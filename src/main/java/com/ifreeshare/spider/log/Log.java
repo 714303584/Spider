@@ -26,7 +26,8 @@ import co.paralleluniverse.strands.queues.ArrayQueue;
 import com.ifreeshare.spider.log.Loggable.Level;
 
 public class Log {
-
+	
+	private static final List<String> jvmArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
 	private static final Map<String, Logger> loggers = new HashMap<String, Logger>();
 	private static Vertx vx; 
 	
@@ -289,9 +290,6 @@ public class Log {
 		dt.setTime(System.currentTimeMillis());
 		return String.format("%1$tF %1$tH:%1$tM:%1$tS.%1$tL", dt);
 	}
-	
-	
-	private static final List<String> jvmArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
 	
 	public static boolean isJvmArg(String target, String key) {
 		return jvmArgs.contains("-D" + key + "=" + target);
