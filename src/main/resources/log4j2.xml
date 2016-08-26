@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<configuration status="OFF">  
+  <appenders>  
+    <Console name="Console" target="SYSTEM_OUT">  
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
+    </Console>  
+    
+    <File name="Applog" fileName="mcc-api.log">
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/> 
+    </File>
+  </appenders>  
+  <loggers>  
+  	<Logger name="com.ifreeshare.spider" level="debug">
+    </Logger>
+    
+    
+    <root level="error">  
+      <appender-ref ref="Console"/> 
+      <appender-ref ref="Applog"/> 
+    </root>  
+  </loggers>  
+</configuration>  
