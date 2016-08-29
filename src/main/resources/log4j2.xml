@@ -5,7 +5,7 @@
       <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>  
     </Console>  
     
-    <File name="Applog" fileName="mcc-api.log">
+    <File name="Applog" fileName="spider.log">
       <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/> 
     </File>
   </appenders>  
