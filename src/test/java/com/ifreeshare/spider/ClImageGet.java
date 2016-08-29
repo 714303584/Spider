@@ -90,7 +90,7 @@ public class ClImageGet {
 				     }
 				 });
 			} catch (Exception e1) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Éµï¿½ catch ï¿½ï¿½
 				e1.printStackTrace();
 			}
 			
@@ -115,6 +115,7 @@ public class ClImageGet {
 				  	
 				  	
 				  	Document doc = Jsoup.parse(responseValue);
+				  	doc.title();
 				  	
 				  	
 				  	Elements as = doc.getElementsByTag("a");
@@ -449,7 +450,7 @@ public class ClImageGet {
 					try {
 						Thread.sleep(100000);
 					} catch (InterruptedException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Éµï¿½ catch ï¿½ï¿½
 						e.printStackTrace();
 					}
 				}

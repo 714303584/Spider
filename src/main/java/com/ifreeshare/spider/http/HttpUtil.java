@@ -4,8 +4,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpUtil {
+	
+	
+	public static final String URL = "url";
+	
+	public static final String LINK_A = "a";
+	
+	public static final String LINK_A_HREF = "href";
+	
+	
+	public static final String HTML_TITLE = "title";
+	
+	public static final String Content_Type = "Content-Type";
+	
+	public static final String  TEXT_HTML = "text/html";
+	
+
+	public static final String  CHARSET = "charset";
+	
+
+	
+	
+	
+	
+	
+	
 
 	public static Map<String, String> ContentType_Map_FileType = new HashMap<String, String>();
+	
+	
 	
 	
 	

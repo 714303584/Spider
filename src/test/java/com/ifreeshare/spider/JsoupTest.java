@@ -37,7 +37,7 @@ public class JsoupTest {
 	public static void main(String[] args) throws IOException {
 		
 		
-		 String urlS = "http://xz6.jb51.net:81/201607/books/JMeterzwsc_jb51.rar";
+		 String urlS = "http://shouce.jb51.net/cxx-abi/abi.html";
 		
 		
 		
@@ -77,7 +77,7 @@ public class JsoupTest {
 			 
 			 
 			 
-			 Request request = new Request.Builder().url(urlS).head().build();
+			 Request request = new Request.Builder().url(urlS).get().build();
 				
 			 Response response = sClient.newCall(request).execute();
 			 
@@ -158,7 +158,7 @@ public class JsoupTest {
 			 
 			 
 		} catch (Exception e1) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Éµï¿½ catch ï¿½ï¿½
 			e1.printStackTrace();
 		}
 		
