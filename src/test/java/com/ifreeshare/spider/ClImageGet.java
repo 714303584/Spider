@@ -381,26 +381,14 @@ public class ClImageGet {
 								  			  	System.out.println(imagePath);
 								  			  	
 								  			  	OutputStream  outputStream = new FileOutputStream(imagePath);
-								  			  	
-//								  			  	byte[] imgByte = response.body().bytes();
-								  			  	
 								  			  	InputStream ins = response2.body().byteStream(); 
-								  			  	
 								  			  	byte[] buffer = new byte[1024];
-								  			  	
-//								  			  	outputStream.write(buffer, 0, imgByte.length);
-								  			  	
 								  			  	int  byteRead = 0;
-								  			  	
 								  			  	while ((byteRead = ins.read(buffer)) != -1) {
 								  			  		outputStream.write(buffer, 0, byteRead);
 												}
-//								  			  	
-								  			  	
 								  			  	outputStream.flush();
 								  			  	outputStream.close();
-								  				
-								  				
 								  				
 											}
 											
