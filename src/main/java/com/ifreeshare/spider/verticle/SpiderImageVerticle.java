@@ -5,15 +5,16 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -23,46 +24,53 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.logging.log4j.Logger;
 
 import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberForkJoinScheduler;
-import co.paralleluniverse.fibers.FiberScheduler;
 import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
 import com.ifreeshare.spider.http.HttpUtil;
+import com.ifreeshare.spider.http.parse.AlphacodersComParser;
+import com.ifreeshare.spider.http.parse.BaseParser;
+import com.ifreeshare.spider.http.parse.HtmlParser;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.verticle.msg.MessageType;
+import com.ifreeshare.util.DateUtil;
+import com.ifreeshare.util.FileAccess;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 
 
-public class SpiderHeaderVerticle extends AbstractVerticle {
-	private static  Logger logger  = Log.register(SpiderHeaderVerticle.class.getName());
-	
-	FiberScheduler fs = null;
 
-	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderHeaderVerticle";
+
+public class SpiderImageVerticle extends AbstractVerticle {
+	private static  Logger logger  = Log.register(SpiderImageVerticle.class.getName());
+	
+
+	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderImageVerticle";
 	
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
 	
+	public static Map<String, HtmlParser> websiteMapParser = new HashMap<String, HtmlParser>();
 	
-	Map<String, String> contentTypeMapVerticle = new HashMap<String, String>();
+	
+	private String imageSavePath;
 	
 	private long loadValue;
 	
 	OkHttpClient   sClient;
 
-	public SpiderHeaderVerticle(Vertx vertx , Context context) {
+	public SpiderImageVerticle(Vertx vertx , Context context) {
 		this.vertx = vertx;
 		this.context = context;
-		fs =  new  FiberForkJoinScheduler(WORKER_ADDRESS, 10000);
 		
 		sClient  = new FiberOkHttpClient();
 		
+		imageSavePath = "H:\\images";
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -96,9 +104,7 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 			e1.printStackTrace();
 		}
 		
-		
-		contentTypeMapVerticle.put(HttpUtil.TEXT_HTML, SpiderHtmlVerticle.WORKER_ADDRESS);
-		contentTypeMapVerticle.put(HttpUtil.IMAGE_JPEG, SpiderImageVerticle.WORKER_ADDRESS);
+		websiteMapParser.put("alphacoders.com", new AlphacodersComParser());
 		
 	}
 	
@@ -110,7 +116,6 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 			JsonObject mbody = (JsonObject) message.body();
 			processor(mbody);
 		});
-		
 		processUrl();
 	}
 
@@ -126,24 +131,26 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 
 	private void  processor(JsonObject message) {
 		int type  =  message.getInteger(MessageType.MESSAGE_TYPE);
-		JsonObject body = message.getJsonObject(MessageType.MESSAGE_BODY);
 		switch (type) {
 		case MessageType.URL_DISTR:
-			urlDistr(body);
+			urlDistr(message);
 			break;
+
 		default:
 			break;
 		}
 
 	}
 	
-	public void  urlDistr(JsonObject body){
+	
+	@Suspendable
+	public void  urlDistr(JsonObject message){
 		try {
-			boolean succ = urlsChannel.send(body, 10000, TimeUnit.SECONDS);
+			boolean succ = urlsChannel.send(message, 10000, TimeUnit.SECONDS);
 			if(!succ){
 				JsonObject newURl = new JsonObject();
 				newURl.put(MessageType.MESSAGE_TYPE, MessageType.Fail_URL);
-				newURl.put(MessageType.MESSAGE_BODY, body);
+				newURl.put(MessageType.MESSAGE_BODY, message);
 				vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
 			}
 			
@@ -158,90 +165,70 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 
 	private void processUrl() {
  		Fiber fiber = new Fiber(() -> {
-				JsonObject body = null;
-				while ((body = urlsChannel.receive()) != null) {
+				JsonObject message = null;
+				while ((message = urlsChannel.receive()) != null) {
 					try {
-						String url = body.getString("url"); 
+						JsonObject body = message.getJsonObject(MessageType.MESSAGE_BODY);  
 						
-						Request request = new Request.Builder().url(url).header("User-Agent", HttpUtil.USER_AGENT).build();
+						String url = body.getString(HttpUtil.URL);
 						
-						Response response = sClient.newCall(request).execute();
+						Request request = new Request.Builder().url(url).get().build();
 						
-						String contentType = response.header("Content-Type");
+						Response  response = sClient.newCall(request).execute();
 						
-						String conetentLength = response.header("Content-Length");
+						InputStream is = response.body().byteStream();
 						
-						//attachment; filename="89821.jpg"
-						String contentDisposition = response.header("Content-Disposition");
+						Date date = new Date();
+						int year = DateUtil.getYear(date);
+						int month = DateUtil.getMonth(date);
+						int day = DateUtil.getDay(date);
 						
-						String fileName = HttpUtil.getFileNameByContentDisposition(contentDisposition);
+						String todayImagePath = imageSavePath+"//"+year+"//"+month+"//"+day;
 						
-						
-					Map<String, List<String>> headers = response.headers().toMultimap();
-				  	Iterator<String> keyIt = headers.keySet().iterator();
-				  	
-				  	while (keyIt.hasNext()) {
-				  		String key = keyIt.next();
-				  		System.out.println("-----------------key:"+key);
-				  		Iterator<String> valIt = headers.get(key).iterator();
-				  		while (valIt.hasNext()) {
-						String value =  valIt
-								.next();
-						
-						System.out
-								.println("value:"+value);
-						
-					}
-				}
-						
-						
-						String charset = body.getString(HttpUtil.CHARSET);
-
-						if(contentType.startsWith("\"")){
-							contentType = contentType.substring(1, contentType.length()-1);
-						}
-						String[] types =  contentType.split(";");
-						
-						
-						if(types.length > 1){
-							contentType = types[0];
-							if(contentType.equals(HttpUtil.TEXT_HTML)){
-								String[] charsets = types[1].split("=");
-								if(charsets.length > 1) charset = charsets[1];
+						if(FileAccess.createMkdir(todayImagePath)){
+							String filename = body.getString("filename");
+							if(filename == null){
+								String[] imageType = url.split("/");
+								filename = imageType[imageType.length-1];
 							}
+							String filePath = null;
+							if(filename != null){
+								filePath = todayImagePath + "/"+filename;
+							}else{
+								String contentType = body.getString(HttpUtil.Content_Type);
+								String fileType = HttpUtil.getFileType(contentType);
+								filePath = todayImagePath + "/" + UUID.randomUUID() + fileType;
+							}
+							FileOutputStream os = new FileOutputStream(filePath);
+						 	byte[] buffer = new byte[1024];
+						  	int  byteRead = 0;
+						  	while ((byteRead = is.read(buffer)) != -1) {
+						  		os.write(buffer, 0, byteRead);
+						  	}
+						  	os.flush();
+						  	os.close();
+						}else{
+							
 						}
 						
-						String verticleAddress = contentTypeMapVerticle.get(contentType);
 						
-						JsonObject object = new JsonObject();
-						object.put(MessageType.MESSAGE_TYPE, MessageType.URL_DISTR);
-						object.put(MessageType.MESSAGE_BODY, body);
 						
-						body.put(HttpUtil.Content_Type, contentType);
-						body.put(HttpUtil.CHARSET, charset);
-						body.put(HttpUtil.FILENAME, fileName);
+//						FileInputStream fis = new FileInputStream();
 						
-						if(verticleAddress != null) vertx.eventBus().send(verticleAddress, object); 
-						Log.log(logger, Level.INFO, "Send ----------------------------- Address:%s; URL:%s; Content-type:%s; Content-Length:%s. charset:%s",
-								verticleAddress, url,contentType,conetentLength,charset);
-					  	
+						
+						 
+						
+						
 					} catch (Exception e) {
-						Log.log(logger, Level.INFO, "e.printStackTrace ----------------------------- message:%s",body);
 						e.printStackTrace();
-						
+						Log.log(logger, Level.WARN, "e.printStackTrace() ----------------------------- Message:%s;   e.message:%s", message,e.getMessage());
 					}
-					
 					
 				}
 				
 				
 				
 				
-//			 	fileType =  HttpUtil.getFileType(contentType);
-//			 	if(fileType == null || fileType.length() == 0){
-//			 		String[] urlSp = url.split("\\.");
-//			 		fileType = "."+urlSp[urlSp.length-1];
-//			 	}
 //				Elements links = doc.getElementsByTag(JsoupUtil.LINK_A);
 //				Iterator<Element> eleIt = links.iterator();
 //				while(eleIt.hasNext()){
@@ -284,10 +271,41 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 ////					  	System.out.println(keyword.html());
 //					}
 //				}
-				
 		});
  		
  		fiber.start();
+	}
+	
+	
+	
+	
+	
+	public HtmlParser getParserByWebsite(String webDomain){
+		HtmlParser parser =  websiteMapParser.get(webDomain);
+		if(parser == null){
+			parser = new BaseParser();
+		}
+		return parser;
+	}
+	
+	
+	public boolean registerParser(String webDomain,String className){
+		boolean flag = false;
+		try {
+			Object obj = Class.forName(className).newInstance();
+			if(obj instanceof HtmlParser){
+				websiteMapParser.put(webDomain, (HtmlParser)obj);
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return flag;
+		
 	}
 	
 	
@@ -301,26 +319,8 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 //	Map<String, List<String>> headers = response.headers().toMultimap();
+//  	
 //  	Iterator<String> keyIt = headers.keySet().iterator();
 //  	
 //  	while (keyIt.hasNext()) {
@@ -336,9 +336,6 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 //		
 //	}
 //}
-  	
-//  	String fileType = null;
-	
 	
 	
 	

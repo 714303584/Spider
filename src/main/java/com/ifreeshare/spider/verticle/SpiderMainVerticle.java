@@ -34,6 +34,8 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 	public SpiderMainVerticle(Vertx vertx, Context context) {
 		this.vertx = vertx;
 		this.context = context;
+		urls.add("");
+		urls.add(null);
 		
 	}
 

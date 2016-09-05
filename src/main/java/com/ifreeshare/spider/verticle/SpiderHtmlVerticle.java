@@ -8,7 +8,10 @@ import io.vertx.core.json.JsonObject;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -32,6 +35,9 @@ import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
 import com.ifreeshare.spider.http.HttpUtil;
+import com.ifreeshare.spider.http.parse.AlphacodersComParser;
+import com.ifreeshare.spider.http.parse.BaseParser;
+import com.ifreeshare.spider.http.parse.HtmlParser;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.verticle.msg.MessageType;
@@ -49,6 +55,9 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderHtmlVerticle";
 	
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
+	
+	
+	public static Map<String, HtmlParser> websiteMapParser = new HashMap<String, HtmlParser>();
 	
 	
 	private long loadValue;
@@ -95,10 +104,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 			e1.printStackTrace();
 		}
 		
-		
-		
-		
-		
+		websiteMapParser.put("alphacoders.com", new AlphacodersComParser());
 		
 	}
 	
@@ -180,11 +186,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						
 						
 						byte[] b = response.body().bytes();
-						
 //						byte[] b2 =  b.clone();
-						
-						
-						
 						
 						if(charset == null){
 							html = new String(b);
@@ -213,27 +215,29 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						charset = charset == null ? "UTF-8" : charset;
 						
 						html = new String(b, charset);
-						
-						
-						 System.out.println(html);
+//						 System.out.println(html);
+						 
+						 
+						 
 						 Document htmlDoc = Jsoup.parse(html);
+						 
 						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
 						 
-						 Element charsetE = htmlDoc.select("meta[charset]").first();
+//						 Element charsetE = htmlDoc.select("meta[charset]").first();
+//						 
+//						 if(charsetE != null) charset = charsetE.attr(HttpUtil.CHARSET);
 						 
-						 if(charsetE != null) charset = charsetE.attr(HttpUtil.CHARSET);
 						 
-						 Elements linkElements =  htmlDoc.getElementsByTag(HttpUtil.LINK_A);
 						 
-						 Iterator<Element> it = linkElements.iterator();
+						 HtmlParser parser = getParserByWebsite(HttpUtil.getMainDomain(url));
+						 Set<String> links = parser.getLinkValue(htmlDoc);
+						 
+						 Iterator<String> it = links.iterator();
 						 
 						 while (it.hasNext()) {
-							 Element a =  it.next();
-							 String href = a.attr("abs:"+HttpUtil.LINK_A_HREF);
+							 String href = it.next();
 							 if(href != null || href.trim().length() > 0){
-								 
-								 
 								 JsonObject newUrl = new JsonObject();
 								 
 								 newUrl.put(MessageType.MESSAGE_TYPE, MessageType.URL_DISTR);
@@ -310,6 +314,40 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
  		
  		fiber.start();
 	}
+	
+	
+	
+	
+	
+	public HtmlParser getParserByWebsite(String webDomain){
+		HtmlParser parser =  websiteMapParser.get(webDomain);
+		if(parser == null){
+			parser = new BaseParser();
+		}
+		return parser;
+	}
+	
+	
+	public boolean registerParser(String webDomain,String className){
+		boolean flag = false;
+		try {
+			Object obj = Class.forName(className).newInstance();
+			if(obj instanceof HtmlParser){
+				websiteMapParser.put(webDomain, (HtmlParser)obj);
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return flag;
+		
+	}
+	
+	
 	
 	
 	

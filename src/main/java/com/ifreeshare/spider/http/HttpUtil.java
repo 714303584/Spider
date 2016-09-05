@@ -1,7 +1,11 @@
 package com.ifreeshare.spider.http;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HttpUtil {
 	
@@ -19,9 +23,16 @@ public class HttpUtil {
 	
 	public static final String  TEXT_HTML = "text/html";
 	
+	public static final String IMAGE_JPEG = "image/jpeg";
+	
+	public static final String IMAGE_PNG = "image/png";
+	
 
 	public static final String  CHARSET = "charset";
 	
+	public static final String FILENAME = "filename";
+	
+	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36";
 
 	
 	
@@ -34,6 +45,7 @@ public class HttpUtil {
 	
 	
 	
+
 	
 	
 	
@@ -343,8 +355,17 @@ public class HttpUtil {
 	
 	
 	
-	
-	
+	public static String getFileNameByContentDisposition(String contentDisposition){
+		String fileName = null;
+		if(contentDisposition != null){
+			String[] contentSpilt = contentDisposition.split("=");
+			if(contentSpilt.length > 1){
+				fileName = contentSpilt[1];
+				fileName = fileName.replaceAll("\"", "");
+			}
+		}
+		return fileName;
+	}
 	
 	
 	
@@ -360,17 +381,50 @@ public class HttpUtil {
 	}
 	
 	
+	public static String  getMainDomain(String url) throws MalformedURLException{
+		String host = new URL(url).getHost().toLowerCase();
+		Pattern p = Pattern.compile("[^\\.]+(\\.com\\.cn|\\.net\\.cn|\\.org\\.cn|\\.gov\\.cn|\\.com|\\.net|\\.cn|\\.org|\\.cc|"
+				+ "\\.ac|\\.ad|\\.ae|\\.af|\\.ag|\\.ai|\\.al|\\.am|\\.an|\\.ao|\\.aq|\\.ar|\\.as|\\.at|\\.au|\\.aw|\\.az|\\.ba|"
+				+ "\\.bb|\\.bd|\\.be|\\.bf|\\.bg|\\.bh|\\.bi|\\.bj|\\.bm|\\.bn|\\.bo|\\.br|\\.bs|\\.bt|\\.bv|\\.bw|\\.by|\\.bz|\\.ca|\\.cat|"
+				+ "\\.cd|\\.cf|\\.cg|\\.ch|\\.ci|\\.ck|\\.cl|\\.cm|\\.co|\\.co\\.uk|\\.co\\.uz|\\.co\\.kr|\\.co\\.uz|\\.co\\.kr|\\.co\\.jp|\\.co\\.nr|\\.co\\.nr|\\.co\\.il|\\.co\\.id|"
+				+ "\\.cq|\\.cr|\\.cu|\\.cv|\\.cx|\\.cy|\\.cz|\\.de|\\.dj|\\.dk|\\.dm|\\.do|\\.dz|\\.ec|\\.ee|\\.eg|\\.eh|\\.es|\\.et|\\.eu|\\.ev|\\.fi|\\.fj|\\.fk|\\.fm|\\.fo|\\.fr|\\.ga|"
+				+ "\\.gb|\\.gd|\\.ge|\\.gf|\\.gh|\\.gi|\\.gl|\\.gm|\\.gn|\\.gp|\\.gr|\\.gt|\\.gu|\\.gw|\\.gy|\\.hk|\\.hm|\\.hn|\\.hr|\\.ht|\\.hu|\\.id|\\.ie|\\.il|\\.in|\\.io|\\.iq|\\.ir|"
+				+ "\\.is|\\.it|\\.jm|\\.jo|\\.jp|\\.ke|\\.kg|\\.kh|\\.ki|\\.km|\\.kn|\\.kp|\\.kr|\\.kw|\\.ky|\\.kz|\\.la|\\.lb|\\.lc|\\.li|\\.lk|\\.lr|\\.ls|\\.lt|\\.lu|\\.lv|\\.ly|\\.ma|"
+				+ "\\.mc|\\.md|\\.me|\\.mg|\\.mh|\\.ml|\\.mm|\\.mn|\\.mo|\\.mp|\\.mq|\\.mr|\\.ms|\\.mt|\\.mv|\\.mw|\\.mx|\\.my|\\.mz|\\.na|\\.nc|\\.ne|\\.nf|\\.ng|\\.ni|\\.nl|\\.no|\\.np|"
+				+ "\\.nr|\\.nt|\\.nu|\\.om|\\.pa|\\.pe|\\.pf|\\.pg|\\.ph|\\.pk|\\.pl|\\.pn|\\.pr|\\.pt|\\.pw|\\.py|\\.qa|\\.re|\\.ro|\\.rs|\\.ru|\\.rw|\\.sa|\\.sb|\\.sc|\\.sd|\\.se|"
+				+ "\\.sg|\\.sh|\\.si|\\.sj|\\.sk|\\.sl|\\.sm|\\.sn|\\.so|\\.sr|\\.st|\\.su|\\.sy|\\.sz|\\.tc|\\.td|\\.tf|\\.tg|\\.th|\\.tj|\\.tk|\\.tl|\\.tm|\\.tn|\\.to|\\.tp|\\.tr|"
+				+ "\\.tt|\\.tw|\\.tz|\\.ua|\\.ug|\\.uk|\\.us|\\.uy|\\.va|\\.vc|\\.ve|\\.vg|\\.vn|\\.vu|\\.wf|\\.ws|\\.wf|\\.ws|\\.ye|\\.za|\\.zm|\\.zw|"
+				+ "\\.me|\\.tel|\\.mobi|\\.asia|\\.biz|\\.info|\\.name|\\.tv|\\.hk|\\.xin|\\.win|\\.xzy|\\.top|\\.ltd|\\.vip|\\.pub|\\.wang|\\.club|\\.site|\\.store|\\.bid|\\.ren|"
+				+ "\\.online|\\.tech|\\.mom|\\.lol|\\.work|\\.red|\\.website|\\.space|\\.link|\\.news|\\.date|\\.loan|\\.live|\\.studio|\\.help|\\.click|\\.pics|"
+				+ "\\.photo|\\.trade|\\.science|\\.party|\\.rocks|\\.band|\\.gift|\\.wiki|\\.design|\\.software|\\.social|\\.lawyer|\\.engineer|\\.me|\\.co|\\.press|\\.video|"
+				+ "\\.market|\\.game|"
+				+ "\\.我爱你|\\.集团|\\.公司|\\.中国|\\.网络)");
+		Matcher matcher = p.matcher(host);  
+		if(matcher.find()) return matcher.group();
+		else return null;
+
+		
+	}
+	
 	
 	
 	
 	public static void main(String[] args) {
 //		System.out.println(HttpUtil.getDomain("https://www.baidu.com/s?wd=java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%20%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2&rsv_spt=1&rsv_iqid=0x9b5994530000f315&issp=1&f=3&rsv_bp=0&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&rsv_sug3=33&rsv_sug1=41&rsv_sug7=100&rsv_sug2=0&prefixsug=java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%20zhiding&rsp=0&inputT=28427&rsv_sug4=28428"));;
 	
-		String urlS = "http://xz6.jb51.net:81/201607/books/JMeterzwsc_jb51.rar";
+		String urlS = "http://ifreeshare.tf:81/201607/books/JMeterzwsc_jb51.rar";
 		
-		String[] urlss = urlS.split("\\.");
+		System.out.println( HttpUtil.getDomain(urlS));
+//		
+//		System.out.println(urlss);
 		
-		System.out.println(urlss);
+		
+		try {
+			System.out.println(getMainDomain(urlS));;
+		} catch (MalformedURLException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
 	
 	}
 	
