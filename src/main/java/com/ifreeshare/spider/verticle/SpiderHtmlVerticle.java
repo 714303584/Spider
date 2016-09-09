@@ -38,6 +38,7 @@ import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
 import com.ifreeshare.spider.http.parse.BaseParser;
 import com.ifreeshare.spider.http.parse.HtmlParser;
+import com.ifreeshare.spider.http.parse.JB51NetParser;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.verticle.msg.MessageType;
@@ -105,6 +106,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 		}
 		
 		websiteMapParser.put("alphacoders.com", new AlphacodersComParser());
+		websiteMapParser.put("jb51.net", new JB51NetParser());
 		
 	}
 	
@@ -186,7 +188,6 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						
 						
 						byte[] b = response.body().bytes();
-//						byte[] b2 =  b.clone();
 						
 						if(charset == null){
 							html = new String(b);
@@ -220,6 +221,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						 
 						 
 						 Document htmlDoc = Jsoup.parse(html);
+						 htmlDoc.setBaseUri(url);
 						 
 						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);

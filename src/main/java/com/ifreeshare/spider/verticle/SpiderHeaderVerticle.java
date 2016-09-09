@@ -99,6 +99,7 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 		
 		contentTypeMapVerticle.put(HttpUtil.TEXT_HTML, SpiderHtmlVerticle.WORKER_ADDRESS);
 		contentTypeMapVerticle.put(HttpUtil.IMAGE_JPEG, SpiderImageVerticle.WORKER_ADDRESS);
+		contentTypeMapVerticle.put(HttpUtil.APPLICATION_OCTET_STREAM, SpiderFileVerticle.WORKER_ADDRESS);
 		
 	}
 	
@@ -162,7 +163,7 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 				while ((body = urlsChannel.receive()) != null) {
 					try {
 						String url = body.getString("url"); 
-						
+						System.err.println(url);
 						Request request = new Request.Builder().url(url).header("User-Agent", HttpUtil.USER_AGENT).build();
 						
 						Response response = sClient.newCall(request).execute();
@@ -176,23 +177,23 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 						
 						String fileName = HttpUtil.getFileNameByContentDisposition(contentDisposition);
 						
-						
-					Map<String, List<String>> headers = response.headers().toMultimap();
-				  	Iterator<String> keyIt = headers.keySet().iterator();
-				  	
-				  	while (keyIt.hasNext()) {
-				  		String key = keyIt.next();
-				  		System.out.println("-----------------key:"+key);
-				  		Iterator<String> valIt = headers.get(key).iterator();
-				  		while (valIt.hasNext()) {
-						String value =  valIt
-								.next();
-						
-						System.out
-								.println("value:"+value);
-						
-					}
-				}
+//						
+//					Map<String, List<String>> headers = response.headers().toMultimap();
+//				  	Iterator<String> keyIt = headers.keySet().iterator();
+//				  	
+//				  	while (keyIt.hasNext()) {
+//				  		String key = keyIt.next();
+//				  		System.out.println("-----------------key:"+key);
+//				  		Iterator<String> valIt = headers.get(key).iterator();
+//				  		while (valIt.hasNext()) {
+//						String value =  valIt
+//								.next();
+//						
+//						System.out
+//								.println("value:"+value);
+//						
+//					}
+//				}
 						
 						
 						String charset = body.getString(HttpUtil.CHARSET);
@@ -221,7 +222,9 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 						body.put(HttpUtil.CHARSET, charset);
 						body.put(HttpUtil.FILENAME, fileName);
 						
-						if(verticleAddress != null) vertx.eventBus().send(verticleAddress, object); 
+						if(verticleAddress != null){
+							vertx.eventBus().send(verticleAddress, object); 
+						}
 						Log.log(logger, Level.INFO, "Send ----------------------------- Address:%s; URL:%s; Content-type:%s; Content-Length:%s. charset:%s",
 								verticleAddress, url,contentType,conetentLength,charset);
 					  	

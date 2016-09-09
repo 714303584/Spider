@@ -5,6 +5,9 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.SecureRandom;
@@ -22,7 +25,11 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+
+
 import org.apache.logging.log4j.Logger;
+
+
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -30,6 +37,8 @@ import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
+
+
 
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
@@ -44,15 +53,11 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-
-
-
-
-public class SpiderImageVerticle extends AbstractVerticle {
-	private static  Logger logger  = Log.register(SpiderImageVerticle.class.getName());
+public class SpiderFileVerticle extends AbstractVerticle {
+	private static  Logger logger  = Log.register(SpiderFileVerticle.class.getName());
 	
 
-	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderImageVerticle";
+	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderFileVerticle";
 	
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
 	
@@ -65,13 +70,13 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	
 	OkHttpClient   sClient;
 
-	public SpiderImageVerticle(Vertx vertx , Context context) {
+	public SpiderFileVerticle(Vertx vertx , Context context) {
 		this.vertx = vertx;
 		this.context = context;
 		
 		sClient  = new FiberOkHttpClient();
 		
-		imageSavePath = "H:\\images";
+		imageSavePath = "H:\\files";
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -184,7 +189,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						int month = DateUtil.getMonth(date);
 						int day = DateUtil.getDay(date);
 						
-						String todayImagePath = imageSavePath+"//"+year+"//"+month+"//"+day;
+						String todayImagePath = imageSavePath+"//"+year+""+month+""+day;
 						
 						if(FileAccess.createMkdir(todayImagePath)){
 							String filename = body.getString("filename");
@@ -192,28 +197,43 @@ public class SpiderImageVerticle extends AbstractVerticle {
 								String[] imageType = url.split("/");
 								filename = imageType[imageType.length-1];
 							}
+							
+							String contentType = body.getString(HttpUtil.Content_Type);
+							String fileType = HttpUtil.getFileType(contentType);
+							
+							
 							String filePath = null;
 							if(filename != null){
 								filePath = todayImagePath + "/"+filename;
+								if(fileType == null){
+									String[] fileSplit =  filename.split("\\.");
+									fileType = fileSplit[fileSplit.length-1];
+								}
 							}else{
-								String contentType = body.getString(HttpUtil.Content_Type);
-								String fileType = HttpUtil.getFileType(contentType);
 								filePath = todayImagePath + "/" + UUID.randomUUID() + fileType;
 							}
-							FileOutputStream os = new FileOutputStream(filePath);
-						 	byte[] buffer = new byte[1024];
-						  	int  byteRead = 0;
-						  	while ((byteRead = is.read(buffer)) != -1) {
-						  		os.write(buffer, 0, byteRead);
-						  	}
-						  	os.flush();
-						  	os.close();
+							
+							File file = new File(filePath);
+							if(file.exists()){
+								filePath = todayImagePath + "/" + UUID.randomUUID() + fileType;
+							}else{
+								FileOutputStream os = new FileOutputStream(file);
+							 	byte[] buffer = new byte[1024];
+							  	int  byteRead = 0;
+							  	while ((byteRead = is.read(buffer)) != -1) {
+							  		os.write(buffer, 0, byteRead);
+							  	}
+							  	os.flush();
+							  	os.close();
+							}
+							
+							
+							
 						}else{
 							
 						}
 						
-						
-						
+					
 //						FileInputStream fis = new FileInputStream();
 						
 					} catch (Exception e) {
@@ -222,8 +242,6 @@ public class SpiderImageVerticle extends AbstractVerticle {
 					}
 					 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 					 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
-					
-					
 				}
 				
 				
@@ -307,17 +325,6 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		return flag;
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 //	Map<String, List<String>> headers = response.headers().toMultimap();
 //  	
