@@ -51,8 +51,11 @@ public class BaseParser implements HtmlParser {
 		Iterator<Element> it = doc.select("a[href]").iterator();
 		while (it.hasNext()) {
 			Element ele = it.next();
-			String href = ele.attr("abs:"+HttpUtil.LINK_A_HREF);
-			results.add(href);
+			String link = ele.attr("abs:"+HttpUtil.LINK_A_HREF);
+			String value = ele.attr(HttpUtil.LINK_A_HREF);
+			if(link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0){
+				results.add(link);
+			}
 		}
 		return results;
 	}
