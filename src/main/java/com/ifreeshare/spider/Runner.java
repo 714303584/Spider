@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonArray;
 import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.spider.verticle.SpiderFileVerticle;
 import com.ifreeshare.spider.verticle.SpiderHeaderVerticle;
 import com.ifreeshare.spider.verticle.SpiderHtmlVerticle;
 import com.ifreeshare.spider.verticle.SpiderImageVerticle;
@@ -40,8 +41,8 @@ public class Runner
     	Context context = vertx.getOrCreateContext();
     	
     	JsonArray baseUrls = new JsonArray();
-    	baseUrls.add("https://alphacoders.com/");
-//    	baseUrls.add("http://www.jb51.net/");
+//    	baseUrls.add("https://alphacoders.com/");
+    	baseUrls.add("http://www.jb51.net/");
     	
     	
     	JsonArray regular = new JsonArray();
@@ -55,6 +56,8 @@ public class Runner
     	vertx.deployVerticle(new SpiderHeaderVerticle(vertx, context));
     	vertx.deployVerticle(new SpiderHtmlVerticle(vertx, context));
     	vertx.deployVerticle(new SpiderImageVerticle(vertx, context));
+    	vertx.deployVerticle(new SpiderFileVerticle(vertx, context));
+    	
     	
     	try {
 			Thread.sleep(1000);
