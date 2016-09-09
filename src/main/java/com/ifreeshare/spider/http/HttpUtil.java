@@ -2,6 +2,7 @@ package com.ifreeshare.spider.http;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,6 +27,10 @@ public class HttpUtil {
 	public static final String IMAGE_JPEG = "image/jpeg";
 	
 	public static final String IMAGE_PNG = "image/png";
+	
+	public static final String APPLICATION_OCTET_STREAM = "application/octet-stream"; 
+	public static final String APPLICATION_PDF = "application/pdf"; 
+	//
 	
 
 	public static final String  CHARSET = "charset";
@@ -369,14 +374,9 @@ public class HttpUtil {
 	
 	
 	
-	public static String getDomain(String url){
-		
-		String domain = null;
-		
-	  	String[] urls = url.split("/");
-	  	
-	  	domain = urls[2];
-		
+	public static String getDomain(String url) throws MalformedURLException{
+		URL getDomain = new URL(url);
+		String domain = getDomain.getHost();
 		return domain;
 	}
 	
@@ -414,7 +414,12 @@ public class HttpUtil {
 	
 		String urlS = "http://ifreeshare.tf:81/201607/books/JMeterzwsc_jb51.rar";
 		
-		System.out.println( HttpUtil.getDomain(urlS));
+		try {
+			System.out.println(HttpUtil.getDomain(urlS));
+		} catch (MalformedURLException e1) {
+			// TODO 自动生成的 catch 块
+			e1.printStackTrace();
+		}
 //		
 //		System.out.println(urlss);
 		
