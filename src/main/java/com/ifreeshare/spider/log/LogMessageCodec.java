@@ -5,7 +5,7 @@ import io.vertx.core.eventbus.MessageCodec;
 
 import java.io.IOException;
 
-import com.ifreeshare.spider.util.Serializer;
+import com.ifreeshare.util.Serializer;
 
 
 public class LogMessageCodec implements MessageCodec<LogMessage, LogMessage> {
