@@ -5,6 +5,9 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
+
+
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -12,7 +15,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+
+
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -20,11 +27,24 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+
+
+
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+
+
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberForkJoinScheduler;
@@ -34,6 +54,11 @@ import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
+
+
+
+import com.ifreeshare.lucene.LuceneFactory;
+import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
 import com.ifreeshare.spider.http.parse.BaseParser;
@@ -223,8 +248,6 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						 Document htmlDoc = Jsoup.parse(html);
 						 htmlDoc.setBaseUri(url);
 						 
-						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
-						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
 						 
 //						 Element charsetE = htmlDoc.select("meta[charset]").first();
 //						 
@@ -234,6 +257,28 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						 
 						 HtmlParser parser = getParserByWebsite(HttpUtil.getMainDomain(url));
 						 Set<String> links = parser.getLinkValue(htmlDoc);
+						 
+						 message.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
+						 message.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
+						 message.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
+						 
+						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
+						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
+						 
+						 org.apache.lucene.document.Document document = new  org.apache.lucene.document.Document();
+						 document.add( new Field(CoreBase.UUID, UUID.randomUUID().toString(), TextField.TYPE_STORED));
+						 document.add(new Field(CoreBase.HTML_KEYWORDS, message.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
+						document.add(new Field(CoreBase.HTML_TITLE, message.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
+						document.add(new Field(CoreBase.HTML_DESCRIPTION, message.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
+							IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
+							writer.addDocument(document);
+							writer.flush();
+							writer.close();
+						 
+					System.out.println(document.toString());
+						 
+						 
+						 
 						 
 						 Iterator<String> it = links.iterator();
 						 
@@ -248,6 +293,9 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 								 newBody.put(HttpUtil.URL, href);
 //								 newBody.put(HttpUtil.CHARSET, charset);
 								 newUrl.put(MessageType.MESSAGE_BODY, newBody);
+								 newBody.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
+								 newBody.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
+								 newBody.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
 								 
 								 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newUrl);
 								 
@@ -255,63 +303,12 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 							 }else{
 								 
 							 }
-							 
 						}
-						 
-						
-						
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.log(logger, Level.WARN, "e.printStackTrace() ----------------------------- Message:%s;   e.message:%s", message,e.getMessage());
 					}
-					
 				}
-				
-				
-				
-				
-//				Elements links = doc.getElementsByTag(JsoupUtil.LINK_A);
-//				Iterator<Element> eleIt = links.iterator();
-//				while(eleIt.hasNext()){
-//					Element a = eleIt.next();
-//					String href = a.attr(JsoupUtil.LINK_A_HREF);
-//					JsonObject newURl = new JsonObject();
-//					newURl.put(MessageType.MESSAGE_TYPE, MessageType.NEW_URL);
-//					newURl.put(MessageType.MESSAGE_BODY, href);
-//					vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
-//				}
-//				
-//				if(url.contains("item.taobao.com")){
-//					System.out.println(url);
-//					String title = doc.title();
-//					System.out.println(title);
-//					String[] urlSplit =  url.split("?");
-//					if(urlSplit.length > 1){
-//						String[] params = url.split("&");
-//						String id = null;
-//						for (int i = 0; i < params.length; i++) {
-//							String param = params[i];
-//							if(param.startsWith("id=")){
-//								 id =  param.split("=")[1];
-//								 break;
-//							}
-//							
-//							if(id != null){
-//								String iteminfourl = "https://detailskip.taobao.com/service/getData/1/p2/item/detail/sib.htm?itemId="+id
-//										+ "&modules=qrcode,viewer,price,contract,duty,xmpPromotion,dynStock,delivery,upp,activity,fqg,zjys,coupon&callback=onSibRequestSuccess";
-//								
-//								Document priceDoc = Jsoup.connect(iteminfourl).header("Referer", "https://item.taobao.com/item.htm?id=534016703208").get();
-//								System.out.println(priceDoc.html());
-//							}
-//						}
-//						
-//						
-////					  	Elements metas = doc.getElementsByTag("meta");
-////					  	Elements keywords = metas.attr("name","keywords"); 
-////					  	Element keyword =  keywords.get(0);
-////					  	System.out.println(keyword.html());
-//					}
-//				}
 		});
  		
  		fiber.start();
