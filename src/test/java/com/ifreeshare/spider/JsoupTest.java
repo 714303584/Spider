@@ -37,7 +37,7 @@ public class JsoupTest {
 	public static void main(String[] args) throws IOException {
 		
 		
-		 String urlS = "http://shouce.jb51.net/cxx-abi/abi.html";
+		 String urlS = "http://sf.jb51.net:81/201609/books/Loadrunnerxncsyy_jb51.rar";
 		
 		
 		
@@ -106,26 +106,28 @@ public class JsoupTest {
 			}
 			
 			
-			if(contentType.startsWith("\"")){
-				contentType = contentType.substring(1, contentType.length()-1);
-			}
+//			if(contentType.startsWith("\"")){
+//				contentType = contentType.substring(1, contentType.length()-1);
+//			}
+//			
+//			
+//		 	fileType =  HttpUtil.getFileType(contentType);
+//			
+//		 	if(fileType == null || fileType.length() == 0){
+//		 		String[] urlSp = urlS.split("\\.");
+//		 		
+//		 		fileType = "."+urlSp[urlSp.length-1];
+//		 		
+//		 	}
+//			
+//			
+//			String contentLength =  response.header("Content-Length");
+//			
+//			String imagePath = "D:\\aaaa"+fileType;
+			  	
+			  	String string = new String(response.body().bytes(), "gb2312"); 
 			
-			
-		 	fileType =  HttpUtil.getFileType(contentType);
-			
-		 	if(fileType == null || fileType.length() == 0){
-		 		String[] urlSp = urlS.split("\\.");
-		 		
-		 		fileType = "."+urlSp[urlSp.length-1];
-		 		
-		 	}
-			
-			
-			String contentLength =  response.header("Content-Length");
-			
-			String imagePath = "D:\\aaaa"+fileType;
-			
-			System.out.println(response.body().string());
+			System.out.println(string);
 		  	
 //			  	OutputStream  outputStream = new FileOutputStream(imagePath);
 //			  	
