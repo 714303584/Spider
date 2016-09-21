@@ -20,6 +20,10 @@ public class HttpUtil {
 	
 	public static final String HTML_TITLE = "title";
 	
+	public static final String HTML_KEYWORDS = "keywords";
+	
+	public static final String HTML_DESCRIPTION = "description";
+	
 	public static final String Content_Type = "Content-Type";
 	
 	public static final String  TEXT_HTML = "text/html";
