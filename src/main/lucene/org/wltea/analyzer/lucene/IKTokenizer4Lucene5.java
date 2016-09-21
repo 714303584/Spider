@@ -56,6 +56,7 @@ public class IKTokenizer4Lucene5 extends Tokenizer{
         //清除所有的词元属性
         clearAttributes();
         Lexeme nextLexeme = _IKImplement.next();
+    
         if(nextLexeme != null){
             //将Lexeme转成Attributes
             //设置词元文本

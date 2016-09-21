@@ -1,6 +1,7 @@
 package org.wltea.analyzer.lucene;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
  
 public class IKAnalyzer4Lucene5 extends Analyzer{
@@ -52,4 +53,15 @@ public class IKAnalyzer4Lucene5 extends Analyzer{
         Tokenizer _IKTokenizer = new IKTokenizer4Lucene5(this.useSmart());
         return new TokenStreamComponents(_IKTokenizer);
     }
+
+	@Override
+	protected TokenStream normalize(String fieldName, TokenStream in) {
+		return  super.normalize(fieldName, in);
+	}
+    
+    
+
+    
+    
+    
 }
