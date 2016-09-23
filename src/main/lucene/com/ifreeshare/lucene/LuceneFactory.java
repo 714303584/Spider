@@ -45,6 +45,10 @@ public class LuceneFactory {
 	}
 	
 	public static  IndexWriter getIndexWriter(OpenMode createOrAppend){
+		
+		if(indexWriter != null){
+			return indexWriter;
+		}
 		Analyzer analyzer = new IKAnalyzer4Lucene5();
     	IndexWriterConfig conf = new IndexWriterConfig(analyzer);
     	conf.setOpenMode(OpenMode.CREATE_OR_APPEND);
@@ -86,9 +90,9 @@ public class LuceneFactory {
 	
 	public static Document[]  search(String[] value,int numb,String[] field,Occur[] occur ,ScoreDoc after){
 		Query query = null;
-		IndexSearcher searcher = null;
-		searcher = getIndexSearcher();
 		try {
+			IndexReader indexReader = DirectoryReader.open(indexDir);
+			IndexSearcher searcher = new IndexSearcher(indexReader);
 			query = MultiFieldQueryParser.parse(value, field, occur, new IKAnalyzer4Lucene5());
 			TopDocs docs = searcher.searchAfter(after,query, numb);
 		
@@ -98,7 +102,10 @@ public class LuceneFactory {
 	           Document document = searcher.doc(scoreDocs[i].doc); 
 	           documents[i] = document;
 			}
-			after = scoreDocs[scoreDocs.length-1];
+			if(scoreDocs.length > 0){
+				after = scoreDocs[scoreDocs.length-1];
+			}
+			indexReader.close();
 			 return documents;
 		} catch (ParseException e) {
 			e.printStackTrace();
