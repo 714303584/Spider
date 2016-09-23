@@ -273,9 +273,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 							IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
 							writer.addDocument(document);
 							writer.flush();
-							writer.close();
-						 
-					System.out.println(document.toString());
+							writer.commit();
 						 
 						 
 						 

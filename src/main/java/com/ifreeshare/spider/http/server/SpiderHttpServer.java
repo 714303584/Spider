@@ -1,23 +1,23 @@
 package com.ifreeshare.spider.http.server;
 
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
 
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
-import com.ifreeshare.spider.verticle.SpiderFileVerticle;
-import com.ifreeshare.spider.verticle.SpiderHeaderVerticle;
-import com.ifreeshare.spider.verticle.SpiderHtmlVerticle;
-import com.ifreeshare.spider.verticle.SpiderImageVerticle;
-import com.ifreeshare.spider.verticle.SpiderMainVerticle;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Context;
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
 
 public class SpiderHttpServer extends AbstractVerticle{
 
@@ -27,11 +27,17 @@ public class SpiderHttpServer extends AbstractVerticle{
 	}
 	
 	
-	
 	@Override
 	public void start() throws Exception {
 		HttpServer httpServer = vertx.createHttpServer();
 		Router router = Router.router(vertx);
+		
+		FreeMarkerTemplateEngine freeMarkerTemplateEngine = FreeMarkerTemplateEngine.create();
+		
+		
+		
+		
+		router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
 		
 		router.get("/images/search").handler(context -> {
 		 	String keys =  context.request().getParam("keys");
@@ -48,15 +54,56 @@ public class SpiderHttpServer extends AbstractVerticle{
 				String uuid = document.get(CoreBase.UUID);
 				String keywords = document.get(CoreBase.HTML_KEYWORDS);
 				String description = document.get(CoreBase.HTML_DESCRIPTION);
+				String title = document.get(CoreBase.HTML_TITLE);
 				JsonObject docJson = new JsonObject();
 				docJson.put(CoreBase.UUID, uuid);
-				docJson.put(CoreBase.HTML_KEYWORDS, keywords);
-				docJson.put(CoreBase.HTML_DESCRIPTION, description);
+				try {
+					docJson.put(CoreBase.HTML_TITLE, title);
+					docJson.put(CoreBase.HTML_KEYWORDS, keywords);
+					docJson.put(CoreBase.HTML_DESCRIPTION, description);
+				} catch (Exception e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+				}
 				objects.add(docJson);
 			}
+		 	HttpServerResponse response = context.response();
+		 	response.putHeader("content-type", "application/json;charset=UTF-8");
 		 	result.put(CoreBase.OBJECTS, objects);
-		 	context.response().end(result.toString());
+		 	response.end(result.toString());
 		});
+		
+	
+		
+		
+		router.post("/conference/listener/").handler(context -> {
+			HttpServerRequest request =  context.request();
+			HttpServerResponse response =  context.response();
+			
+			request.bodyHandler(body -> {
+				System.out.println(body.toString());
+				response.end("success");
+			});
+		});
+		
+		
+		
+		router.get("/holle/").handler(ctx -> {
+			ctx.put("name", "Vert.x Web");
+			
+			freeMarkerTemplateEngine.render(ctx, "templates/index.ftl", res -> {
+				
+				if(res.succeeded()){
+					ctx.response().end(res.result());
+				}else{
+					ctx.fail(res.cause());
+				}
+				
+				
+			});
+		});
+		
+		
 		
 		httpServer.requestHandler(router::accept).listen(8000);
 	}
@@ -69,6 +116,8 @@ public class SpiderHttpServer extends AbstractVerticle{
 	
 	
 	public static void main(String[] args) {
+		
+		 System.setProperty("vertx.disableFileCaching", "true");
 		Vertx vertx = Vertx.vertx();
     	Context context = vertx.getOrCreateContext();
     	
