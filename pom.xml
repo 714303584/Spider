@@ -46,6 +46,14 @@
 		    <version>0.7.0</version>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/io.vertx/vertx-web-templ-freemarker -->
+		<dependency>
+		    <groupId>io.vertx</groupId>
+		    <artifactId>vertx-web-templ-freemarker</artifactId>
+		    <version>3.3.3</version>
+		</dependency>
+		
+		
 			
 	
 			<!-- https://mvnrepository.com/artifact/co.paralleluniverse/comsat-httpclient -->
@@ -81,25 +89,25 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-unit</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-codetrans</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-web</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.3</version>
 		</dependency>
 
 		<dependency>
