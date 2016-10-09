@@ -1,6 +1,5 @@
 package com.ifreeshare.spider.verticle.msg;
 
-import io.vertx.core.json.JsonObject;
 
 public class MessageType {
 	
@@ -14,16 +13,5 @@ public class MessageType {
 	public static final String MESSAGE_TYPE = "type";
 	
 	public static final String MESSAGE_BODY = "body";
-	
-	
-	
-//	public JsonObject createMessage(int type,JsonObject body){
-//		
-//		
-//		
-//		
-//		
-//	}
-	
 
 }
