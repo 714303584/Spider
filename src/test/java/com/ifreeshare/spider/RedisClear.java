@@ -20,6 +20,7 @@ public class RedisClear {
 		for (int i = 0; i < keys.length; i++) {
 			String string = keys[i];
 			RedisPool.delKey(string);
+			System.out.println("Clear ------------"+string);
 		}
 		
 		

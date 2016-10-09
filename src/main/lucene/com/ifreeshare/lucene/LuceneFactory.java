@@ -15,7 +15,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -119,9 +118,18 @@ public class LuceneFactory {
 	}
 	
 	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		ScoreDoc after = null;
+		ScoreDoc after = new ScoreDoc(0, 0);
 		LuceneFactory.search(after);
+		
+		if(after != null){
+			ScoreDoc a = new ScoreDoc(after.doc, after.score, after.shardIndex);
+			System.out.println("--------------------------------------------");
+			LuceneFactory.search(after);
+		}
 		
 	
 		
@@ -171,7 +179,7 @@ public class LuceneFactory {
 		String[] field = {CoreBase.HTML_KEYWORDS,CoreBase.HTML_TITLE,CoreBase.HTML_DESCRIPTION};
 		Occur[] occur =  {Occur.SHOULD,Occur.SHOULD,Occur.SHOULD};
 		
-		Document[] documents = LuceneFactory.search(value, 1000, field,occur, after);
+		Document[] documents = LuceneFactory.search(value, 10, field,occur, after);
 		
 		for (int i = 0; i < documents.length; i++) {
 			Document document = documents[i];

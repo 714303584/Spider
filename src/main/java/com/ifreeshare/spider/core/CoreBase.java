@@ -7,9 +7,7 @@ package com.ifreeshare.spider.core;
 public class CoreBase {
 	
 	/**
-	 * redis  key address
-	 * key:md5
-	 * value: uuid of image
+	 * redis  key for image
 	 */
 	public static final String MD5_UUID_IMAGE = "md5_uuid_image_ifreeshare_com";
 
@@ -20,6 +18,23 @@ public class CoreBase {
 	public static final String UUID_MD5_SHA1_SHA512_IMAGES_KEY = "uuid_md5_sha1_sha512_images_info_ifreeshare_com";
 	
 	public static final String MD5_SHA1_SHA512_EXIST_IMAGES_KEY = "md5_sha1_sha512_exist_image_key_ifreeshare_com";
+
+	
+	/**
+	 * redis key for file
+	 */
+	public static final String MD5_UUID_FILE = "md5_uuid_file_ifreeshare_com";
+
+	public static final String SHA1_UUID_FILE = "sha1_uuid_file_ifreeshare_com";
+
+	public static final String SHA512_UUID_FILE = "sha512_uuid_file_ifreeshare_com";
+	
+	public static final String UUID_MD5_SHA1_SHA512_FILE_KEY = "uuid_md5_sha1_sha512_file_info_ifreeshare_com";
+	
+	public static final String MD5_SHA1_SHA512_EXIST_FILE_KEY = "md5_sha1_sha512_exist_file_key_ifreeshare_com";
+	
+	
+	public static final String DOT = ".";
 	
 	public static final String UUID = "uuid";
 	
@@ -45,6 +60,9 @@ public class CoreBase {
 	public static final String  TEXT_HTML = "text/html";
 	
 	public static final String  OBJECTS = "objects";
+	
+	public  static final  String FILE_PATH = "file_path";
+	public static final String FILE_STATUS = "status";
 	
 	
 	

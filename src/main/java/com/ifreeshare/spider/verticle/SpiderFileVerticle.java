@@ -5,6 +5,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -16,13 +17,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+
 import org.apache.logging.log4j.Logger;
+
+
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.Suspendable;
@@ -30,6 +36,8 @@ import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
+
+import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
 import com.ifreeshare.spider.http.parse.BaseParser;
@@ -39,6 +47,8 @@ import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.ifreeshare.util.DateUtil;
 import com.ifreeshare.util.FileAccess;
+import com.ifreeshare.util.MD5Util;
+import com.ifreeshare.util.ZipUtil;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -51,10 +61,15 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
 	
+	Channel<JsonObject> fileChannel = Channels.newChannel(100000);
+	
 	public static Map<String, HtmlParser> websiteMapParser = new HashMap<String, HtmlParser>();
 	
+	private String FileSavePath;
 	
-	private String imageSavePath;
+	private String fileCachePath;
+	
+	private String filePdfPath;
 	
 	private long loadValue;
 	
@@ -66,7 +81,9 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		
 		sClient  = new FiberOkHttpClient();
 		
-		imageSavePath = "H:\\files";
+		FileSavePath = "H:\\files";
+		fileCachePath = "H:\\fileCaches";
+		filePdfPath = "H:\\filePdfs";
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -113,9 +130,10 @@ public class SpiderFileVerticle extends AbstractVerticle {
 			processor(mbody);
 		});
 		processUrl();
+		
+		processFile();
 	}
 
-	
 
 	@Override
 	public void init(Vertx vertx, Context context) {
@@ -158,6 +176,55 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	}
 	
 
+	
+	
+
+	private void processFile() {
+		Fiber fiber = new Fiber(() -> {
+			
+			JsonObject fileInfo = null;
+			while ((fileInfo = fileChannel.receive()) != null) {
+				try {
+					String filePath = fileInfo.getString(CoreBase.FILE_PATH);
+					File sourcefile = new File(filePath);
+					String fileName = sourcefile.getName();
+					String fileType = FileAccess.getFileType(fileName);
+					
+					
+					String sha512  = MD5Util.getFileSHA512(sourcefile);
+					String Md5  = MD5Util.getFileMD5(sourcefile);
+					String sha1  = MD5Util.getFileSHA1(sourcefile);
+					
+					String uuid = UUID.randomUUID().toString();
+					
+					
+					Date date = new Date();
+					int year = DateUtil.getYear(date);
+					int month = DateUtil.getMonth(date);
+					int day = DateUtil.getDay(date);
+					
+					String todayCachePath = fileCachePath+"//"+year+""+month+""+day;
+					if(FileAccess.createMkdir(todayCachePath)){
+						String filesCachePath = todayCachePath + "//" + uuid;
+						FileAccess.createMkdir(filesCachePath);
+						if("rar".equals(fileType)){
+							ZipUtil.unrar(filePath, filesCachePath);
+						}else{
+							
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}).start();
+		
+	}
+
+	
+	
+	
 
 	private void processUrl() {
  		Fiber fiber = new Fiber(() -> {
@@ -179,7 +246,7 @@ public class SpiderFileVerticle extends AbstractVerticle {
 						int month = DateUtil.getMonth(date);
 						int day = DateUtil.getDay(date);
 						
-						String todayImagePath = imageSavePath+"//"+year+""+month+""+day;
+						String todayImagePath = FileSavePath+"//"+year+""+month+""+day;
 						
 						if(FileAccess.createMkdir(todayImagePath)){
 							String filename = body.getString("filename");
@@ -216,16 +283,11 @@ public class SpiderFileVerticle extends AbstractVerticle {
 							  	os.flush();
 							  	os.close();
 							}
-							
-							
-							
+							message.put(CoreBase.FILE_PATH, filePath);
+							fileChannel.send(message);
 						}else{
 							
 						}
-						
-					
-//						FileInputStream fis = new FileInputStream();
-						
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.log(logger, Level.WARN, "e.printStackTrace() ----------------------------- Message:%s;   e.message:%s", message,e.getMessage());
@@ -233,52 +295,6 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 					 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
 				}
-				
-				
-				
-				
-//				Elements links = doc.getElementsByTag(JsoupUtil.LINK_A);
-//				Iterator<Element> eleIt = links.iterator();
-//				while(eleIt.hasNext()){
-//					Element a = eleIt.next();
-//					String href = a.attr(JsoupUtil.LINK_A_HREF);
-//					JsonObject newURl = new JsonObject();
-//					newURl.put(MessageType.MESSAGE_TYPE, MessageType.NEW_URL);
-//					newURl.put(MessageType.MESSAGE_BODY, href);
-//					vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
-//				}
-//				
-//				if(url.contains("item.taobao.com")){
-//					System.out.println(url);
-//					String title = doc.title();
-//					System.out.println(title);
-//					String[] urlSplit =  url.split("?");
-//					if(urlSplit.length > 1){
-//						String[] params = url.split("&");
-//						String id = null;
-//						for (int i = 0; i < params.length; i++) {
-//							String param = params[i];
-//							if(param.startsWith("id=")){
-//								 id =  param.split("=")[1];
-//								 break;
-//							}
-//							
-//							if(id != null){
-//								String iteminfourl = "https://detailskip.taobao.com/service/getData/1/p2/item/detail/sib.htm?itemId="+id
-//										+ "&modules=qrcode,viewer,price,contract,duty,xmpPromotion,dynStock,delivery,upp,activity,fqg,zjys,coupon&callback=onSibRequestSuccess";
-//								
-//								Document priceDoc = Jsoup.connect(iteminfourl).header("Referer", "https://item.taobao.com/item.htm?id=534016703208").get();
-//								System.out.println(priceDoc.html());
-//							}
-//						}
-//						
-//						
-////					  	Elements metas = doc.getElementsByTag("meta");
-////					  	Elements keywords = metas.attr("name","keywords"); 
-////					  	Element keyword =  keywords.get(0);
-////					  	System.out.println(keyword.html());
-//					}
-//				}
 		});
  		
  		fiber.start();
@@ -315,28 +331,5 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		return flag;
 		
 	}
-	
-//	Map<String, List<String>> headers = response.headers().toMultimap();
-//  	
-//  	Iterator<String> keyIt = headers.keySet().iterator();
-//  	
-//  	while (keyIt.hasNext()) {
-//  		String key = keyIt.next();
-//  		System.out.println("-----------------key:"+key);
-//  		Iterator<String> valIt = headers.get(key).iterator();
-//  		while (valIt.hasNext()) {
-//		String value =  valIt
-//				.next();
-//		
-//		System.out
-//				.println("value:"+value);
-//		
-//	}
-//}
-	
-	
-	
-	
-	
 
 }

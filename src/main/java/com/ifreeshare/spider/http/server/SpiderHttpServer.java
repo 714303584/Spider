@@ -12,11 +12,23 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
 
+
+import org.apache.lucene.search.ScoreDoc;
+
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
+import com.ifreeshare.spider.http.server.page.PageDocument;
+
 
 
 public class SpiderHttpServer extends AbstractVerticle{
@@ -29,23 +41,37 @@ public class SpiderHttpServer extends AbstractVerticle{
 	
 	@Override
 	public void start() throws Exception {
+		
+		
+		
+		
+		Vertx vertx = Vertx.vertx();
 		HttpServer httpServer = vertx.createHttpServer();
 		Router router = Router.router(vertx);
+		router.post("/conference/listener/").handler(context -> {
+			HttpServerRequest request =  context.request();
+			HttpServerResponse response =  context.response();
+			request.bodyHandler(body -> {
+				System.out.println(body.toString());
+				response.end("success");
+			});
+		});
 		
 		FreeMarkerTemplateEngine freeMarkerTemplateEngine = FreeMarkerTemplateEngine.create();
 		
-		
-		
-		
 		router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
 		
-		router.get("/images/search").handler(context -> {
+		router.get("/file/search").handler(context -> {
 		 	String keys =  context.request().getParam("keys");
 		 	String[] value = {keys, keys , keys};
 		 	String[] field = {CoreBase.HTML_TITLE,CoreBase.HTML_KEYWORDS,CoreBase.HTML_DESCRIPTION};
 		 	Occur[] occur = {Occur.SHOULD,Occur.SHOULD,Occur.SHOULD};
 		 	
-		 	Document[] documents = LuceneFactory.search(value, 100, field, occur, null);
+		 	ScoreDoc scoreDoc = null;
+		 	Document[] documents = LuceneFactory.search(value, 100, field, occur, scoreDoc);
+		 	
+		 	List<PageDocument> page = new ArrayList<PageDocument>();
+		 	
 		 	JsonObject result = new JsonObject();
 		 	JsonArray objects = new JsonArray();
 		 	
@@ -56,56 +82,41 @@ public class SpiderHttpServer extends AbstractVerticle{
 				String description = document.get(CoreBase.HTML_DESCRIPTION);
 				String title = document.get(CoreBase.HTML_TITLE);
 				JsonObject docJson = new JsonObject();
-				docJson.put(CoreBase.UUID, uuid);
+				PageDocument pd = new PageDocument();
+				pd.setUuid(uuid);
 				try {
-					docJson.put(CoreBase.HTML_TITLE, title);
-					docJson.put(CoreBase.HTML_KEYWORDS, keywords);
-					docJson.put(CoreBase.HTML_DESCRIPTION, description);
+					pd.setName(title);
+					pd.setKeywords(keywords);
+					pd.setDescription(description);
+					page.add(pd);
 				} catch (Exception e) {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
 				}
 				objects.add(docJson);
 			}
-		 	HttpServerResponse response = context.response();
-		 	response.putHeader("content-type", "application/json;charset=UTF-8");
-		 	result.put(CoreBase.OBJECTS, objects);
-		 	response.end(result.toString());
+		 	
+		 	context.put("pages", page);
+		 	context.put("keys", keys);
+		 	
+		 	freeMarkerTemplateEngine.render(context, "templates/search.ftl", res -> {
+				if(res.succeeded()){
+//					context.response.putHeader("content-type", "application/json;charset=UTF-8");
+					context.response().end(res.result());
+				}else{
+					context.fail(res.cause());
+				}
+		 	});
+		
 		});
 		
 	
-		
-		
-		router.post("/conference/listener/").handler(context -> {
-			HttpServerRequest request =  context.request();
-			HttpServerResponse response =  context.response();
-			
-			request.bodyHandler(body -> {
-				System.out.println(body.toString());
-				response.end("success");
-			});
-		});
-		
-		
-		
-		router.get("/holle/").handler(ctx -> {
-			ctx.put("name", "Vert.x Web");
-			
-			freeMarkerTemplateEngine.render(ctx, "templates/index.ftl", res -> {
-				
-				if(res.succeeded()){
-					ctx.response().end(res.result());
-				}else{
-					ctx.fail(res.cause());
-				}
-				
-				
-			});
-		});
-		
-		
+//		
 		
 		httpServer.requestHandler(router::accept).listen(8000);
+		
+		
+	
 	}
 	
 	
