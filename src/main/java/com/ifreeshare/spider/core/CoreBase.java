@@ -66,6 +66,17 @@ public class CoreBase {
 	
 	
 	
+	/**
+	 * File Type 
+	 */
+	public static final String FILE_TYPE_RAR = "rar";
+	public static final String FILE_TYPE_ZIP = "zip";
+	public static final String FILE_TYPE_PDF = "pdf";
+	public static final String FILE_TYPE_DOC = "doc";
+	
+	
+	
+	
 	
 	
 	

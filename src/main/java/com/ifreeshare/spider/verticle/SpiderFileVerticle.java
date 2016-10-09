@@ -173,7 +173,9 @@ public class SpiderFileVerticle extends AbstractVerticle {
 
 	
 	
-
+	/**
+	 * Fiber process download file
+	 */
 	private void processFile() {
 		Fiber fiber = new Fiber(() -> {
 			
@@ -183,11 +185,14 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					String filePath = fileInfo.getString(CoreBase.FILE_PATH);
 					File sourcefile = new File(filePath);
 					String fileName = sourcefile.getName();
+					//download file type
 					String fileType = FileAccess.getFileType(fileName);
 					
-					
+					//SHA512 of file
 					String sha512  = MD5Util.getFileSHA512(sourcefile);
+					//Md5 of file
 					String Md5  = MD5Util.getFileMD5(sourcefile);
+					//sha1 of file
 					String sha1  = MD5Util.getFileSHA1(sourcefile);
 					
 					String uuid = UUID.randomUUID().toString();
@@ -202,11 +207,44 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					if(FileAccess.createMkdir(todayCachePath)){
 						String filesCachePath = todayCachePath + "//" + uuid;
 						FileAccess.createMkdir(filesCachePath);
-						if("rar".equals(fileType)){
+						if(CoreBase.FILE_TYPE_RAR.equals(fileType)){
 							ZipUtil.unrar(filePath, filesCachePath);
-						}else{
+						}else if(CoreBase.FILE_TYPE_ZIP.equals(fileType)){
+							ZipUtil.zipDecompressing(filePath, filesCachePath);
+						}else if(CoreBase.FILE_TYPE_PDF.equals(fileType)){
+							
+//							String destName = null;
+							
+//							sourcefile.renameTo(dest)
+							//Move the file to new path
+//							FileAccess.Move(filePath, this.filePdfPath);
+							
+							// Save the file information to Redis
+							saveToLucene(uuid, fileInfo);
+							// Save the file information to Redis
+							saveToRedis(uuid,Md5, sha1, sha512, fileInfo);
+							continue;
+						}else if(CoreBase.FILE_TYPE_DOC.equals(fileType)){
 							
 						}
+						
+						
+						File cachePath = new File(filesCachePath);
+						
+						File[] decompreFiles = cachePath.listFiles();
+						
+						for (int i = 0; i < decompreFiles.length; i++) {
+							File file = decompreFiles[i];
+							String decopresFileName =  file.getName();
+							//The type of file after decompression
+							String decompresFileType = FileAccess.getFileType(decopresFileName);
+							if(CoreBase.FILE_TYPE_PDF.equals(decompresFileType)){
+								
+							}
+							
+						}
+						
+						
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -218,9 +256,26 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	}
 
 	
+	public void processPdf(JsonObject fileInfo){
+		
+		
+		
+		
+	}
+	
+	public void saveToLucene(String uuid,JsonObject fileInfo){
+		
+	}
+	
+	private void saveToRedis(String uuid, String md5,String sha1,String sha512,JsonObject json){
+		
+	}
 	
 	
-
+	
+	/**
+	 * if the url is download a file, the Function process
+	 */
 	private void processUrl() {
  		Fiber fiber = new Fiber(() -> {
 				JsonObject message = null;
