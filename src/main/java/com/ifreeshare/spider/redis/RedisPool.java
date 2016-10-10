@@ -1,19 +1,15 @@
 package com.ifreeshare.spider.redis;
 
-import io.vertx.core.json.JsonObject;
-
-import java.net.MalformedURLException;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import com.ifreeshare.spider.http.HttpUtil;
-
 public class RedisPool {
 	
-	
-private static  JedisPool jedisPool = null;
+	/**
+	 * Jedis connection pool
+	 */
+	private static  JedisPool jedisPool = null;
 	
 	
 	static{
@@ -35,7 +31,13 @@ private static  JedisPool jedisPool = null;
 		}
 		return flag;
 	}
-
+	
+	/**
+	 * Delete A Data Of Redis
+	 * @param keys 
+	 * @param field
+	 * @return
+	 */
 	public static long delfield(String keys,String... field) {
 		long flag = 0L;
 		Jedis jedis = null;
@@ -52,7 +54,11 @@ private static  JedisPool jedisPool = null;
 		return flag;
 	}
 	
-	
+	/**
+	 * Delete A Key Of Redis
+	 * @param key  To Remove The Key
+	 * @return How Many Deleted, 1 success.
+	 */
 	public static long delKey(String key) {
 		Long flag = 0L;
 		Jedis jedis = null;
@@ -69,6 +75,14 @@ private static  JedisPool jedisPool = null;
 		return flag;
 	}
 
+	
+	/**
+	 * Add a data to HSET Redis
+	 * @param key The Key Of Redis
+	 * @param field The Key Of Data in HSET.
+	 * @param value The Value Of Data;
+	 * @return  Success is True , Failed is False
+	 */
 	public static boolean addfield(String key, String field,String value) {
 		boolean flag = false;
 		Jedis jedis = null;
@@ -86,6 +100,12 @@ private static  JedisPool jedisPool = null;
 		return flag;
 	}
 
+	/**
+	 * To Obtain A data By HSET
+	 * @param key
+	 * @param field
+	 * @return
+	 */
 	public static String  getFieldValue(String key, String field) {
 		Jedis jedis = null;
 		try {
