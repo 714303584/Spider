@@ -2,12 +2,15 @@ package com.ifreeshare.spider.http;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Some fields about HTTP
+ * @author zhuss
+ */
 public class HttpUtil {
 	
 	
@@ -16,7 +19,6 @@ public class HttpUtil {
 	public static final String LINK_A = "a";
 	
 	public static final String LINK_A_HREF = "href";
-	
 	
 	public static final String HTML_TITLE = "title";
 	
@@ -35,7 +37,6 @@ public class HttpUtil {
 	public static final String APPLICATION_OCTET_STREAM = "application/octet-stream"; 
 	public static final String APPLICATION_PDF = "application/pdf"; 
 	//
-	
 
 	public static final String  CHARSET = "charset";
 	
@@ -43,43 +44,24 @@ public class HttpUtil {
 	
 	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36";
 
-	
-	
-	
-	
-	
-	
-
 	public static Map<String, String> ContentType_Map_FileType = new HashMap<String, String>();
 	
-	
-	
-
-	
-	
-	
-	
+	//ContentType corresponding document type
 	static{
 		ContentType_Map_FileType.put("application/octet-stream", null);
-		
-		
 		ContentType_Map_FileType.put("image/jpeg", ".jpg");
-		
 		ContentType_Map_FileType.put("image/fax", ".fax");
 		ContentType_Map_FileType.put("image/gif", ".gif");
 		ContentType_Map_FileType.put("image/x-icon", ".ico");
 		ContentType_Map_FileType.put("image/png", ".png");
 		ContentType_Map_FileType.put("application/x-png", ".png");
 		ContentType_Map_FileType.put("image/vnd.rn-realpix", ".rp");
-		
-		
 		ContentType_Map_FileType.put("application/x-001", ".001");
 		ContentType_Map_FileType.put("application/x-301", ".301");
 		ContentType_Map_FileType.put("text/h323", ".323");
 		ContentType_Map_FileType.put("application/x-906", ".906");
 		ContentType_Map_FileType.put("application/x-a11", ".a11");
 		ContentType_Map_FileType.put("drawing/907", ".907");
-
 		ContentType_Map_FileType.put("audio/x-mei-aac", ".acp");
 		ContentType_Map_FileType.put("application/postscript", ".ai");
 		ContentType_Map_FileType.put("audio/aiff", ".aiff");
@@ -104,8 +86,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/x-x509-ca-cert", ".cer");
 		ContentType_Map_FileType.put("application/x-g4", ".cg4");
 		ContentType_Map_FileType.put("application/x-cgm", ".cgm");
-		
-		
 		ContentType_Map_FileType.put("application/x-cit", ".cit");
 		ContentType_Map_FileType.put("java/*", ".class");		
 //		ContentType_Map_FileType.put("text/xml", ".cml");
@@ -164,7 +144,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("text/x-component", ".htc");
 		ContentType_Map_FileType.put("application/x-ico", ".ico");
 		ContentType_Map_FileType.put("application/x-iff", ".iff");
-		
 		ContentType_Map_FileType.put("application/x-g4", ".ig4");
 		ContentType_Map_FileType.put("application/x-igs", ".igs");
 		ContentType_Map_FileType.put("application/x-iphone", ".iii");
@@ -183,7 +162,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/x-lbm", ".lbm");
 		ContentType_Map_FileType.put("audio/x-la-lms", ".lmsff");
 		ContentType_Map_FileType.put("application/x-javascript", ".ls");
-		
 		ContentType_Map_FileType.put("application/x-ltr", ".ltr");
 		ContentType_Map_FileType.put("video/x-mpeg", ".m1v");
 		ContentType_Map_FileType.put("video/x-mpeg", ".m2v");
@@ -195,8 +173,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/x-mdb", ".mdb");
 		ContentType_Map_FileType.put("application/x-shockwave-flash", ".mfp");
 		ContentType_Map_FileType.put("message/rfc822", ".mht");
-		
-		
 		ContentType_Map_FileType.put("message/rfc822", "..mhtml");
 		ContentType_Map_FileType.put("application/x-mi", ".mi");
 		ContentType_Map_FileType.put("audio/mid", ".midi");
@@ -216,7 +192,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("video/x-mpeg", ".mpe");
 		ContentType_Map_FileType.put("video/mpg", ".mpeg");
 		ContentType_Map_FileType.put("video/mpg", ".mpg");
-		
 		ContentType_Map_FileType.put("audio/rn-mpeg", ".mpga");
 		ContentType_Map_FileType.put("application/vnd.ms-project", ".mpp");
 		ContentType_Map_FileType.put("video/x-mpeg", ".mps");
@@ -237,8 +212,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/pkcs7-mime", ".p7c");
 		ContentType_Map_FileType.put("application/pkcs7-mime", ".p7m");
 		ContentType_Map_FileType.put("application/x-pkcs7-certreqresp", ".p7r");
-		
-		
 		ContentType_Map_FileType.put("application/pkcs7-signature", ".p7s");
 		ContentType_Map_FileType.put("application/x-pc5", ".pc5");
 		ContentType_Map_FileType.put("application/x-pci", ".pci");
@@ -256,8 +229,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/x-plt", ".plt");
 		ContentType_Map_FileType.put("application/x-png", ".png");
 		ContentType_Map_FileType.put("application/vnd.ms-powerpoint", ".pot");
-		
-		
 		ContentType_Map_FileType.put("application/vnd.ms-powerpoint", ".ppa");
 		ContentType_Map_FileType.put("application/x-ppm", ".ppm");
 		ContentType_Map_FileType.put("application/vnd.ms-powerpoint", ".pps");
@@ -267,8 +238,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/pics-rules", ".prf");
 		ContentType_Map_FileType.put("application/x-prn", ".prn");
 		ContentType_Map_FileType.put("application/x-prt", ".prt");
-		
-		
 		ContentType_Map_FileType.put("application/x-ps", ".ps");
 		ContentType_Map_FileType.put("application/postscript", ".ps");
 		ContentType_Map_FileType.put("application/x-ptn", ".ptn");
@@ -285,8 +254,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/vnd.rn-realsystem-rjt", ".rjt");
 		ContentType_Map_FileType.put("application/x-rlc", ".rlc");
 		ContentType_Map_FileType.put("application/x-rle", ".rle");
-		
-		
 		ContentType_Map_FileType.put("application/vnd.rn-realmedia", ".rm");
 		ContentType_Map_FileType.put("application/vnd.adobe.rmf", ".rmf");
 		ContentType_Map_FileType.put("audio/mid", ".rmi");
@@ -297,8 +264,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/vnd.rn-realmedia-vbr", ".rmvb");
 		ContentType_Map_FileType.put("application/vnd.rn-realsystem-rmx", ".rmx");
 		ContentType_Map_FileType.put("application/vnd.rn-realplayer", ".rnx");
-		
-		
 		ContentType_Map_FileType.put("image/vnd.rn-realpix", ".rp");
 		ContentType_Map_FileType.put("audio/x-pn-realaudio-plugin", ".rpm");
 		ContentType_Map_FileType.put("application/vnd.rn-rsml", ".rsml");
@@ -313,7 +278,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/x-stuffit", ".sit");
 		ContentType_Map_FileType.put("application/x-slb", ".slb");
 		ContentType_Map_FileType.put("application/x-sld", ".sld");
-		
 		ContentType_Map_FileType.put("drawing/x-slk", ".slk");
 		ContentType_Map_FileType.put("application/smil", ".smi");
 		ContentType_Map_FileType.put("application/smil", ".smil");
@@ -330,8 +294,6 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("application/x-tga", ".tga");
 		ContentType_Map_FileType.put("application/x-tif", ".tif");
 		ContentType_Map_FileType.put("drawing/x-top", ".top");
-		
-		
 		ContentType_Map_FileType.put("application/x-bittorrent", ".torrent");
 		ContentType_Map_FileType.put("text/plain", ".txt");
 		ContentType_Map_FileType.put("drawing/x-top", ".top");
@@ -341,28 +303,13 @@ public class HttpUtil {
 		ContentType_Map_FileType.put("drawing/x-top", ".top");
 		ContentType_Map_FileType.put("drawing/x-top", ".top");
 		ContentType_Map_FileType.put("drawing/x-top", ".top");
-
-
-
-		
-		
 		
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	public static String getFileType(String contentType){
 		return ContentType_Map_FileType.get(contentType);
 	}
-	
-	
-	
 	
 	public static String getFileNameByContentDisposition(String contentDisposition){
 		String fileName = null;
@@ -376,14 +323,11 @@ public class HttpUtil {
 		return fileName;
 	}
 	
-	
-	
 	public static String getDomain(String url) throws MalformedURLException{
 		URL getDomain = new URL(url);
 		String domain = getDomain.getHost();
 		return domain;
 	}
-	
 	
 	public static String  getMainDomain(String url) throws MalformedURLException{
 		String host = new URL(url).getHost().toLowerCase();
@@ -410,9 +354,6 @@ public class HttpUtil {
 		
 	}
 	
-	
-	
-	
 	public static void main(String[] args) {
 //		System.out.println(HttpUtil.getDomain("https://www.baidu.com/s?wd=java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%20%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2&rsv_spt=1&rsv_iqid=0x9b5994530000f315&issp=1&f=3&rsv_bp=0&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&rsv_sug3=33&rsv_sug1=41&rsv_sug7=100&rsv_sug2=0&prefixsug=java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%20zhiding&rsp=0&inputT=28427&rsv_sug4=28428"));;
 	
@@ -424,7 +365,6 @@ public class HttpUtil {
 			// TODO 自动生成的 catch 块
 			e1.printStackTrace();
 		}
-//		
 //		System.out.println(urlss);
 		
 		

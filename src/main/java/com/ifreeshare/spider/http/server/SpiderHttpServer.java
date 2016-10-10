@@ -12,22 +12,18 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
-
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
-
-
 import org.apache.lucene.search.ScoreDoc;
 
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
+
 
 
 
@@ -109,6 +105,96 @@ public class SpiderHttpServer extends AbstractVerticle{
 		 	});
 		
 		});
+		
+		
+		
+		
+		
+		
+		
+	router.get("/policy/v1/service/configuration").handler(context -> {
+			System.err.println("/policy/v1/service/configuration");
+			HttpServerRequest request = context.request();
+			
+			Iterator<String> it =  request.params().names().iterator();		
+			while (it.hasNext()) {
+				String key =  it.next();
+				
+				System.out.println("keys-----"+key+"      value-----"+request.getParam(key));
+			}
+			JsonObject result = new JsonObject();
+			result.put("status", "success");
+			result.put("action", "continue");
+			
+			context.response().setStatusCode(200).headers().add("Content-Type", "application/json");
+			context.response().end(result.toString());
+			
+			
+		});
+		
+		
+		
+		
+	router.get("/policy/v1/participant/location").handler(context -> {
+			System.err.println("/policy/v1/participant/location");
+			HttpServerRequest request = context.request();
+			
+			Iterator<String> it =  request.params().names().iterator();		
+			while (it.hasNext()) {
+				String key =  it.next();
+				
+				System.out.println("keys-----"+key+"      value-----"+request.getParam(key));
+			}
+			JsonObject result = new JsonObject();
+			result.put("status", "success");
+			result.put("action", "continue");
+			
+			context.response().setStatusCode(200).headers().add("Content-Type", "application/json");
+			context.response().end(result.toString());
+			
+			
+		});
+	
+	
+	router.get("/policy/v1/participant/avatar/:alias").handler(context -> {
+		System.err.println("/policy/v1/participant/location");
+		HttpServerRequest request = context.request();
+		
+		Iterator<String> it =  request.params().names().iterator();		
+		while (it.hasNext()) {
+			String key =  it.next();
+			
+			System.out.println("keys-----"+key+"      value-----"+request.getParam(key));
+		}
+		JsonObject result = new JsonObject();
+		result.put("status", "success");
+		result.put("action", "continue");
+		
+		context.response().setStatusCode(200).headers().add("Content-Type", "application/json");
+		context.response().end(result.toString());
+		
+		
+	});
+	
+	router.get("/policy/v1/participant/audioavatar/:alias").handler(context -> {
+		System.err.println("/policy/v1/participant/location");
+		HttpServerRequest request = context.request();
+		
+		Iterator<String> it =  request.params().names().iterator();		
+		while (it.hasNext()) {
+			String key =  it.next();
+			
+			System.out.println("keys-----"+key+"      value-----"+request.getParam(key));
+		}
+		JsonObject result = new JsonObject();
+		result.put("status", "success");
+		result.put("action", "continue");
+		
+		context.response().setStatusCode(200).headers().add("Content-Type", "application/json");
+		context.response().end(result.toString());
+		
+		
+	});
 		
 	
 //		
