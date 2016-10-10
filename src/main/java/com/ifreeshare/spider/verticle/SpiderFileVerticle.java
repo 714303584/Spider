@@ -136,7 +136,15 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		});
 		processUrl();
 		
-		processFile();
+		processCompressedFile();
+		
+		
+		processPdfFile();
+	}
+
+
+	private void processPdfFile() {
+		
 	}
 
 
@@ -180,15 +188,14 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		}
 	}
 	
-
-	
-	
 	/**
 	 * Fiber process download file
 	 */
-	private void processFile() {
-		Fiber fiber = new Fiber(() -> {
+	private void processCompressedFile() {
+		Fiber compressedFileFiber = new Fiber(() -> {
 			
+			//Get a full-text index path for compressed files
+			IndexWriter indexWriter = LuceneFactory.getIndexWriter("D://compressedfile");
 			JsonObject fileInfo = null;
 			while ((fileInfo = fileChannel.receive()) != null) {
 				try {
@@ -367,8 +374,13 @@ public class SpiderFileVerticle extends AbstractVerticle {
 							  	os.flush();
 							  	os.close();
 							}
+							
+							String localFileName = file.getName();
+							String localFileType = FileAccess.getFileType(localFileName);
 							message.put(CoreBase.FILE_PATH, filePath);
-							fileChannel.send(message);
+							// File Type ---get--> Channel
+							getChannelByFileType(fileType).send(message);
+//							fileChannel.send(message);
 						}else{
 							
 						}
@@ -385,6 +397,22 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	}
 	
 	
+	/**
+	 * Get Channel By File Type
+	 * @param fileType  Need to Process the type of file
+	 * @return
+	 */
+	public Channel getChannelByFileType(String fileType){
+		switch (fileType) {
+		case CoreBase.FILE_TYPE_RAR:
+		case CoreBase.FILE_TYPE_ZIP:
+			return fileChannel;
+
+		default:
+			break;
+		}
+		return null;
+	}
 	
 	
 	
