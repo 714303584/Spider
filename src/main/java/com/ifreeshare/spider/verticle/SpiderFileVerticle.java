@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -24,6 +25,13 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -32,6 +40,7 @@ import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
+import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
@@ -39,6 +48,7 @@ import com.ifreeshare.spider.http.parse.BaseParser;
 import com.ifreeshare.spider.http.parse.HtmlParser;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
+import com.ifreeshare.spider.redis.RedisPool;
 import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.ifreeshare.util.DateUtil;
 import com.ifreeshare.util.FileAccess;
@@ -263,15 +273,39 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		
 	}
 	
-	public void saveToLucene(String uuid,JsonObject fileInfo){
-		
+	/**
+	 * Add Data Information Full Text Search
+	 * @param uuid 
+	 * @param fileInfo
+	 * @throws IOException
+	 */
+	public void saveToLucene(String uuid,JsonObject fileInfo) throws IOException{
+		Document document = new  Document();
+		document.add( new StringField(CoreBase.UUID, uuid, Store.YES));
+		document.add( new StringField(CoreBase.FILE_PATH, fileInfo.getString(CoreBase.FILE_PATH), Store.YES));
+		document.add(new Field(CoreBase.HTML_KEYWORDS, fileInfo.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
+		document.add(new Field(CoreBase.HTML_TITLE, fileInfo.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
+		document.add(new Field(CoreBase.HTML_DESCRIPTION, fileInfo.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
+		IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
+		writer.addDocument(document);
+		writer.flush();
+		writer.commit();
 	}
 	
+	/**
+	 * Save the file information to Redis
+	 * @param uuid The UUID Of File, Uniqueness
+	 * @param md5  The MD5 Of File , Uniqueness
+	 * @param sha1 The SHA1 Of File , Uniqueness
+	 * @param sha512 The SHA512 Of File , Uniqueness
+	 * @param json the File Information
+	 */
 	private void saveToRedis(String uuid, String md5,String sha1,String sha512,JsonObject json){
-		
+		RedisPool.addfield(CoreBase.MD5_UUID_FILE, md5, uuid);
+		RedisPool.addfield(CoreBase.SHA1_UUID_FILE, sha1, uuid);
+		RedisPool.addfield(CoreBase.SHA512_UUID_FILE, sha512, uuid);
+		RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_FILE_KEY, uuid, json.toString());
 	}
-	
-	
 	
 	/**
 	 * if the url is download a file, the Function process
