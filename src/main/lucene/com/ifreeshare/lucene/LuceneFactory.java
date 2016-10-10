@@ -43,6 +43,37 @@ public class LuceneFactory {
 		}
 	}
 	
+	/**
+	 * According to the path for Directory
+	 * @param path
+	 * @return
+	 */
+	public static Directory getDirectory(String path){
+		try {
+			return FSDirectory.open(Paths.get(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * According to the path for IndexWriter
+	 * @param path  Full-text index path
+	 * @return  IndexWriter
+	 */
+	public static IndexWriter getIndexWriter(String path){
+		Analyzer analyzer = new IKAnalyzer4Lucene5();
+    	IndexWriterConfig conf = new IndexWriterConfig(analyzer);
+    	conf.setOpenMode(OpenMode.CREATE_OR_APPEND);
+    	try {
+    		return new IndexWriter(getDirectory(path), conf);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	return null;
+	}
+	
 	public static  IndexWriter getIndexWriter(OpenMode createOrAppend){
 		
 		if(indexWriter != null){
