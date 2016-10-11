@@ -193,7 +193,6 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	 */
 	private void processCompressedFile() {
 		Fiber compressedFileFiber = new Fiber(() -> {
-			
 			//Get a full-text index path for compressed files
 			IndexWriter indexWriter = LuceneFactory.getIndexWriter("D://compressedfile");
 			JsonObject fileInfo = null;
@@ -213,7 +212,17 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					String sha1  = MD5Util.getFileSHA1(sourcefile);
 					
 					String uuid = UUID.randomUUID().toString();
+					CoreBase.setUUid(fileInfo, uuid, Md5, sha1, sha512);
 					
+					boolean existmd5 =  RedisPool.fieldExist(CoreBase.MD5_UUID_COMPRESSED_FILE, Md5);
+					boolean existsha1 =  RedisPool.fieldExist(CoreBase.SHA1_UUID_COMPRESSED_FILE, sha1);
+					boolean existsha512 =  RedisPool.fieldExist(CoreBase.SHA512_UUID_COMPRESSED_FILE, sha512);
+					
+					if(existmd5 || existsha1 || existsha512){
+						RedisPool.addfield(CoreBase.MD5_SHA1_SHA512_EXIST_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
+						continue;
+					}
+					RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
 					
 					Date date = new Date();
 					int year = DateUtil.getYear(date);
@@ -237,7 +246,9 @@ public class SpiderFileVerticle extends AbstractVerticle {
 //							FileAccess.Move(filePath, this.filePdfPath);
 							
 							// Save the file information to Redis
-							saveToLucene(uuid, fileInfo);
+							
+//							CoreBase.saveToLucene(fileInfo, writer);
+							
 							// Save the file information to Redis
 							saveToRedis(uuid,Md5, sha1, sha512, fileInfo);
 							continue;
@@ -280,24 +291,6 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		
 	}
 	
-	/**
-	 * Add Data Information Full Text Search
-	 * @param uuid 
-	 * @param fileInfo
-	 * @throws IOException
-	 */
-	public void saveToLucene(String uuid,JsonObject fileInfo) throws IOException{
-		Document document = new  Document();
-		document.add( new StringField(CoreBase.UUID, uuid, Store.YES));
-		document.add( new StringField(CoreBase.FILE_PATH, fileInfo.getString(CoreBase.FILE_PATH), Store.YES));
-		document.add(new Field(CoreBase.HTML_KEYWORDS, fileInfo.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
-		document.add(new Field(CoreBase.HTML_TITLE, fileInfo.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
-		document.add(new Field(CoreBase.HTML_DESCRIPTION, fileInfo.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
-		IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
-		writer.addDocument(document);
-		writer.flush();
-		writer.commit();
-	}
 	
 	/**
 	 * Save the file information to Redis

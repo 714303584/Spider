@@ -1,5 +1,16 @@
 package com.ifreeshare.spider.core;
 
+import java.io.IOException;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.index.IndexWriter;
+
+import io.vertx.core.json.JsonObject;
+
 /**
  * @author zhuss
  * @date 2016年9月19日下午5:26:20
@@ -89,13 +100,40 @@ public class CoreBase {
 	public static final String FILE_TYPE_PDF = "pdf";
 	public static final String FILE_TYPE_DOC = "doc";
 	
+	/**
+	 * Add and Update the Info 
+	 * @param info  Calculated file information 
+	 * @param uuid Unique identifier for system generation 
+	 * @param md5  The md5 of file. ---------- Obtain calculation 
+	 * @param sha1 The sha1 of file. ---------- Obtain calculation 
+	 * @param sha512 The sha512 of file. ---------- Obtain calculation 
+	 */
+	public static void setUUid(JsonObject info, String uuid, String md5, String sha1, String sha512){
+		info.put(CoreBase.UUID, uuid);
+		info.put(CoreBase.MD5, md5);
+		info.put(CoreBase.SHA1, sha1);
+		info.put(CoreBase.SHA512, sha512);
+	}
 	
 	
+	/**
+	 * Add Data Information Full Text Search
+	 * @param uuid 
+	 * @param fileInfo
+	 * @throws IOException
+	 */
 	
-	
-	
-	
-	
+	public static void saveFileToLucene(JsonObject fileInfo, IndexWriter writer) throws IOException{
+		Document document = new  Document();
+		document.add( new StringField(CoreBase.UUID, fileInfo.getString(CoreBase.UUID), Store.YES));
+		document.add( new StringField(CoreBase.FILE_PATH, fileInfo.getString(CoreBase.FILE_PATH), Store.YES));
+		document.add(new Field(CoreBase.HTML_KEYWORDS, fileInfo.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
+		document.add(new Field(CoreBase.HTML_TITLE, fileInfo.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
+		document.add(new Field(CoreBase.HTML_DESCRIPTION, fileInfo.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
+		writer.addDocument(document);
+		writer.flush();
+		writer.commit();
+	}
 	
 	
 	
