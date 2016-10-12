@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<config>
+	
+	<redis>
+	
+	</redis>
+	
+	<http listen-port="8000" request-timeout="10000"/>
+</config>

@@ -9,6 +9,8 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexWriter;
 
+import com.ifreeshare.spider.redis.RedisPool;
+
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -60,6 +62,10 @@ public class CoreBase {
 	public static final String MD5_SHA1_SHA512_EXIST_COMPRESSED_FILE_KEY = "md5_sha1_sha512_exist_compressed_file_key_ifreeshare_com";
 	
 	
+	//Some Abnormal file information into The Address
+	public static final String EXCEPTION_FILE_KEY = "md5_sha1_sha512_exception_file_key_ifreeshare_com";
+	
+	
 	public static final String DOT = ".";
 	
 	public static final String UUID = "uuid";
@@ -90,6 +96,31 @@ public class CoreBase {
 	public  static final  String FILE_PATH = "file_path";
 	public static final String FILE_STATUS = "status";
 	
+	
+	
+    public static final String TOKEN = "token";
+    public static final String ACCOUNTS = "accounts";
+    public static final String MODE = "mode";
+    public static final String PROTOCOL = "protocol";
+    public static final String PASSWORD = "password";
+    public static final String TIMESTAMP = "timestamp";
+    public static final String EXPIRE = "user_expire";
+    public static final String LAST_CHANGE = "last_change_time";
+    public static final String TTL = "ttl";
+    public static final String STATUS = "status";
+    public static final String VERSION = "version";
+    public static final String PHOTO = "photo";
+    public static final String AVATOR ="avator";
+    public static final String DEPT_NUMBER = "departmentNumber";
+    public static final String ENTERPRISE_CODE = "comcode";
+    public static final String ADDRESS = "address";
+    public static final String POSTCODE = "postcode";
+    public static final String URL = "url";
+    public static final String PHONE = "phone";
+    public static final String ONUSE = "onuse";
+    public static final String LIMIT = "upper_limit";
+    public static final String RECORDS = "records";
+    public static final String DATA = "data";
 	
 	
 	/**
@@ -135,6 +166,11 @@ public class CoreBase {
 		writer.commit();
 	}
 	
+	
+	
+	public static void saveExceptionFileInfo(JsonObject value){
+		RedisPool.addfield(CoreBase.EXCEPTION_FILE_KEY, value.getString(CoreBase.UUID), value.toString());
+	}
 	
 	
 	
