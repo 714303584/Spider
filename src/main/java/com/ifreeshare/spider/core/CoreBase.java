@@ -121,6 +121,20 @@ public class CoreBase {
     public static final String LIMIT = "upper_limit";
     public static final String RECORDS = "records";
     public static final String DATA = "data";
+    
+    public static final String RESOURCES_PATH = System.getProperty("user.dir");
+    
+    
+    /**
+     * config field
+     */
+    public static final String REDIS = "redis";
+    public static final String SERVER = "server";
+    public static final String port = "port";
+    public static final String maxTotal = "total";
+    public static final String MAXIDLE = "idle";
+    public static final String LISTEN_PORT = "listen-port";
+    public static final String HTTP_SERVER = "http-server";
 	
 	
 	/**
