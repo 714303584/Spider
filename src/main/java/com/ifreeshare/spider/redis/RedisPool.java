@@ -21,13 +21,24 @@ public class RedisPool {
 		jedisPool = new JedisPool(config, "127.0.0.1", 6379);
 	}
 
-
+	/**
+	 * Exist Key 
+	 * @param key
+	 * @param field
+	 * @return
+	 */
 	public static boolean fieldExist(String key,String field) {
 		boolean flag = false;
-		Jedis jedis = jedisPool.getResource();
-		flag = jedis.hexists(key, field);
-		if(jedis != null){
-			jedis.close();
+		Jedis jedis = null;
+		try {
+			jedis  = jedisPool.getResource();
+			flag = jedis.hexists(key, field);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(jedis != null){
+				jedis.close();
+			}
 		}
 		return flag;
 	}
