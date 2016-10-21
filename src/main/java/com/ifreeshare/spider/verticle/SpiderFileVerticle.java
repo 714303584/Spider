@@ -7,14 +7,12 @@ import io.vertx.core.json.JsonObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -25,13 +23,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -43,16 +37,15 @@ import co.paralleluniverse.strands.channels.Channels;
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
-import com.ifreeshare.spider.http.parse.AlphacodersComParser;
-import com.ifreeshare.spider.http.parse.BaseParser;
-import com.ifreeshare.spider.http.parse.HtmlParser;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.redis.RedisPool;
 import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.ifreeshare.util.DateUtil;
 import com.ifreeshare.util.FileAccess;
+import com.ifreeshare.util.ImgUtil;
 import com.ifreeshare.util.MD5Util;
+import com.ifreeshare.util.PdfUtil;
 import com.ifreeshare.util.ZipUtil;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -64,17 +57,24 @@ public class SpiderFileVerticle extends AbstractVerticle {
 
 	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderFileVerticle";
 	
+	//URL channel to be processed
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
 	
-	Channel<JsonObject> fileChannel = Channels.newChannel(100000);
+	//Compressed file queue to be processed
+	Channel<JsonObject> compressedFileChannel = Channels.newChannel(100000);
 	
-	public static Map<String, HtmlParser> websiteMapParser = new HashMap<String, HtmlParser>();
 	
-	private String FileSavePath;
+	//Download File storage address
+	private String downloadFileSavePath;
 	
-	private String fileCachePath;
+	//Extract file storage address
+	private String extractFileCachePath;
 	
-	private String filePdfPath;
+	//Pdf storage address
+	private String pdfFileSavePath;
+	
+	//Pdf thumbnail save address 
+	private String thumbnailSavePath;
 	
 	private long loadValue;
 	
@@ -86,9 +86,12 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		
 		sClient  = new FiberOkHttpClient();
 		
-		FileSavePath = "H:\\files";
-		fileCachePath = "H:\\fileCaches";
-		filePdfPath = "H:\\filePdfs";
+		downloadFileSavePath = "H:\\files";
+		extractFileCachePath = "H:\\fileCaches";
+		pdfFileSavePath = "H:\\filePdfs";
+		thumbnailSavePath = "H:\\thumbnailSavePath";
+		
+		
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -122,7 +125,8 @@ public class SpiderFileVerticle extends AbstractVerticle {
 			e1.printStackTrace();
 		}
 		
-		websiteMapParser.put("alphacoders.com", new AlphacodersComParser());
+		FileAccess.createDir(thumbnailSavePath);
+		
 		
 	}
 	
@@ -130,10 +134,12 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	@Override
 	public void start() throws Exception {
 		
+		//Monitor file download messages
 		vertx.eventBus().consumer(WORKER_ADDRESS, message -> {
 			JsonObject mbody = (JsonObject) message.body();
 			processor(mbody);
 		});
+		
 		processUrl();
 		
 		processCompressedFile();
@@ -196,7 +202,7 @@ public class SpiderFileVerticle extends AbstractVerticle {
 			//Get a full-text index path for compressed files
 			IndexWriter indexWriter = LuceneFactory.getIndexWriter("D://compressedfile");
 			JsonObject fileInfo = null;
-			while ((fileInfo = fileChannel.receive()) != null) {
+			while ((fileInfo = compressedFileChannel.receive()) != null) {
 				try {
 					String filePath = fileInfo.getString(CoreBase.FILE_PATH);
 					File sourcefile = new File(filePath);
@@ -228,11 +234,11 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					int year = DateUtil.getYear(date);
 					int month = DateUtil.getMonth(date);
 					int day = DateUtil.getDay(date);
-					
-					String todayCachePath = fileCachePath+"//"+year+""+month+""+day;
-					if(FileAccess.createMkdir(todayCachePath)){
+					String todayCachePath = extractFileCachePath+"//"+year+""+month+""+day;
+					if(FileAccess.createDir(todayCachePath)){
 						String filesCachePath = todayCachePath + "//" + uuid;
-						FileAccess.createMkdir(filesCachePath);
+						FileAccess.createDir(filesCachePath);
+						Log.log(logger, Level.WARN, "ZipUtil.unrar ----------------------------- in file:%s;  out dir:%s", filePath,filesCachePath);
 						if(CoreBase.FILE_TYPE_RAR.equals(fileType)){
 							ZipUtil.unrar(filePath, filesCachePath);
 						}else if(CoreBase.FILE_TYPE_ZIP.equals(fileType)){
@@ -250,8 +256,7 @@ public class SpiderFileVerticle extends AbstractVerticle {
 //							CoreBase.saveToLucene(fileInfo, writer);
 							
 							// Save the file information to Redis
-							saveToRedis(uuid,Md5, sha1, sha512, fileInfo);
-							continue;
+//							saveToRedis(uuid,Md5, sha1, sha512, fileInfo);
 						}else if(CoreBase.FILE_TYPE_DOC.equals(fileType)){
 							
 						}
@@ -267,6 +272,25 @@ public class SpiderFileVerticle extends AbstractVerticle {
 							//The type of file after decompression
 							String decompresFileType = FileAccess.getFileType(decopresFileName);
 							if(CoreBase.FILE_TYPE_PDF.equals(decompresFileType)){
+								PDDocument pdfDocument = PDDocument.loadNonSeq(file, null, "");
+								if(pdfDocument != null){
+									 if (pdfDocument.isEncrypted())
+							          {
+										 continue;
+							          }
+									int pageSize = pdfDocument.getNumberOfPages();
+									fileInfo.put(CoreBase.DOC_PAGE_SIZE, pageSize);
+									
+									List<PDPage> pages = PdfUtil.getPages(pdfDocument);
+									String thumbnailUUid = UUID.randomUUID().toString();
+									String thumbnail = thumbnailSavePath+thumbnailUUid;
+									String thumbnailPath = thumbnail+"1."+ImgUtil.IMG_TYPE_JPG;
+									PdfUtil.pdfPage2Img(pdfDocument, "", 1, 1, thumbnail, ImgUtil.IMG_TYPE_JPG);
+//									doc.setImgPath(thumbnailPath);
+								}
+								pdfDocument.close();
+								
+								
 								
 							}
 							
@@ -330,9 +354,9 @@ public class SpiderFileVerticle extends AbstractVerticle {
 						int month = DateUtil.getMonth(date);
 						int day = DateUtil.getDay(date);
 						
-						String todayImagePath = FileSavePath+"//"+year+""+month+""+day;
+						String todayImagePath = downloadFileSavePath+"//"+year+""+month+""+day;
 						
-						if(FileAccess.createMkdir(todayImagePath)){
+						if(FileAccess.createDir(todayImagePath)){
 							String filename = body.getString("filename");
 							if(filename == null){
 								String[] imageType = url.split("/");
@@ -399,7 +423,7 @@ public class SpiderFileVerticle extends AbstractVerticle {
 		switch (fileType) {
 		case CoreBase.FILE_TYPE_RAR:
 		case CoreBase.FILE_TYPE_ZIP:
-			return fileChannel;
+			return compressedFileChannel;
 
 		default:
 			break;
@@ -409,32 +433,32 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	
 	
 	
-	public HtmlParser getParserByWebsite(String webDomain){
-		HtmlParser parser =  websiteMapParser.get(webDomain);
-		if(parser == null){
-			parser = new BaseParser();
-		}
-		return parser;
-	}
-	
-	
-	public boolean registerParser(String webDomain,String className){
-		boolean flag = false;
-		try {
-			Object obj = Class.forName(className).newInstance();
-			if(obj instanceof HtmlParser){
-				websiteMapParser.put(webDomain, (HtmlParser)obj);
-			}
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return flag;
-		
-	}
+//	public HtmlParser getParserByWebsite(String webDomain){
+//		HtmlParser parser =  websiteMapParser.get(webDomain);
+//		if(parser == null){
+//			parser = new BaseParser();
+//		}
+//		return parser;
+//	}
+//	
+//	
+//	public boolean registerParser(String webDomain,String className){
+//		boolean flag = false;
+//		try {
+//			Object obj = Class.forName(className).newInstance();
+//			if(obj instanceof HtmlParser){
+//				websiteMapParser.put(webDomain, (HtmlParser)obj);
+//			}
+//		} catch (InstantiationException e) {
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return flag;
+//		
+//	}
 
 }

@@ -96,6 +96,8 @@ public class CoreBase {
 	public  static final  String FILE_PATH = "file_path";
 	public static final String FILE_STATUS = "status";
 	
+	public static final String DOC_PAGE_SIZE = "page_size";
+	public static final String DOC_THUMBNAIL = "thumbnail";
 	
 	
     public static final String TOKEN = "token";

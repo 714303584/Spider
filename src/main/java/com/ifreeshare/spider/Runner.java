@@ -33,6 +33,10 @@ public class Runner {
 
 		Vertx vertx = Vertx.vertx();
 		Context context = vertx.getOrCreateContext();
+		
+		String defaultConfigPah = "/etc/ifreeshare/spider-config.xml";
+		
+		
 
 		JsonArray baseUrls = new JsonArray();
 		// baseUrls.add("https://alphacoders.com/");
