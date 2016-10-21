@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -27,6 +28,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
@@ -59,7 +61,6 @@ import com.squareup.okhttp.Response;
 public class SpiderImageVerticle extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderImageVerticle.class.getName());
 
-	private static String FILE_PATH = "FILE_PATH";
 	private static String FILE_STATUS = "STATUS";
 
 	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderImageVerticle";
@@ -68,14 +69,13 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	
 	Channel<JsonObject> imageChannel = Channels.newChannel(100000);
 	
-	public static Map<String, HtmlParser> websiteMapParser = new HashMap<String, HtmlParser>();
-	
-	
-	
-	
 	private String imageSavePath;
 	
 	private long loadValue;
+	
+	private String imageIndexPath;
+	
+	private IndexWriter imageIndexWriter;
 	
 	OkHttpClient   sClient;
 
@@ -86,6 +86,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		sClient  = new FiberOkHttpClient();
 		
 		imageSavePath = "H:\\images";
+		imageIndexPath = "H:\\imagesLucene";
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -119,8 +120,12 @@ public class SpiderImageVerticle extends AbstractVerticle {
 			e1.printStackTrace();
 		}
 		
-		websiteMapParser.put("alphacoders.com", new AlphacodersComParser());
-		
+		if(FileAccess.createDir(imageIndexPath)){
+			imageIndexWriter = LuceneFactory.getIndexWriter(imageIndexPath);
+		}else{
+			Log.log(logger, Level.WARN, "Failed to save path for the index of image");
+			System.exit(0);
+		}
 	}
 	
 	
@@ -178,60 +183,59 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	}
 	
 	
-	
+	/**
+	 * Start a fiber to process Images URL
+	 */
 	private void processImage(){
 		Fiber imageFiber = new Fiber(() -> {
 			JsonObject imageJson = null;
 			while ((imageJson = imageChannel.receive()) != null) {
 				try {
 					String uuid = UUID.randomUUID().toString();
-					String imagePath = imageJson.getString(FILE_PATH);
+					String imagePath = imageJson.getString(CoreBase.FILE_PATH);
 					File file = new File(imagePath);
 					if(file.exists() && file.isFile()){
 						
+						//Calculation The SHA512 of file  
 						String sha512  = MD5Util.getFileSHA512(file);
+						//Calculation The MD5 of file  
 						String Md5  = MD5Util.getFileMD5(file);
+						//Calculation The SHA1 of file  
 						String sha1  = MD5Util.getFileSHA1(file);
 						
+						//Query the same MD5 from Redis 
 						String md5GetUuid = RedisPool.getFieldValue(CoreBase.MD5_UUID_IMAGE, Md5);
+						//Query the same sha1 from Redis 
 						String sha1GetUuid = RedisPool.getFieldValue(CoreBase.SHA1_UUID_IMAGE, sha1);
+						//Query the same sha512 from Redis 
 						String sha512GetUuid = RedisPool.getFieldValue(CoreBase.SHA512_UUID_IMAGE, sha512);
 						
 						if(md5GetUuid == null && sha1GetUuid == null && sha512GetUuid == null){
 							Image image = ImageIO.read(file);
+							// Get The Width of image 
 							int width = image.getWidth(null);
+							//Get The Height of Image
 							int height = image.getHeight(null);
 							
+							//The Resolution Of Image 
 							String resolution = width+"X"+height;
 							
+							// put unique inot The Json of Image
 							imageJson.put(CoreBase.RESOLUTION, resolution);
 							imageJson.put(CoreBase.MD5, Md5);
 							imageJson.put(CoreBase.UUID, uuid);
 							imageJson.put(CoreBase.SHA1, sha1);
 							
+							//Put The infomation of Image into Redis
 							RedisPool.addfield(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
 							RedisPool.addfield(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
 							RedisPool.addfield(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
 							RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
-							
-							Document document = new Document();
-							
-							StringField uuidField = new StringField(CoreBase.UUID, uuid, Store.YES);
-							document.add(uuidField);
-							StringField keywordsField = new StringField(CoreBase.HTML_KEYWORDS, imageJson.getString(CoreBase.HTML_KEYWORDS), Store.YES);
-							document.add(keywordsField);
-							StringField titleField = new StringField(CoreBase.HTML_TITLE, imageJson.getString(CoreBase.HTML_TITLE), Store.YES);
-							document.add(titleField);
-							StringField descriptionField = new StringField(CoreBase.HTML_DESCRIPTION, imageJson.getString(CoreBase.HTML_DESCRIPTION), Store.YES);
-							document.add(descriptionField);
-							StringField resolutionField = new StringField(CoreBase.RESOLUTION, resolution, Store.YES);
-							document.add(resolutionField);
-							
-							IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
-							writer.addDocument(document);
-							writer.flush();
-							
+							imageJson.put(CoreBase.UUID, uuid);
+							//Create an index for the picture
+							createIndex(imageJson);
 						}else{
+							// Have the same unique code ,Put the file in the specified path of redis.
 							RedisPool.addfield(CoreBase.MD5_SHA1_SHA512_EXIST_IMAGES_KEY, uuid, imageJson.toString());
 						}
 						
@@ -251,31 +255,53 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		
 		imageFiber.start();
 	}
+	
+	
+	/**
+	 * Create full text index using Lucene
+	 * @param imageJson Image info
+	 * @throws IOException Create The index of Image 
+	 */
+	private void createIndex(JsonObject imageJson) throws IOException{
+		Document document = new Document();
+		
+		StringField uuidField = new StringField(CoreBase.UUID, imageJson.getString(CoreBase.UUID), Store.YES);
+		document.add(uuidField);
+		TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, imageJson.getString(CoreBase.HTML_KEYWORDS), Store.YES);
+		document.add(keywordsField);
+		TextField titleField = new TextField(CoreBase.HTML_TITLE, imageJson.getString(CoreBase.HTML_TITLE), Store.YES);
+		document.add(titleField);
+		TextField descriptionField = new TextField(CoreBase.HTML_DESCRIPTION, imageJson.getString(CoreBase.HTML_DESCRIPTION), Store.YES);
+		document.add(descriptionField);
+		StringField resolutionField = new StringField(CoreBase.RESOLUTION, imageJson.getString(CoreBase.RESOLUTION), Store.YES);
+		document.add(resolutionField);
+		imageIndexWriter.addDocument(document);
+		imageIndexWriter.flush();
+	}
 
 
+	/**
+	 * Start a fiber to process Images URL
+	 */
 	private void processUrl() {
  		Fiber fiber = new Fiber(() -> {
 				JsonObject message = null;
 				while ((message = urlsChannel.receive()) != null) {
 					try {
 						JsonObject body = message.getJsonObject(MessageType.MESSAGE_BODY);  
-						
 						String url = body.getString(HttpUtil.URL);
-						
 						Request request = new Request.Builder().url(url).get().build();
-						
 						Response  response = sClient.newCall(request).execute();
-						
 						InputStream is = response.body().byteStream();
-						
 						Date date = new Date();
 						int year = DateUtil.getYear(date);
 						int month = DateUtil.getMonth(date);
 						int day = DateUtil.getDay(date);
 						
+						//Get pictures saved address 
 						String todayImagePath = imageSavePath+"//"+year+month+day;
 						
-						if(FileAccess.createMkdir(todayImagePath)){
+						if(FileAccess.createDir(todayImagePath)){
 							String filename = body.getString("filename");
 							if(filename == null){
 								String[] imageType = url.split("/");
@@ -291,7 +317,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							}
 							
 							
-							body.put(FILE_PATH, filePath);
+							body.put(CoreBase.FILE_PATH, filePath);
 							FileOutputStream os = new FileOutputStream(filePath);
 							
 							long fileSize = 0;
@@ -325,37 +351,4 @@ public class SpiderImageVerticle extends AbstractVerticle {
  		
  		fiber.start();
 	}
-	
-	
-	
-	
-	
-	public HtmlParser getParserByWebsite(String webDomain){
-		HtmlParser parser =  websiteMapParser.get(webDomain);
-		if(parser == null){
-			parser = new BaseParser();
-		}
-		return parser;
-	}
-	
-	
-	public boolean registerParser(String webDomain,String className){
-		boolean flag = false;
-		try {
-			Object obj = Class.forName(className).newInstance();
-			if(obj instanceof HtmlParser){
-				websiteMapParser.put(webDomain, (HtmlParser)obj);
-			}
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return flag;
-		
-	}
-
 }
