@@ -85,7 +85,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		
 		sClient  = new FiberOkHttpClient();
 		
-		imageSavePath = "H:\\images";
+		imageSavePath = "G:\\nginx-1.9.4\\html";
 		imageIndexPath = "H:\\imagesLucene";
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
@@ -137,7 +137,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 			processor(mbody);
 		});
 		processUrl();
-//		processImage();
+		processImage();
 	}
 
 	
@@ -174,7 +174,6 @@ public class SpiderImageVerticle extends AbstractVerticle {
 				newURl.put(MessageType.MESSAGE_BODY, message);
 				vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
 			}
-			
 		} catch (SuspendExecution e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -299,7 +298,8 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						int day = DateUtil.getDay(date);
 						
 						//Get pictures saved address 
-						String todayImagePath = imageSavePath+"//"+year+month+day;
+						String todayImagePath = imageSavePath+"//images//"+year+month+day;
+						String showPath = "//images//"+year+month+day;
 						
 						if(FileAccess.createDir(todayImagePath)){
 							String filename = body.getString("filename");
@@ -310,14 +310,14 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							String filePath = null;
 							if(filename != null){
 								filePath = todayImagePath + "/"+filename;
+								showPath = showPath + "/"+filename;
 							}else{
 								String contentType = body.getString(HttpUtil.Content_Type);
 								String fileType = HttpUtil.getFileType(contentType);
 								filePath = todayImagePath + "/" + UUID.randomUUID() + fileType;
+								showPath = showPath + "/" + UUID.randomUUID() + fileType;
 							}
 							
-							
-							body.put(CoreBase.FILE_PATH, filePath);
 							FileOutputStream os = new FileOutputStream(filePath);
 							
 							long fileSize = 0;
@@ -329,6 +329,11 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						  	}
 						  	os.flush();
 						  	os.close();
+						  	
+						  	//Real storage path for files 
+							body.put(CoreBase.FILE_PATH, filePath);
+							//Relative storage path of file ------- Web access browser 
+							body.put(CoreBase.FILE_URL_PATH, showPath);
 						  	body.put(CoreBase.FILE_SIZE, fileSize);
 						}
 //						FileInputStream fis = new FileInputStream();
