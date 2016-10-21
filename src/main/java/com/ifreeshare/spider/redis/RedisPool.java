@@ -4,6 +4,12 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+/**
+ * Redis connection pool 
+ * @author zhuss
+ * @date 2016-10-21-3:55:15
+ * @description Redis connection pool 
+ */
 public class RedisPool {
 	
 	/**
