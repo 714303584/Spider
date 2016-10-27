@@ -162,12 +162,10 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 					try {
 						String url = body.getString("url"); 
 						System.err.println(url);
-						Request request = new Request.Builder().url(url).header("User-Agent", HttpUtil.USER_AGENT).build();
+						Request request = new Request.Builder().url(url).header("User-Agent", HttpUtil.USER_AGENT).head().build();
 						
 						Response response = sClient.newCall(request).execute();
-						
 						String contentType = response.header("Content-Type");
-						
 						String conetentLength = response.header("Content-Length");
 						
 						//attachment; filename="89821.jpg"
@@ -234,58 +232,6 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 					
 					
 				}
-				
-				
-				
-				
-//			 	fileType =  HttpUtil.getFileType(contentType);
-//			 	if(fileType == null || fileType.length() == 0){
-//			 		String[] urlSp = url.split("\\.");
-//			 		fileType = "."+urlSp[urlSp.length-1];
-//			 	}
-//				Elements links = doc.getElementsByTag(JsoupUtil.LINK_A);
-//				Iterator<Element> eleIt = links.iterator();
-//				while(eleIt.hasNext()){
-//					Element a = eleIt.next();
-//					String href = a.attr(JsoupUtil.LINK_A_HREF);
-//					JsonObject newURl = new JsonObject();
-//					newURl.put(MessageType.MESSAGE_TYPE, MessageType.NEW_URL);
-//					newURl.put(MessageType.MESSAGE_BODY, href);
-//					vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
-//				}
-//				
-//				if(url.contains("item.taobao.com")){
-//					System.out.println(url);
-//					String title = doc.title();
-//					System.out.println(title);
-//					String[] urlSplit =  url.split("?");
-//					if(urlSplit.length > 1){
-//						String[] params = url.split("&");
-//						String id = null;
-//						for (int i = 0; i < params.length; i++) {
-//							String param = params[i];
-//							if(param.startsWith("id=")){
-//								 id =  param.split("=")[1];
-//								 break;
-//							}
-//							
-//							if(id != null){
-//								String iteminfourl = "https://detailskip.taobao.com/service/getData/1/p2/item/detail/sib.htm?itemId="+id
-//										+ "&modules=qrcode,viewer,price,contract,duty,xmpPromotion,dynStock,delivery,upp,activity,fqg,zjys,coupon&callback=onSibRequestSuccess";
-//								
-//								Document priceDoc = Jsoup.connect(iteminfourl).header("Referer", "https://item.taobao.com/item.htm?id=534016703208").get();
-//								System.out.println(priceDoc.html());
-//							}
-//						}
-//						
-//						
-////					  	Elements metas = doc.getElementsByTag("meta");
-////					  	Elements keywords = metas.attr("name","keywords"); 
-////					  	Element keyword =  keywords.get(0);
-////					  	System.out.println(keyword.html());
-//					}
-//				}
-				
 		});
  		
  		fiber.start();

@@ -39,8 +39,8 @@ public class Runner {
 		
 
 		JsonArray baseUrls = new JsonArray();
-		// baseUrls.add("https://alphacoders.com/");
-		baseUrls.add("http://www.jb51.net/");
+		 baseUrls.add("https://alphacoders.com/");
+//		baseUrls.add("http://www.jb51.net/");
 
 		JsonArray regular = new JsonArray();
 		regular.add("^[.]+.taobao.com([\\w/]+)\\.$");

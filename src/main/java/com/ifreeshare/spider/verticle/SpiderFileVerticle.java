@@ -207,17 +207,18 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					String filePath = fileInfo.getString(CoreBase.FILE_PATH);
 					File sourcefile = new File(filePath);
 					String fileName = sourcefile.getName();
+					String uuid = UUID.randomUUID().toString();
 					//download file type
 					String fileType = FileAccess.getFileType(fileName);
 					
-					//SHA512 of file
+					//Calculation The SHA512 of file  
 					String sha512  = MD5Util.getFileSHA512(sourcefile);
-					//Md5 of file
-					String Md5  = MD5Util.getFileMD5(sourcefile);
-					//sha1 of file
-					String sha1  = MD5Util.getFileSHA1(sourcefile);
 					
-					String uuid = UUID.randomUUID().toString();
+					//Calculation The Md5 of file  
+					String Md5  = MD5Util.getFileMD5(sourcefile);
+					
+					//Calculation The SHA1 of file  
+					String sha1  = MD5Util.getFileSHA1(sourcefile);
 					CoreBase.setUUid(fileInfo, uuid, Md5, sha1, sha512);
 					
 					boolean existmd5 =  RedisPool.fieldExist(CoreBase.MD5_UUID_COMPRESSED_FILE, Md5);

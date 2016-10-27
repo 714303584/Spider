@@ -35,7 +35,7 @@
 					  <p class="lead"  style="text-align: center;">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
 					  <hr class="m-y-md">
 					  <p class="lead">
-					    <form class="form-inline" method="get" action="/file/search" style="text-align: center;">
+					    <form class="form-inline" method="get" action="/images/search" style="text-align: center;">
 						  <div class="form-group">
 						    <label for="exampleInputEmail2"></label>
 						    <input type="text" name="keys" style="width: 500px" value="${context.keys}" class="form-control" id="exampleInputEmail2" required="required"/>
@@ -55,6 +55,8 @@
 						  <p class="lead">${item.name}</p>
 						   <p class="lead">${item.keywords}</p>
 						  <p>${item.description}</p>
+						  <img style="height:500px,width:500px" src="http://localhost:808/${item.thumbnail}"/>
+						  	<a href="/image/edit/?uuid=${item.uuid}">编辑</a>
 						   <hr class="m-y-md">
 			    			</div>
 			    			

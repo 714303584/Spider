@@ -94,10 +94,16 @@ public class CoreBase {
 	public static final String  OBJECTS = "objects";
 	
 	public  static final  String FILE_PATH = "file_path";
+	public static final String FILE_URL_PATH = "file_url_path";
 	public static final String FILE_STATUS = "status";
 	
 	public static final String DOC_PAGE_SIZE = "page_size";
 	public static final String DOC_THUMBNAIL = "thumbnail";
+	
+	public static final String  CHARSET = "charset";
+	
+	public static final String FILE_NAME = "filename";
+	
 	
 	
     public static final String TOKEN = "token";
@@ -146,6 +152,21 @@ public class CoreBase {
 	public static final String FILE_TYPE_ZIP = "zip";
 	public static final String FILE_TYPE_PDF = "pdf";
 	public static final String FILE_TYPE_DOC = "doc";
+	
+	
+	
+	/**
+	 * request Data Type
+	 */
+	public static final String DATA_TYPE = "dtype";
+	public static final String DATA_I_TYPE = "itype"; //Input parameter format 
+	public static final String DATA_O_TYPE = "otype"; //Output parameter format 
+	public static final String DATA_TYPE_HTML = "html"; //
+	public static final String DATA_TYPE_JSON = "json";
+	public static final String DATA_TYPE_XML = "xml";
+	public static final String DATA_TYPE_FORM = "form";
+	public static final String DATA_TYPE_GET = "get";
+	
 	
 	/**
 	 * Add and Update the Info 

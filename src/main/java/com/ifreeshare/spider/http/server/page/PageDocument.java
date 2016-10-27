@@ -4,19 +4,39 @@ public class PageDocument {
 	
 	private String uuid;
 	
+	private String title;
+	
 	private String name;
+	
+	private String type;
 	
 	private String keywords;
 	
 	private String description;
 	
-	private String thumbnail;
+	private String thumbnail = "#";
+	
+	private String src = "#";
+	
+	private String resolution;
+	
+	private String origin;
+	
 	
 	private long size;
 	
 	private long favorite;
 	
 	private long download;
+	
+	
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
 
 	public String getUuid() {
 		return uuid;
@@ -80,6 +100,38 @@ public class PageDocument {
 
 	public void setDownload(long download) {
 		this.download = download;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
+	}
+
+	public String getResolution() {
+		return resolution;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setResolution(String resolution) {
+		this.resolution = resolution;
 	}
 
 }

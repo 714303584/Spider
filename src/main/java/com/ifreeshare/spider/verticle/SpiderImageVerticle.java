@@ -5,6 +5,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,12 +20,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+
 import javax.imageio.ImageIO;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -34,12 +37,14 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 
+
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
+
 
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
@@ -54,6 +59,7 @@ import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.ifreeshare.util.DateUtil;
 import com.ifreeshare.util.FileAccess;
 import com.ifreeshare.util.MD5Util;
+import com.ifreeshare.util.ThumbnailTools;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -69,12 +75,18 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	
 	Channel<JsonObject> imageChannel = Channels.newChannel(100000);
 	
+	//Storage path for downloading images 
 	private String imageSavePath;
+	
+	//Storage path for generated thumbnail 
+	private String thumbnailPath;
+	
+	//Storage path for image indexing  ---------- lucene
+	private String imageIndexPath;
 	
 	private long loadValue;
 	
-	private String imageIndexPath;
-	
+	//Word segmentation And Create index 
 	private IndexWriter imageIndexWriter;
 	
 	OkHttpClient   sClient;
@@ -87,6 +99,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		
 		imageSavePath = "G:\\nginx-1.9.4\\html";
 		imageIndexPath = "H:\\imagesLucene";
+		thumbnailPath = "G:\\nginx-1.9.4\\html\\thumbnail";
 		
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -194,6 +207,14 @@ public class SpiderImageVerticle extends AbstractVerticle {
 					String imagePath = imageJson.getString(CoreBase.FILE_PATH);
 					File file = new File(imagePath);
 					if(file.exists() && file.isFile()){
+						String fileName = file.getName();
+						String fileType = FileAccess.getFileType(fileName);
+						
+						
+						Date date = new Date();
+						int year = DateUtil.getYear(date);
+						int month = DateUtil.getMonth(date);
+						int day = DateUtil.getDay(date);
 						
 						//Calculation The SHA512 of file  
 						String sha512  = MD5Util.getFileSHA512(file);
@@ -219,6 +240,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							//The Resolution Of Image 
 							String resolution = width+"X"+height;
 							
+							
 							// put unique inot The Json of Image
 							imageJson.put(CoreBase.RESOLUTION, resolution);
 							imageJson.put(CoreBase.MD5, Md5);
@@ -230,6 +252,15 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							RedisPool.addfield(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
 							RedisPool.addfield(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
 							RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
+							
+							String thumbnailName = uuid+"."+fileType;
+							
+							String thumbnail = thumbnailPath+"\\"+year+"\\"+month+"\\"+day;
+							if(FileAccess.createDir(thumbnail)){
+								ThumbnailTools.getThumbnail(imagePath, thumbnail+"\\"+thumbnailName, 300, 300);
+								imageJson.put(CoreBase.DOC_THUMBNAIL, "/"+year+"/"+month+"/"+day+thumbnailName);
+							}
+							
 							imageJson.put(CoreBase.UUID, uuid);
 							//Create an index for the picture
 							createIndex(imageJson);
@@ -257,13 +288,13 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	
 	
 	/**
-	 * Create full text index using Lucene
+	 * Create full text index using Lucene,  Prepare for full text retrieval 
 	 * @param imageJson Image info
 	 * @throws IOException Create The index of Image 
 	 */
 	private void createIndex(JsonObject imageJson) throws IOException{
 		Document document = new Document();
-		
+		// The uuid of image, Storage but not  segmentation , The unique in Redis
 		StringField uuidField = new StringField(CoreBase.UUID, imageJson.getString(CoreBase.UUID), Store.YES);
 		document.add(uuidField);
 		TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, imageJson.getString(CoreBase.HTML_KEYWORDS), Store.YES);
@@ -274,8 +305,14 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		document.add(descriptionField);
 		StringField resolutionField = new StringField(CoreBase.RESOLUTION, imageJson.getString(CoreBase.RESOLUTION), Store.YES);
 		document.add(resolutionField);
+		// Web browsing path 
+		StringField urlPath = new StringField(CoreBase.FILE_URL_PATH, imageJson.getString(CoreBase.FILE_URL_PATH), Store.YES);
+		StringField thumbnail = new StringField(CoreBase.DOC_THUMBNAIL, imageJson.getString(CoreBase.DOC_THUMBNAIL), Store.YES);
+		document.add(urlPath);
+		document.add(thumbnail);
 		imageIndexWriter.addDocument(document);
 		imageIndexWriter.flush();
+		imageIndexWriter.commit();
 	}
 
 
@@ -299,7 +336,9 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						
 						//Get pictures saved address 
 						String todayImagePath = imageSavePath+"//images//"+year+month+day;
-						String showPath = "//images//"+year+month+day;
+						
+						//picture URL Address
+						String showPath = "images/"+year+month+day;
 						
 						if(FileAccess.createDir(todayImagePath)){
 							String filename = body.getString("filename");
