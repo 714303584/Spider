@@ -32,6 +32,10 @@ public class CoreBase {
 	public static final String UUID_MD5_SHA1_SHA512_IMAGES_KEY = "uuid_md5_sha1_sha512_images_info_ifreeshare_com";
 	
 	public static final String MD5_SHA1_SHA512_EXIST_IMAGES_KEY = "md5_sha1_sha512_exist_image_key_ifreeshare_com";
+	
+	
+	// User information storage location ---------- redis 
+	public static final String USERNAME_USER_INFO_IFREESHARE_COM = "username_user_info_ifreeshare_com";
 
 	
 	/**
@@ -161,10 +165,10 @@ public class CoreBase {
 	public static final String DATA_TYPE = "dtype";
 	public static final String DATA_I_TYPE = "itype"; //Input parameter format 
 	public static final String DATA_O_TYPE = "otype"; //Output parameter format 
-	public static final String DATA_TYPE_HTML = "html"; //
-	public static final String DATA_TYPE_JSON = "json";
-	public static final String DATA_TYPE_XML = "xml";
-	public static final String DATA_TYPE_FORM = "form";
+	public static final String DATA_TYPE_HTML = "html"; //Web page format  
+	public static final String DATA_TYPE_JSON = "json"; //Json
+	public static final String DATA_TYPE_XML = "xml"; 	//XML
+	public static final String DATA_TYPE_FORM = "form"; 
 	public static final String DATA_TYPE_GET = "get";
 	
 	
