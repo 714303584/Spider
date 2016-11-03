@@ -8,16 +8,18 @@
 		storage := the storage address --- Absolute path 
 		thumbnail := Thumbnail to the storage address --- Absolute path 
 		uri :=   Network access address 
+		index := lucene Index path 
 	 -->
-	<images storage=""  thumbnail="" uri=""></images>
+	<images storage="G:\nginx-1.9.4\html"  thumbnail="G:\nginx-1.9.4\html\thumbnail" uri="" index="H:\imagesLucene"></images>
 	
 	<!-- Grab the PDF to the storage address
 		storage := the storage address --- Absolute path 
 		thumbnail := Thumbnail to the storage address --- Absolute path 
 		uri :=   Network access address 
+		index := lucene Index path 
 	 -->
 	
-	<pdf storage=""  thumbnail=""  uri="" ></pdf>
+	<pdf storage=""  thumbnail=""  uri="" index=""></pdf>
 	
 	<!-- server listening port  -->
 	<http-server listen-port="8000" request-timeout="10000"/>
