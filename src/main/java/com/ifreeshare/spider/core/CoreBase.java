@@ -109,6 +109,16 @@ public class CoreBase {
 	public static final String FILE_NAME = "filename";
 	
 	
+	/**
+	 * Field of configuration file 
+	 */
+	public static final String STORAGE = "storage";
+	public static final String IMAGES = "images";
+	public static final String URI = "uri";
+	public static final String INDEX = "index";
+	
+	
+	
 	
     public static final String TOKEN = "token";
     public static final String ACCOUNTS = "accounts";
