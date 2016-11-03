@@ -1,5 +1,16 @@
 package com.ifreeshare.spider.http.server.route;
 
+import java.net.HttpURLConnection;
+
+import org.apache.logging.log4j.Logger;
+
+import com.ifreeshare.spider.core.CoreBase;
+import com.ifreeshare.spider.core.ErrorBase;
+import com.ifreeshare.spider.http.server.SpiderHttpServer;
+import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.spider.log.Loggable.Level;
+
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 /**
@@ -16,10 +27,12 @@ public class BaseRoute {
 	public final static String OPTIONS = "OPTIONS";
 	public final static String PATCH = "PATCH";
 	
+	private static  Logger logger  = Log.register(BaseRoute.class.getName());
+	
 	private  String url;
 	private String method;
 	private String template;
-	FreeMarkerTemplateEngine freeMarkerTemplateEngine;
+	FreeMarkerTemplateEngine freeMarkerTemplateEngine = FreeMarkerTemplateEngine.create();; 
 	public BaseRoute(String url, String method, FreeMarkerTemplateEngine freeMarkerTemplateEngine) {
 		this.url = url;
 		this.method = method;
@@ -34,7 +47,12 @@ public class BaseRoute {
 		this.freeMarkerTemplateEngine = freeMarkerTemplateEngine;
 	}
 
-
+	public BaseRoute(String url, String method, String template) {
+		super();
+		this.url = url;
+		this.method = method;
+		this.template = template;
+	}
 
 	public void process(RoutingContext context){
 		
@@ -96,11 +114,71 @@ public class BaseRoute {
 			if (res.succeeded()) {
 				// context.response.putHeader("content-type",
 				// "application/json;charset=UTF-8");
+				context.response().putHeader("content-type", "text/html");
 				context.response().end(res.result());
 			} else {
 				context.fail(res.cause());
 			}
 		});
 		
+	}
+	
+	/**
+	 * Feedback on error requests 
+	 * @param response 
+	 * @param errMessage    Prompt information for feedback 
+	 */
+	public void faultRequest(HttpServerResponse response,String errMessage){
+		response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+		response.end(errMessage);
+	}
+	
+	/**
+	 * Feedback on error requests 
+	 * @param response
+	 * @param errorCode The Code of Error.
+	 */
+	public void faultRequest(HttpServerResponse response,int errorCode){
+		response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+		String errorMessage = ErrorBase.getErrorMesage(errorCode);
+		response.end(errorMessage);
+	}
+	
+	/**
+	 *  Check format of request parameters  
+	 *  Method: GET
+	 *  Submit parameters using URL splicing 
+	 * @param itype CoreBase.DATA_TYPE_GET
+	 * @return
+	 */
+	public boolean getItypeCheck(String itype){
+		return CoreBase.DATA_TYPE_GET.equals(itype);
+	}
+	
+	/**
+	 *	Check Output data format 
+	 *	The format of the data returned by the request 
+	 * @param otype: html , xml , json;
+	 * @return
+	 */
+	public boolean otypeCheck(String otype){
+		return CoreBase.DATA_TYPE_HTML.equals(otype) || CoreBase.DATA_TYPE_XML.equals(otype) || CoreBase.DATA_TYPE_JSON.equals(otype);
+	}
+	
+	/**
+	 * Input format for POST requests 
+	 * @param itype  form -> form submission,   xml and json ----> parameters in the request body 
+	 * @return
+	 */
+	public boolean postItypeCheck(String itype){
+		return CoreBase.DATA_TYPE_FORM.equals(itype) || CoreBase.DATA_TYPE_XML.equals(itype) || CoreBase.DATA_TYPE_JSON.equals(itype);
+	}
+	
+	
+	/**
+	 * Router log 
+	 */
+	protected void  log(String message) {
+		Log.log(logger, Level.WARN, "router path: [%s] router method: [%s] message: [%s]", this.url, this.method, message);
 	}
 }

@@ -1,11 +1,13 @@
 package com.ifreeshare.spider.http.server.route.image;
 
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
 import com.ifreeshare.spider.core.CoreBase;
+import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.redis.RedisPool;
@@ -19,25 +21,26 @@ public class GetImageRouter extends BaseRoute {
 	@Override
 	public void process(RoutingContext context) {
 		HttpServerRequest request =  context.request();
+		HttpServerResponse response = context.response();
 		String id = request.getParam("id");
 		String iType = request.getParam(CoreBase.DATA_I_TYPE);
 		String oType = request.getParam(CoreBase.DATA_O_TYPE);
 		
 		if(!CoreBase.DATA_TYPE_GET.equals(iType)){
-			request.response().end("This parameter format is not supported ");
+			faultRequest(response, ErrorBase.DATA_I_TYPE_ERROR);
 			return;
 		}
 		
 		String info = RedisPool.getFieldValue(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
 		if(CoreBase.DATA_TYPE_JSON.equals(oType)){
-			request.response().end(info);
+			response.end(info);
 			return;
 		}else if(CoreBase.DATA_TYPE_XML.equals(oType)){
-			request.response().end("Temporarily not available ");
+			response.end("Temporarily not available ");
 			return;
 		}
-		JsonObject docJson = new JsonObject(info);
 		
+		JsonObject docJson = new JsonObject(info);
 		PageDocument doc = new PageDocument();
 		doc.setUuid(docJson.getString(CoreBase.UUID));
 		doc.setKeywords(docJson.getString(CoreBase.HTML_KEYWORDS));
