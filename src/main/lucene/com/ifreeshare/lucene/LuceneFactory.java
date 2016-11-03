@@ -26,6 +26,11 @@ import org.wltea.analyzer.lucene.IKAnalyzer4Lucene5;
 
 import com.ifreeshare.spider.core.CoreBase;
 
+/**
+ * @author zhuss
+ * @date 2016-11-3-PM7:07:31
+ * @description Full text retrieval tools 
+ */
 public class LuceneFactory {
 	
 	private static Directory indexDir ;
@@ -144,9 +149,48 @@ public class LuceneFactory {
 			e.printStackTrace();
 			return null;
 		}
-		
-		
 	}
+	
+	/**
+	 * @param path
+	 * @param value
+	 * @param numb
+	 * @param field
+	 * @param occur
+	 * @param after
+	 * @return
+	 */
+	public static Document[] search(String path, String[] value, int numb, String[] field, Occur[] occur, ScoreDoc after){
+		Query query = null;
+		try {
+			IndexReader indexReader = DirectoryReader.open(getDirectory(path));
+			IndexSearcher searcher = new IndexSearcher(indexReader);
+			query = MultiFieldQueryParser.parse(value, field, occur, new IKAnalyzer4Lucene5());
+			TopDocs docs = searcher.searchAfter(after,query, numb);
+			
+		
+			ScoreDoc[] scoreDocs =  docs.scoreDocs;
+			Document[] documents = new Document[scoreDocs.length];
+			for (int i = 0; i < scoreDocs.length; i++) {
+	           Document document = searcher.doc(scoreDocs[i].doc); 
+	           documents[i] = document;
+			}
+			if(scoreDocs.length > 0){
+				after = scoreDocs[scoreDocs.length-1];
+				System.out.println(after);
+			}
+			indexReader.close();
+			 return documents;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 	
 	
 	/**
