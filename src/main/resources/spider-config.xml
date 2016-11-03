@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>  
 <config>
 	
+	<!-- Redis Server configuration information   -->
 	<redis server="127.0.0.1" port="6379" total="10" idle="5"></redis>
 	
+	<!-- Grab the picture to the storage address
+		storage := the storage address --- Absolute path 
+		thumbnail := Thumbnail to the storage address --- Absolute path 
+		uri :=   Network access address 
+	 -->
+	<images storage=""  thumbnail="" uri=""></images>
+	
+	<!-- Grab the PDF to the storage address
+		storage := the storage address --- Absolute path 
+		thumbnail := Thumbnail to the storage address --- Absolute path 
+		uri :=   Network access address 
+	 -->
+	
+	<pdf storage=""  thumbnail=""  uri="" ></pdf>
+	
+	<!-- server listening port  -->
 	<http-server listen-port="8000" request-timeout="10000"/>
 </config>
