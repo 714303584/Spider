@@ -17,6 +17,9 @@ public class ErrorBase {
 	//Output parameter format  error code 
 	public static final int DATA_O_TYPE_ERROR = 10002;
 	
+	//Registered user name has been occupied
+	public static final int USER_ALREADY_EXISTS = 10004;
+	
 	//ErrorCode mapping Message
 	public static Map<Integer, String> codeAndMessage = new HashMap<Integer, String>();
 	
@@ -24,6 +27,8 @@ public class ErrorBase {
 		codeAndMessage.put(DATA_I_TYPE_ERROR, "This parameter format is not supported ");
 
 		codeAndMessage.put(DATA_O_TYPE_ERROR, "This parameter format is not supported ");
+		
+		codeAndMessage.put(USER_ALREADY_EXISTS, "Registered user name has been occupied ");
 	}
 	
 

@@ -36,7 +36,9 @@ public class CoreBase {
 	
 	// User information storage location ---------- redis 
 	public static final String USERNAME_USER_INFO_IFREESHARE_COM = "username_user_info_ifreeshare_com";
-
+	
+	public static final String USERNAME = "username";
+	
 	
 	/**
 	 * redis key for file
@@ -181,6 +183,7 @@ public class CoreBase {
 	public static final String DATA_TYPE_FORM = "form"; 
 	public static final String DATA_TYPE_GET = "get";
 	
+	public static final String RESPONSE_RESULT_CACHE = "response_cache_result"; //Storage of results 
 	
 	/**
 	 * Add and Update the Info 
