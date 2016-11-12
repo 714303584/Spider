@@ -123,6 +123,15 @@ public class LuceneFactory {
 		return new IndexSearcher(getIndexReader());  
 	} 
 	
+	/**
+	 * 
+	 * @param value The query keywords
+	 * @param numb   Take out how many rows
+	 * @param field  Query of the fields
+	 * @param occur  
+	 * @param after
+	 * @return
+	 */
 	public static Document[]  search(String[] value,int numb,String[] field,Occur[] occur ,ScoreDoc after){
 		Query query = null;
 		try {
@@ -152,21 +161,35 @@ public class LuceneFactory {
 	}
 	
 	/**
-	 * @param path
-	 * @param value
-	 * @param numb
-	 * @param field
+	 *  Full text search page
+	 * @param path The index is stored
+	 * @param value The query keywords
+	 * @param pageSize   Take out how many rows
+	 * @param field  Query of the fields
 	 * @param occur
-	 * @param after
-	 * @return
+	 * @param pageindex The page number
+	 * @return  data 
 	 */
-	public static Document[] search(String path, String[] value, int numb, String[] field, Occur[] occur, ScoreDoc after){
+	public static Document[] search(String path, String[] value, int pageSize, String[] field, Occur[] occur, int pageindex){
 		Query query = null;
 		try {
 			IndexReader indexReader = DirectoryReader.open(getDirectory(path));
 			IndexSearcher searcher = new IndexSearcher(indexReader);
 			query = MultiFieldQueryParser.parse(value, field, occur, new IKAnalyzer4Lucene5());
-			TopDocs docs = searcher.searchAfter(after,query, numb);
+			
+			ScoreDoc last = null;
+			if(pageindex > 1){
+				int numb = pageSize * (pageindex - 1);
+				TopDocs tds = searcher.search(query, numb);
+				int lastNum = numb - 1;
+				if(tds.totalHits <  lastNum ){
+					return null;
+				}else{
+					last = tds.scoreDocs[lastNum];
+				}
+			}
+			
+			TopDocs docs = searcher.searchAfter(last,query, pageSize);
 			
 		
 			ScoreDoc[] scoreDocs =  docs.scoreDocs;
@@ -175,10 +198,7 @@ public class LuceneFactory {
 	           Document document = searcher.doc(scoreDocs[i].doc); 
 	           documents[i] = document;
 			}
-			if(scoreDocs.length > 0){
-				after = scoreDocs[scoreDocs.length-1];
-				System.out.println(after);
-			}
+			
 			indexReader.close();
 			 return documents;
 		} catch (ParseException e) {
