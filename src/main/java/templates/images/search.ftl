@@ -35,7 +35,7 @@
 					  <p class="lead"  style="text-align: center;">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
 					  <hr class="m-y-md">
 					  <p class="lead">
-					    <form class="form-inline" method="get" action="/images/search" style="text-align: center;">
+					    <form class="form-inline" method="get" action="/search/image/get/html/" style="text-align: center;">
 						  <div class="form-group">
 						    <label for="exampleInputEmail2"></label>
 						    <input type="text" name="keys" style="width: 500px" value="${context.keys}" class="form-control" id="exampleInputEmail2" required="required"/>
@@ -62,7 +62,22 @@
 			    			
 			</#list>
 		
-		
+			<div class="container">
+				  <ul class="pagination pagination-lg">
+				    <li class="page-item">
+				      <a class="page-link" href="/search/image/get/html/?keys=${context.keys}&index=${context.index - 1}" aria-label="Previous">
+				        <span aria-hidden="true">&laquo;</span>
+				        <span class="sr-only">Previous</span>
+				      </a>
+				    </li>
+				    <li class="page-item">
+				      <a class="page-link" href="/search/image/get/html/?keys=${context.keys}&index=${context.index - 1}" aria-label="Next">
+				        <span aria-hidden="true">&raquo;</span>
+				        <span class="sr-only">Next</span>
+				      </a>
+				    </li>
+				  </ul>
+			</div>
 		
     
     

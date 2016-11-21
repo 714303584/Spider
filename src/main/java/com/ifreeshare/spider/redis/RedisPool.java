@@ -1,5 +1,8 @@
 package com.ifreeshare.spider.redis;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -138,5 +141,50 @@ public class RedisPool {
 		return null;
 	}
 	
+	
+//	public static String getKey(String key){
+//		
+//	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static List<String> pageList(String key, int start, int end){
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.lrange(key, start, end);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(jedis != null){
+				jedis.close();
+			}
+		}
+		return null;
+	}
+	
+	
+	
+//	public static List<String> addList(String key, int start, int end){
+//		Jedis jedis = null;
+//		try {
+//			jedis = jedisPool.getResource();
+//			return jedis.l(key, start, end);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}finally {
+//			if(jedis != null){
+//				jedis.close();
+//			}
+//		}
+//		return null;
+//	}
+	
+	
+	
 }

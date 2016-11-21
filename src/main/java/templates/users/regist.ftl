@@ -45,7 +45,7 @@
 
 
 	<div class="container">
-		<form action="/user/regist/form/html/" method="post" enctype="" >
+		<form action="/user/regist/form/html/" method="post" >
 		
 				<div class="form-group row" >
 				<label for="example-text-input" class="col-xs-2 col-form-label">用户名称:</label>
@@ -65,7 +65,7 @@
 			
 			<div class="form-group row">
 		      <div class="offset-sm-2 col-sm-10">
-		        <button type="submit" class="btn btn-primary">Update</button>
+		        <button type="submit" class="btn btn-primary">注册</button>
 		      </div>
 		    </div>
 			

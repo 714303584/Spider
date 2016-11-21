@@ -1,18 +1,17 @@
 package com.ifreeshare.spider.http.server.route;
 
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
+
 import java.net.HttpURLConnection;
 
 import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
-import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
-
-import io.vertx.core.http.HttpServerResponse;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 /**
  * 
  * @author zhuss
@@ -180,5 +179,26 @@ public class BaseRoute {
 	 */
 	protected void  log(String message) {
 		Log.log(logger, Level.WARN, "router path: [%s] router method: [%s] message: [%s]", this.url, this.method, message);
+	}
+	
+	/**
+	 * Final response function 
+	 * @param context   Request context 
+	 * @param response  Case of response 
+	 * @param otype Response data format 
+	 */
+	public void response(RoutingContext context, HttpServerResponse response,String otype,Object... obj){
+		
+		
+		if(CoreBase.DATA_TYPE_JSON.equals(otype)){
+			response.end(obj[0].toString());
+		}else if(CoreBase.DATA_TYPE_XML.equals(otype)){
+			
+			
+		}else if(CoreBase.DATA_TYPE_HTML.equals(otype)){
+			render(context);
+		}
+		
+		
 	}
 }

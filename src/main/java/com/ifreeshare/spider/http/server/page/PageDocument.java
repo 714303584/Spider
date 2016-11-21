@@ -134,4 +134,9 @@ public class PageDocument {
 		this.resolution = resolution;
 	}
 
+	@Override
+	public String toString() {
+		return "PageDocument [uuid=" + uuid + ", title=" + title + ", name=" + name + ", type=" + type + ", keywords=" + keywords + ", description=" + description + ", thumbnail=" + thumbnail + ", src=" + src + ", resolution=" + resolution + ", origin=" + origin + ", size=" + size + ", favorite=" + favorite + ", download=" + download + "]";
+	}
+
 }

@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 
+
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +22,14 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
+
 import javax.imageio.ImageIO;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 
 
 import org.apache.logging.log4j.Logger;
@@ -38,6 +41,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 
 
+
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.Suspendable;
@@ -46,7 +50,9 @@ import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
 
+
 import com.ifreeshare.lucene.LuceneFactory;
+import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
@@ -97,10 +103,11 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		
 		sClient  = new FiberOkHttpClient();
 		
-		imageSavePath = "G:\\nginx-1.9.4\\html";
-		imageIndexPath = "H:\\imagesLucene";
-		thumbnailPath = "G:\\nginx-1.9.4\\html\\thumbnail";
 		
+		imageSavePath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.STORAGE);
+		imageIndexPath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.INDEX);
+		thumbnailPath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.DOC_THUMBNAIL);
+
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);
 		sClient.setReadTimeout(2, TimeUnit.MINUTES);
 		SSLContext sc;
@@ -248,18 +255,19 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							imageJson.put(CoreBase.SHA1, sha1);
 							
 							//Put The infomation of Image into Redis
-							RedisPool.addfield(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
-							RedisPool.addfield(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
-							RedisPool.addfield(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
-							RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
+						
 							
 							String thumbnailName = uuid+"."+fileType;
 							
 							String thumbnail = thumbnailPath+"\\"+year+"\\"+month+"\\"+day;
 							if(FileAccess.createDir(thumbnail)){
 								ThumbnailTools.getThumbnail(imagePath, thumbnail+"\\"+thumbnailName, 300, 300);
-								imageJson.put(CoreBase.DOC_THUMBNAIL, "/"+year+"/"+month+"/"+day+thumbnailName);
+								imageJson.put(CoreBase.DOC_THUMBNAIL, "/"+year+"/"+month+"/"+day+"/"+thumbnailName);
 							}
+							RedisPool.addfield(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
+							RedisPool.addfield(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
+							RedisPool.addfield(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
+							RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
 							
 							imageJson.put(CoreBase.UUID, uuid);
 							//Create an index for the picture
