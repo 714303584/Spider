@@ -9,10 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CookieHandler;
-import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.sstore.ClusteredSessionStore;
-import io.vertx.ext.web.sstore.SessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
 import java.util.ArrayList;
@@ -32,6 +29,7 @@ import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.http.server.route.image.GetImageRouter;
+import com.ifreeshare.spider.http.server.route.image.LoveImageRouter;
 import com.ifreeshare.spider.http.server.route.image.SearchImageRouter;
 import com.ifreeshare.spider.http.server.route.image.UpdateImageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPageRouter;
@@ -68,15 +66,16 @@ public class SpiderHttpServer extends AbstractVerticle {
 		routers.add(new UserRegistPostRouter());
 		routers.add(new UserLoginPostRouter());
 		routers.add(new UserLoginPageRouter());
+		routers.add(new LoveImageRouter());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);
 	    router.route().handler(BodyHandler.create());
 	    
 	    router.route().handler(CookieHandler.create());
-	    SessionStore store = ClusteredSessionStore.create(vertx);
-	    SessionHandler sessionHandler = SessionHandler.create(store);
-	    router.route().handler(sessionHandler);
+//	    SessionStore store = ClusteredSessionStore.create(vertx);
+//	    SessionHandler sessionHandler = SessionHandler.create(store);
+//	    router.route().handler(sessionHandler);
 
 		router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
 		

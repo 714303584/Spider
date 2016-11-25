@@ -22,7 +22,6 @@ public class PageDocument {
 	
 	private String origin;
 	
-	
 	private long size;
 	
 	private long favorite;
@@ -30,6 +29,7 @@ public class PageDocument {
 	private long download;
 	
 	
+
 	public String getOrigin() {
 		return origin;
 	}

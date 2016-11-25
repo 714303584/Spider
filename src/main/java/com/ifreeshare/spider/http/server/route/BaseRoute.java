@@ -26,7 +26,7 @@ public class BaseRoute {
 	public final static String OPTIONS = "OPTIONS";
 	public final static String PATCH = "PATCH";
 	
-	private static  Logger logger  = Log.register(BaseRoute.class.getName());
+	protected static  Logger logger  = Log.register(BaseRoute.class.getName());
 	
 	private  String url;
 	private String method;
@@ -189,7 +189,6 @@ public class BaseRoute {
 	 */
 	public void response(RoutingContext context, HttpServerResponse response,String otype,Object... obj){
 		
-		
 		if(CoreBase.DATA_TYPE_JSON.equals(otype)){
 			response.end(obj[0].toString());
 		}else if(CoreBase.DATA_TYPE_XML.equals(otype)){
@@ -198,7 +197,7 @@ public class BaseRoute {
 		}else if(CoreBase.DATA_TYPE_HTML.equals(otype)){
 			render(context);
 		}
-		
-		
 	}
+	
+	
 }

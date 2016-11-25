@@ -36,7 +36,7 @@ public class RedisPool {
 	 * @param field
 	 * @return
 	 */
-	public static boolean fieldExist(String key,String field) {
+	public static boolean hExist(String key,String field) {
 		boolean flag = false;
 		Jedis jedis = null;
 		try {

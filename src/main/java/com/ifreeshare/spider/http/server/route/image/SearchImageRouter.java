@@ -16,6 +16,8 @@ import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
+import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.util.RegExpValidatorUtils;
 
 /**
@@ -36,9 +38,9 @@ public class SearchImageRouter extends BaseRoute {
 		String iType = request.getParam(CoreBase.DATA_I_TYPE);
 		String oType = request.getParam(CoreBase.DATA_O_TYPE);
 		
-		
 		String keys = request.getParam("keys");
 		String index = request.getParam("index");
+		String size = request.getParam("size");
 		String[] value = { keys, keys, keys };
 		String[] field = { CoreBase.HTML_TITLE, CoreBase.HTML_KEYWORDS, CoreBase.HTML_DESCRIPTION };
 		Occur[] occur = { Occur.SHOULD, Occur.SHOULD, Occur.SHOULD };
@@ -48,7 +50,12 @@ public class SearchImageRouter extends BaseRoute {
 			pageIndex = Integer.parseInt(index);
 		}
 		
-		Document[] documents = LuceneFactory.search("H:\\imagesLucene", value, 10, field, occur, pageIndex);
+		int pageSize = 10;
+		if(size != null  && RegExpValidatorUtils.IsIntNumber(size)){
+			pageSize = Integer.parseInt(size);
+		}
+		
+		Document[] documents = LuceneFactory.search("H:\\imagesLucene", value, pageSize, field, occur, pageIndex);
 		
 		if(documents == null){
 			response.end("No More Can Give You!");
@@ -63,6 +70,7 @@ public class SearchImageRouter extends BaseRoute {
 				String description = document.get(CoreBase.HTML_DESCRIPTION);
 				String title = document.get(CoreBase.HTML_TITLE);
 				String thumbnail = document.get(CoreBase.DOC_THUMBNAIL);
+				String src = document.get(CoreBase.FILE_URL_PATH);
 				JsonObject docJson = new JsonObject();
 				PageDocument pd = new PageDocument();
 				pd.setUuid(uuid);
@@ -72,16 +80,31 @@ public class SearchImageRouter extends BaseRoute {
 					pd.setKeywords(keywords);
 					pd.setDescription(description);
 					pd.setThumbnail(thumbnail);
+					pd.setSrc(src);
+					Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), pd);
 					page.add(pd);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				objects.add(docJson);
 			}
-
+			
+			if(page.size() == pageSize){
+				context.put("nextp", (pageIndex+1));
+			}else{
+				context.put("nextp", pageIndex);
+			}
+			
+			if(pageIndex > 1){
+				context.put("previous", (pageIndex - 1));
+			}else{
+				context.put("previous", pageIndex);
+			}
+			
+			context.put("sizep", pageSize);
 			context.put("pages", page);
 			context.put("keys", keys);
-			context.put("index", index);
+		
 			render(context);
 		}
 

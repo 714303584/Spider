@@ -38,6 +38,10 @@ public class CoreBase {
 	//Image resource is a collection of pictures. ---------------redis list;
 	public static final String IMAGE_RESOURSE_KEY = "image_resourse_key";
 	
+	//Image Resource Prefix -------------- Info
+	//Image resource is a collection of pictures. ---------------redis list;
+	public static final String IMAGE_RESOURSE_HASH_KEY = "image_resourse_hash_ifreeshare_com";
+	
 	//Document Resource Prefix 
 	//Document resource is a collection of File(doc, pdf, txt ......). --------------- redis list
 	public static final String DOCUMENT_RESOURSE_KEY = "document_resourse_key";
@@ -96,16 +100,15 @@ public class CoreBase {
 	
 	public static final String SOURCE_ADDRESS = "sourceAddress";
 	
+	
+	/**
+	 * detailed information 
+	 */
 	public static final String HTML_TITLE = "title";
-	
 	public static final String HTML_KEYWORDS = "keywords";
-	
 	public static final String HTML_DESCRIPTION = "description";
-	
 	public static final String Content_Type = "Content-Type";
-	
 	public static final String  TEXT_HTML = "text/html";
-	
 	public static final String  OBJECTS = "objects";
 	
 	public  static final  String FILE_PATH = "file_path";
@@ -129,7 +132,7 @@ public class CoreBase {
 	public static final String INDEX = "index";
 	
 	
-	
+	public static final String NAME = "name";
 	
     public static final String TOKEN = "token";
     public static final String ACCOUNTS = "accounts";

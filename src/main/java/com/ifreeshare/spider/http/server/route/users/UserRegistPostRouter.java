@@ -43,7 +43,7 @@ public class UserRegistPostRouter extends BaseRoute {
 		String username = params.get(CoreBase.USERNAME);
 		String password = params.get(CoreBase.PASSWORD);
 		
-		if(RedisPool.fieldExist(CoreBase.USERNAME_USER_INFO_IFREESHARE_COM, username)){
+		if(RedisPool.hExist(CoreBase.USERNAME_USER_INFO_IFREESHARE_COM, username)){
 			
 			
 		}else{

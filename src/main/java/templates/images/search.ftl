@@ -72,10 +72,12 @@
 									<#list context.pages as item>
 										 <li class="masonry-brick" style="position: absolute; top: 0px; left: 0px;">
 								        	<div class="img_block">
-								            	<img src="http://localhost:808/thumbnail${item.thumbnail}" alt="">
-								                <a href="http://localhost:808/${item.src}" 
-								                rel="lightbox[plants]" title="测试标题" class="zoom" style="display: none;">放大</a>
-								                <a href="http://www.niurenzm.com/demo/969/#" class="ilike" style="display: none;">我喜欢</a>
+								            	<img src="http://192.168.3.148:808/thumbnail${item.thumbnail}" alt="">
+								            	
+								            	 <a href="http://192.168.3.148:808/${item.src}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
+								               
+								            	
+								            	 <a href="#" class="ilike" onclick="loveImage('${item.uuid}')" style="display: none;">我喜欢</a>
 								          </div>
 								            <h3>${item.name}</h3>
 								            <div class="iNum"><span>1</span><a href="http://www.niurenzm.com/demo/969/#">4</a></div>
@@ -171,6 +173,20 @@
    });
    
    
+   function loveImage(uuid){
+		   	$.ajax({
+				type: "GET",
+				url: "/love/image/get/get/"+uuid+"/",
+				success:function(data){
+					alert("thank you!")
+					console.log("success:"+data);
+				},
+				error: function(data){
+					console.log("error:"+data);
+				}
+			});
+   }
+   
 			 
    </script>
    
@@ -179,10 +195,10 @@
 $(document).ready(function(){	
 	$(".zoom,.ilike").hide();
 
-	$(".zoom").each(function(){//遍历所有对象
-	var src=$(this).siblings("img").attr("src");
-		$(this).attr({href:src});
-	});
+	//$(".zoom").each(function(){//遍历所有对象
+	//var src=$(this).siblings("img").attr("src");
+		//$(this).attr({href:src});
+	//});
 	
 	$("#nav li").click(function(){
 		$("#nav a").removeClass("hover");

@@ -221,9 +221,9 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					String sha1  = MD5Util.getFileSHA1(sourcefile);
 					CoreBase.setUUid(fileInfo, uuid, Md5, sha1, sha512);
 					
-					boolean existmd5 =  RedisPool.fieldExist(CoreBase.MD5_UUID_COMPRESSED_FILE, Md5);
-					boolean existsha1 =  RedisPool.fieldExist(CoreBase.SHA1_UUID_COMPRESSED_FILE, sha1);
-					boolean existsha512 =  RedisPool.fieldExist(CoreBase.SHA512_UUID_COMPRESSED_FILE, sha512);
+					boolean existmd5 =  RedisPool.hExist(CoreBase.MD5_UUID_COMPRESSED_FILE, Md5);
+					boolean existsha1 =  RedisPool.hExist(CoreBase.SHA1_UUID_COMPRESSED_FILE, sha1);
+					boolean existsha512 =  RedisPool.hExist(CoreBase.SHA512_UUID_COMPRESSED_FILE, sha512);
 					
 					if(existmd5 || existsha1 || existsha512){
 						RedisPool.addfield(CoreBase.MD5_SHA1_SHA512_EXIST_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
