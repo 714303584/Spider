@@ -1,0 +1,107 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>404</title>
+
+    <style type="text/css">
+
+        body,p,div,h1,h2,h3,h4{margin:0;padding:0;}
+
+        /*公用样式*/
+
+        body {
+
+          color:#454545;
+
+        }
+
+        a, .link {
+
+          color:#454545;
+
+          text-decoration:none;
+
+        }
+
+        a:hover, .link:hover {
+
+          color:#ff6600;
+
+          text-decoration:underline;
+
+        }
+
+        .f-tit {
+
+          font-family:"Microsoft YaHei", "微软雅黑", "Microsoft JhengHei", "宋体";
+
+          font-weight:400;
+
+          font-size:24px;
+
+        }
+
+        .f-tit span{
+
+            color:#f60;
+
+        }
+
+        .page404{
+
+            background:url(/images/404.png) no-repeat 30px 30px;
+
+            height:350px;
+
+            margin:10px auto;
+
+            padding:150px 0 10px 300px;
+
+            width:540px;
+
+        }
+
+        .handle{
+
+            border-top:1px #ccc dashed;
+
+            margin-top:30px;
+
+            padding:30px 0;
+
+        }
+
+    </style>
+
+</head>
+
+<body style="background:#f2f3f4;font:14px/1.5 "lucida Grande", Tahoma, Arial, Helvetica, "宋体", sans-serif;">
+
+<div class="page404">
+
+    <h1 class="f-tit"><span>Error 404</span> 很抱歉，没有找到您访问的页面</h1>
+
+    <p class="reason">有可能我们的页面和系统正在升级或者维护</p>
+
+    <div class="handle">
+
+        <strong>您可以尝试一下：</strong><br/>
+
+        <a href="javascript:location.href=document.referrer;">&laquo; 返回上一页</a><br/>
+
+        <a href="/">&laquo; 返回首页</a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
