@@ -1,11 +1,15 @@
 package com.ifreeshare.spider.redis;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 /**
  * Redis connection pool 
@@ -103,7 +107,7 @@ public class RedisPool {
 	 * @param value The Value Of Data;
 	 * @return  Success is True , Failed is False
 	 */
-	public static boolean addfield(String key, String field,String value) {
+	public static boolean hSet(String key, String field,String value) {
 		boolean flag = false;
 		Jedis jedis = null;
 		try {
@@ -131,6 +135,57 @@ public class RedisPool {
 		try {
 			jedis = jedisPool.getResource();
 			return jedis.hget(key, field);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(jedis != null){
+				jedis.close();
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	/**
+	 * Get The Size of Len
+	 * @param key
+	 */
+	public static long hLen(String key){
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.hlen(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(jedis != null){
+				jedis.close();
+			}
+		}
+		return 0;
+	}
+	
+	
+	public static ScanResult<Map.Entry<String, String>> hScan(String key, String cursor,int count){
+		
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			 ScanParams params = new ScanParams();
+			 params.count(count);
+			ScanResult<Map.Entry<String, String>> sr = 
+				jedis.hscan(key, cursor,params);
+			Iterator<Map.Entry<String, String>> it = sr.getResult().iterator();
+			System.out.println("sr.getStringCursor():"+sr.getStringCursor());
+//			while (it.hasNext()) {
+//				Map.Entry<String, String> entity = it.next();
+//				System.out.println("entity.getKey():"+entity.getKey());
+//				System.out.println("entity.getValue():"+entity.getValue());
+//			}
+//			
+			return sr;
+//			return jedis.hget(key, field);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
