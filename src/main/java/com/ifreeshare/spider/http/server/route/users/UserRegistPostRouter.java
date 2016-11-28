@@ -48,7 +48,7 @@ public class UserRegistPostRouter extends BaseRoute {
 			
 		}else{
 			JsonObject userInfo = new JsonObject().put(CoreBase.USERNAME, username).put(CoreBase.PASSWORD, password);
-			RedisPool.addfield(CoreBase.USERNAME_USER_INFO_IFREESHARE_COM, username, userInfo.toString());
+			RedisPool.hSet(CoreBase.USERNAME_USER_INFO_IFREESHARE_COM, username, userInfo.toString());
 		}
 		
 		render(context);
