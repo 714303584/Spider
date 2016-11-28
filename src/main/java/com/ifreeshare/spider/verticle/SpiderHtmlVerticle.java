@@ -52,9 +52,11 @@ import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-
-
-
+/**
+ * @author zhuss
+ * @date 2016-11-28PM5:57:38
+ * @description  Request and parse HTML 
+ */
 public class SpiderHtmlVerticle extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderHtmlVerticle.class.getName());
 	
@@ -171,8 +173,9 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 		}
 	}
 	
-
-
+	/**
+	 * Method for processing HTML 
+	 */
 	private void processUrl() {
  		Fiber fiber = new Fiber(() -> {
 				JsonObject message = null;
@@ -186,26 +189,17 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						
 						Response  response = sClient.newCall(request).execute();
 						
-						
 						String html = null;
 						
 						String charset = body.getString(HttpUtil.CHARSET);
-						
-						
-						
-						
 						byte[] b = response.body().bytes();
-						
 						if(charset == null){
 							html = new String(b);
 							 Document htmlDoc = Jsoup.parse(html);
 							 Element charsetE = htmlDoc.select("meta[charset]").first();
 							 if(charsetE != null) charset = charsetE.attr(HttpUtil.CHARSET);
-							 
-							 
 							 if(charset == null){
 								Elements chasetHttp_equiv =  htmlDoc.select("meta[http-equiv]");
-								
 								Iterator<Element> it = chasetHttp_equiv.iterator();
 								while (it.hasNext()) {
 									Element httpEquiv =  it.next();
@@ -214,25 +208,17 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 										if(types.length > 1) charset = types[1];
 									}
 								}
-								
-								
-								 
 							 }
 						}
 						
 						charset = charset == null ? "UTF-8" : charset;
 						
 						html = new String(b, charset);
-//						 System.out.println(html);
-						 
-						 
 						 
 						 Document htmlDoc = Jsoup.parse(html);
 						 htmlDoc.setBaseUri(url);
 						 
-						 
 //						 Element charsetE = htmlDoc.select("meta[charset]").first();
-//						 
 //						 if(charsetE != null) charset = charsetE.attr(HttpUtil.CHARSET);
 						 
 						 
@@ -256,12 +242,8 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 							writer.addDocument(document);
 							writer.flush();
 							writer.commit();
-						 
-						 
-						 
-						 
+							
 						 Iterator<String> it = links.iterator();
-						 
 						 while (it.hasNext()) {
 							 String href = it.next();
 							 if(href != null || href.trim().length() > 0){
@@ -278,15 +260,14 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 								 newBody.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
 								 
 								 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newUrl);
-								 
-//								 Log.log(logger, Level.INFO, "Document Links ----------------------------- href:%s;   url:%s", href, url);
 							 }else{
 								 
 							 }
 						}
+						Log.log(logger, Level.WARN, "html pase success ----------------------------- url:[%s];   e.message:[%s]", url,body);
 					} catch (Exception e) {
 						e.printStackTrace();
-						Log.log(logger, Level.WARN, "e.printStackTrace() ----------------------------- Message:%s;   e.message:%s", message,e.getMessage());
+						Log.log(logger, Level.WARN, "html paser ----------------------------- Message:[%s];   e.message:[%s]", message,e.getMessage());
 					}
 				}
 		});
@@ -306,7 +287,12 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 		return parser;
 	}
 	
-	
+	/**
+	 * 
+	 * @param webDomain Domain name 
+	 * @param className  Parser name 
+	 * @return
+	 */
 	public boolean registerParser(String webDomain,String className){
 		boolean flag = false;
 		try {
@@ -325,16 +311,6 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 		return flag;
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 //	Map<String, List<String>> headers = response.headers().toMultimap();
