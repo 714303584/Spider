@@ -5,8 +5,6 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
-
-
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,12 +14,8 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HostnameVerifier;
@@ -30,17 +24,12 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-
-
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-
-
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -49,15 +38,10 @@ import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
-
-
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
-import com.ifreeshare.spider.http.parse.AlphacodersComParser;
-import com.ifreeshare.spider.http.parse.BaseParser;
-import com.ifreeshare.spider.http.parse.HtmlParser;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.redis.RedisPool;
@@ -70,6 +54,12 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+/**
+ * image verticle
+ * @author zhuss
+ * @date 2016-11-28PM5:06:17
+ * @description  download images and process images;
+ */
 public class SpiderImageVerticle extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderImageVerticle.class.getName());
 
@@ -264,17 +254,19 @@ public class SpiderImageVerticle extends AbstractVerticle {
 								ThumbnailTools.getThumbnail(imagePath, thumbnail+"\\"+thumbnailName, 300, 300);
 								imageJson.put(CoreBase.DOC_THUMBNAIL, "/"+year+"/"+month+"/"+day+"/"+thumbnailName);
 							}
-							RedisPool.addfield(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
-							RedisPool.addfield(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
-							RedisPool.addfield(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
-							RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
+							RedisPool.hSet(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
+							RedisPool.hSet(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
+							RedisPool.hSet(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
+							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
 							
 							imageJson.put(CoreBase.UUID, uuid);
 							//Create an index for the picture
 							createIndex(imageJson);
+							Log.log(logger, Level.DEBUG, "process image   -----------------------------  image [%s]", imageJson);
 						}else{
 							// Have the same unique code ,Put the file in the specified path of redis.
-							RedisPool.addfield(CoreBase.MD5_SHA1_SHA512_EXIST_IMAGES_KEY, uuid, imageJson.toString());
+							RedisPool.hSet(CoreBase.MD5_SHA1_SHA512_EXIST_IMAGES_KEY, uuid, imageJson.toString());
+							Log.log(logger, Level.DEBUG, "md5 sha1 sha512  -----------------------------  exist image [%s]", imageJson);
 						}
 						
 					}else{
@@ -387,6 +379,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
 						imageChannel.send(body);
+						Log.log(logger, Level.DEBUG, "image download  -----------------------------  download iamge from [%s], the image info [%s]", url,body);
 						
 					} catch (Exception e) {
 						e.printStackTrace();
