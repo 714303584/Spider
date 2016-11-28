@@ -6,23 +6,18 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 
 import org.apache.logging.log4j.Logger;
-
 
 import redis.clients.jedis.ScanResult;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 import co.paralleluniverse.strands.channels.Channels.OverflowPolicy;
-
 
 import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.core.CoreBase;
@@ -34,6 +29,11 @@ import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.ifreeshare.spider.verticle.validate.MainVerticleValidate;
 import com.ifreeshare.spider.verticle.validate.RedisValidate;
 
+/**
+ * @author zhuss
+ * @date 2016-11-28PM5:36:09
+ * @description Distribution URL  and Duplicate removal URL
+ */
 public class SpiderMainVerticle extends AbstractVerticle  {
 
 	private static final Logger logger  = Log.register(SpiderMainVerticle.class.getName());
@@ -41,6 +41,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 	public static final String MAIN_ADDRESS = "com.ifreeshare.spider.verticle.SpiderMainVerticle";
 //	private static Set<String> urls = new HashSet<String>();
 	
+	//Verify data exists 
 	MainVerticleValidate validate = new RedisValidate();
 	
 	private int grabFrequency = 3;
@@ -128,8 +129,8 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 //					waitQueue.remove(url);
 					
 					vertx.eventBus().send(SpiderHeaderVerticle.WORKER_ADDRESS, info);
-					Log.log(logger, Level.DEBUG, "url Distribute Fiber ----------------------------- url:%s;   body:%s", url,info);
-					Log.log(logger, Level.DEBUG, "url Distribute Fiber -----------------------------cache ---->size:%d", cache.size());
+					Log.log(logger, Level.DEBUG, "distributer fiber ----------------------------- send url:%s;   body:%s", url,info);
+					Log.log(logger, Level.DEBUG, "Distribute cache -----------------------------cache ---->size:%d", cache.size());
 					
 					if(cache.size() == 0){
 						ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, "0", 1000);
@@ -163,7 +164,12 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 	private void failUrl(JsonObject body) {
 		
 	}
-
+	
+	
+	/**
+	 * process success url 
+	 * @param body With the success of the URL's information
+	 */
 	private void succUrl(JsonObject body) {
 		String url = body.getString(HttpUtil.URL);
 		validate.addOrUpdateUrl(url, body);
@@ -183,6 +189,12 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 		
 	}
 	
+	/**
+	 * Create a Json Message 
+	 * @param type process type 
+	 * @param body  process body
+	 * @return
+	 */
 	public JsonObject createMessage(int type ,JsonObject body){
 		JsonObject message = new JsonObject();
 		message.put(MessageType.MESSAGE_TYPE, type);
@@ -202,8 +214,9 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 		String url = body.getString(HttpUtil.URL);
 		if(!validate.urlExist(url) && !works.containsKey(url) && !inCache(url)){
 			try {
-				urlChannel.send(url);
+//				urlChannel.send(url);
 				putCache(url, message);
+				Log.log(logger, Level.DEBUG, "new url to cache ----------------------------- url:%s;   body:%s", url,body);		
 //				waitQueue.put(url, message);
 			} catch (Exception e) {
 				Log.log(logger, Level.DEBUG, "urlChannel new  ----------------------------- url:%s;   body:%s", url,body);			
