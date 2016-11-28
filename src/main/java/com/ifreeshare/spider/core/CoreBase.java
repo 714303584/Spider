@@ -33,6 +33,9 @@ public class CoreBase {
 	
 	public static final String MD5_SHA1_SHA512_EXIST_IMAGES_KEY = "md5_sha1_sha512_exist_image_key_ifreeshare_com";
 	
+	//Not grab URL 
+	public static final String FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM = "find_new_url_but_no_grab_and_cache_ifreeshare_com"; 
+	
 	
 	//Image Resource Prefix 
 	//Image resource is a collection of pictures. ---------------redis list;
@@ -235,7 +238,7 @@ public class CoreBase {
 	
 	
 	public static void saveExceptionFileInfo(JsonObject value){
-		RedisPool.addfield(CoreBase.EXCEPTION_FILE_KEY, value.getString(CoreBase.UUID), value.toString());
+		RedisPool.hSet(CoreBase.EXCEPTION_FILE_KEY, value.getString(CoreBase.UUID), value.toString());
 	}
 	
 	
