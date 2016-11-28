@@ -159,7 +159,10 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		
 	}
 
-
+	/**
+	 * Processing received messages 
+	 * @param message
+	 */
 	private void  processor(JsonObject message) {
 		int type  =  message.getInteger(MessageType.MESSAGE_TYPE);
 		switch (type) {
@@ -174,6 +177,10 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	}
 	
 	
+	/**
+	 * Failure message forwarding 
+	 * @param message
+	 */
 	@Suspendable
 	public void  urlDistr(JsonObject message){
 		try {
@@ -383,15 +390,11 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						
 					} catch (Exception e) {
 						e.printStackTrace();
-						Log.log(logger, Level.WARN, "e.printStackTrace() ----------------------------- Message:%s;   e.message:%s", message,e.getMessage());
+						Log.log(logger, Level.WARN, " dwonload image ----------------------------- Message:%s;   e.message:%s", message,e.getMessage());
 						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
 					}
-					 
 				}
-				
-				
-				
 		});
  		
  		fiber.start();
