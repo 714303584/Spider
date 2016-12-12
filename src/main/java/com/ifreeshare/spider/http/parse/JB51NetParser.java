@@ -1,27 +1,27 @@
 package com.ifreeshare.spider.http.parse;
 
+import io.vertx.core.json.JsonObject;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
+import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.util.RegExpValidatorUtils;
 
 public class JB51NetParser extends BaseParser {
 
 	@Override
-	public Set<String> getLinkValue(Document doc) {
-		
-		Set<String> result = new HashSet<String>();
-		
-		Set<String> allHrefValue = super.getLinkValue(doc);
-		Iterator<String> it = allHrefValue.iterator();
+	public Set<JsonObject> getLinkValue(Document doc) {
+		Set<JsonObject> result = new HashSet<JsonObject>();
+		Set<JsonObject> allHrefValue = super.getLinkValue(doc);
+		Iterator<JsonObject> it = allHrefValue.iterator();
 		while (it.hasNext()) {
-			String value = it.next();
-			if(value.contains("books")){
+			JsonObject value = it.next();
+			if(value.getString(HttpUtil.URL).contains("books")){
 				result.add(value);
-				
 			}
 		}
 		return result;

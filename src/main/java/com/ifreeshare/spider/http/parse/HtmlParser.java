@@ -1,5 +1,7 @@
 package com.ifreeshare.spider.http.parse;
 
+import io.vertx.core.json.JsonObject;
+
 import java.util.Set;
 
 import org.jsoup.nodes.Document;
@@ -17,6 +19,6 @@ public interface HtmlParser {
 	
 	public Elements getImages(Document doc);
 	
-	public Set<String> getLinkValue(Document doc);
+	public Set<JsonObject> getLinkValue(Document doc);
 
 }
