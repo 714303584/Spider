@@ -36,6 +36,11 @@ public class CoreBase {
 	//Not grab URL 
 	public static final String FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM = "find_new_url_but_no_grab_and_cache_ifreeshare_com"; 
 	
+	//error
+	public static final String NEW_URL_BUT_GRAB_ERROR_CACHE_IFREESHARE_COM = "new_url_but_grab_error_cache_ifreeshare_com"; 
+	
+	public static final String ENGLISH_MAP_CHINESE_DICTIONARY_IFREESHARE_COM = "english_map_chinese_dictionary_ifreeshare_com";
+	
 	
 	//Image Resource Prefix 
 	//Image resource is a collection of pictures. ---------------redis list;
@@ -160,6 +165,9 @@ public class CoreBase {
     public static final String LIMIT = "upper_limit";
     public static final String RECORDS = "records";
     public static final String DATA = "data";
+    
+    public static final String OLD_KEYWORDS = "old_keywords";
+    public static final String NEW_KEYWORDS = "new_keywords";
     
     public static final String RESOURCES_PATH = System.getProperty("user.dir");
     

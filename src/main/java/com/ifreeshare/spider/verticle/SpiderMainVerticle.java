@@ -7,9 +7,11 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
@@ -132,7 +134,8 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 					Log.log(logger, Level.DEBUG, "distributer fiber ----------------------------- send url:%s;   body:%s", url,info);
 					Log.log(logger, Level.DEBUG, "Distribute cache -----------------------------cache ---->size:%d", cache.size());
 					
-					if(cache.size() == 0){
+					
+					if(cache.isEmpty()){
 						ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, "0", 1000);
 						List<Map.Entry<String, String>> entrys = sr.getResult();
 						Iterator<Map.Entry<String, String>> it = entrys.iterator();
@@ -146,6 +149,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 							Log.log(logger, Level.DEBUG, "put in cache ----------------------------- url:%s;   body:%s", key,value);
 						}
 					}
+					Fiber.sleep(5000);
 //					if(RedisPool.h)
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -160,11 +164,16 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 
 
 
-
-	private void failUrl(JsonObject body) {
-		
+	/**
+	 * Grab failed URL to Cache
+	 * @param message  The info of Message
+	 */
+	private void failUrl(JsonObject message) {
+		String url = message.getString(HttpUtil.URL);
+		works.remove(url);
+		putFailedCache(url, message);
+		Log.log(logger, Level.DEBUG, "grab  failure ----------------------------- url:%s;   body:%s", url,message);
 	}
-	
 	
 	/**
 	 * process success url 
@@ -174,7 +183,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 		String url = body.getString(HttpUtil.URL);
 		validate.addOrUpdateUrl(url, body);
 		works.remove(url);
-		Log.log(logger, Level.DEBUG, "success ----------------------------- url:%s;   body:%s", url,body);
+		Log.log(logger, Level.DEBUG, "grab success ----------------------------- url:%s;   body:%s", url,body);
 	}
 
 	private void succUrl(String string) {
@@ -202,6 +211,33 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 		return message;
 	}
 	
+	public static Set<String> shieldBox = new HashSet<String>();
+	
+	static{
+		shieldBox.add("www.facebook.com");
+		shieldBox.add("facebook.com");
+		shieldBox.add("www.tumblr.com");
+		shieldBox.add("tumblr.com");
+		shieldBox.add("vkontakte.ru");
+		shieldBox.add("www.vkontakte.ru");
+		shieldBox.add("thetvdb.com");
+		shieldBox.add("www.thetvdb.com");
+		shieldBox.add("pinterest.com");
+		shieldBox.add("www.pinterest.com");
+		shieldBox.add("plus.google.com");
+		shieldBox.add("www.google.com");
+		shieldBox.add("google.com");
+		shieldBox.add("www.linkedin.com");
+		shieldBox.add("linkedin.com");
+		shieldBox.add("www.twitter.com");
+		shieldBox.add("twitter.com");
+		shieldBox.add("www.reddit.com");
+		shieldBox.add("reddit.com");
+		shieldBox.add("www.stumbleupon.com");
+		shieldBox.add("stumbleupon.com");
+		shieldBox.add("christmassocks.deviantart.com");
+		shieldBox.add("deviantart.com");
+	}
 	
 	
 	
@@ -222,8 +258,14 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 				Log.log(logger, Level.DEBUG, "urlChannel new  ----------------------------- url:%s;   body:%s", url,body);			
 				e.printStackTrace();
 			}
+		}else{
+			Log.log(logger, Level.DEBUG, "exist url ----------------------------- url:%s;", url);	
 		}
 		
+	}
+	
+	public boolean isShield(String domain){
+		return shieldBox.contains(domain);
 	}
 	
 	/**
@@ -231,9 +273,13 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 	 * @param url
 	 */
 	public boolean inCache(String url){
-		return RedisPool.hExist(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, url);
+		return RedisPool.hExist(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, url) || RedisPool.hExist(CoreBase.NEW_URL_BUT_GRAB_ERROR_CACHE_IFREESHARE_COM, url);
 	}
 	
+	
+	public void putFailedCache(String url, JsonObject message){
+		RedisPool.hSet(CoreBase.NEW_URL_BUT_GRAB_ERROR_CACHE_IFREESHARE_COM, url, message.toString());
+	}
 	
 	public void putCache(String url, JsonObject message){
 		RedisPool.hSet(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, url, message.toString());
@@ -244,7 +290,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 	}
 	
 	public JsonObject getCache(String url){
-		String result = RedisPool.getFieldValue(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, url);
+		String result = RedisPool.hGet(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, url);
 		if(result != null){
 			return new JsonObject(result);
 		}

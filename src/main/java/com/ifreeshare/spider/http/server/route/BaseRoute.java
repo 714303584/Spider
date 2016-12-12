@@ -1,5 +1,6 @@
 package com.ifreeshare.spider.http.server.route;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
@@ -8,6 +9,7 @@ import java.net.HttpURLConnection;
 
 import org.apache.logging.log4j.Logger;
 
+import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.log.Log;
@@ -26,8 +28,11 @@ public class BaseRoute {
 	public final static String OPTIONS = "OPTIONS";
 	public final static String PATCH = "PATCH";
 	
+	
+	
 	protected static  Logger logger  = Log.register(BaseRoute.class.getName());
 	
+	public static  Vertx vertx = Runner.vertx;
 	private  String url;
 	private String method;
 	private String template;

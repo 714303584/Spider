@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.spider.verticle.SpiderAdminHttpVerticle;
 import com.ifreeshare.spider.verticle.SpiderFileVerticle;
 import com.ifreeshare.spider.verticle.SpiderHeaderVerticle;
 import com.ifreeshare.spider.verticle.SpiderHtmlVerticle;
@@ -22,6 +23,8 @@ import com.ifreeshare.spider.verticle.SpiderMainVerticle;
  */
 public class Runner {
 	private static Logger logger = Log.register(Runner.class.getName());
+	
+	public static Vertx vertx = null;
 
 	public final static String BASE_ARRAY = "Base_URLs";
 
@@ -36,13 +39,13 @@ public class Runner {
 
 	public static void main(String[] args) {
 
-		Vertx vertx = Vertx.vertx();
+		vertx = Vertx.vertx();
 		Context context = vertx.getOrCreateContext();
 		
 		Configuration.load(defaultConfigPah, SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
 		
 		JsonArray baseUrls = new JsonArray();
-		 baseUrls.add("https://alphacoders.com/");
+//		 baseUrls.add("https://alphacoders.com/");
 //		baseUrls.add("http://www.jb51.net/");
 
 		JsonArray regular = new JsonArray();
@@ -65,7 +68,7 @@ public class Runner {
 		}
 
 		vertx.deployVerticle(new SpiderMainVerticle(vertx, context));
-
+		vertx.deployVerticle(new SpiderAdminHttpVerticle(vertx, context));
 	}
 	
 	

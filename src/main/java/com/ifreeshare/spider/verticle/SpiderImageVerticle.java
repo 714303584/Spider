@@ -5,6 +5,8 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
+
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +19,8 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+
+
 import javax.imageio.ImageIO;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -24,12 +28,19 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+
+
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+
+
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -37,6 +48,8 @@ import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
+
+
 
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.config.Configuration;
@@ -67,9 +80,13 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 	public static final String WORKER_ADDRESS = "com.ifreeshare.spider.verticle.SpiderImageVerticle";
 	
+	public static final String IMAGE_CHANGE_ADDRESS = "com.ifreeshare.spider.verticle.ImageChangeVerticle";
+	
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
 	
 	Channel<JsonObject> imageChannel = Channels.newChannel(100000);
+	
+	Channel<JsonObject> others = Channels.newChannel(100);
 	
 	//Storage path for downloading images 
 	private String imageSavePath;
@@ -84,6 +101,9 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	
 	//Word segmentation And Create index 
 	private IndexWriter imageIndexWriter;
+	
+	//Word segmentation And Create index 
+		private IndexReader indexReader;
 	
 	OkHttpClient   sClient;
 
@@ -146,8 +166,15 @@ public class SpiderImageVerticle extends AbstractVerticle {
 			JsonObject mbody = (JsonObject) message.body();
 			processor(mbody);
 		});
+		
+		vertx.eventBus().consumer(IMAGE_CHANGE_ADDRESS, message -> {
+			JsonObject mbody = (JsonObject) message.body();
+			Log.log(logger, Level.INFO, "images update  -----------------------------  exist message [%s]", message);
+			imageProcess(mbody);
+		});
 		processUrl();
 		processImage();
+		imagesInfoProcess();
 	}
 
 	
@@ -169,12 +196,109 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		case MessageType.URL_DISTR:
 			urlDistr(message);
 			break;
-
 		default:
 			break;
 		}
-
 	}
+	
+	public void imageProcess(JsonObject message){
+		try {
+			others.send(message);
+		} catch (SuspendExecution e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void imagesInfoProcess(){
+		new Fiber(() -> {
+			JsonObject message = null;
+			while ((message = others.receive()) != null) {
+				int type  =  message.getInteger(MessageType.MESSAGE_TYPE);
+				switch (type) {
+				case MessageType.KEYWORD_REPLACE:
+					keywordReplace(message);
+					break;
+
+				default:
+					break;
+				}
+			}
+		}).start();
+	}
+	
+	public void keywordReplace(JsonObject message){
+		String oldKeyword = message.getString(CoreBase.OLD_KEYWORDS);
+		String newKeyword = message.getString(CoreBase.NEW_KEYWORDS);
+		if(indexReader == null){
+			indexReader = LuceneFactory.getIndexReader(imageIndexPath);
+		}
+		
+		String[] value = {oldKeyword};
+		String[] field = { 
+//				CoreBase.HTML_TITLE, 
+				CoreBase.HTML_KEYWORDS
+//				, CoreBase.HTML_DESCRIPTION
+				};
+		Occur[] occur = { 
+//				Occur.SHOULD, 
+				Occur.SHOULD
+//				, Occur.SHOULD
+				};
+		
+		new Fiber(() -> {
+			
+			boolean flage = true;
+			int index = 0;
+			while (flage) {
+				Document[] documents = LuceneFactory.search(indexReader, value, 100, field, occur, index);
+				
+				for (int i = 0; i < documents.length; i++) {
+					Document document = documents[i];
+					String uuid = document.get(CoreBase.UUID);
+					String keywords = document.get(CoreBase.HTML_KEYWORDS);
+					if(!keywords.contains(oldKeyword)){
+						continue;
+					}
+					
+					if(keywords.contains(newKeyword)){
+						continue;
+					}
+					
+					document.removeField(keywords);
+					
+					keywords += keywords + ", " + newKeyword;
+					TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, keywords, Store.YES);
+					document.add(keywordsField);
+					
+					String thumbnail = document.get(CoreBase.DOC_THUMBNAIL);
+					String src = document.get(CoreBase.FILE_URL_PATH);
+					try {
+						imageIndexWriter.updateDocument(new Term(CoreBase.UUID, uuid), document);
+						imageIndexWriter.flush();
+						imageIndexWriter.commit();
+					} catch (Exception e) {
+						Log.log(logger, Level.ERROR, "images update  -----------------------------  exist document [%s]", document);
+						e.printStackTrace();
+					}
+				}
+				
+				
+				if(documents.length < 100){
+					flage = false;
+				}
+			}
+			
+		
+			
+			
+		}).start();
+		
+	}
+	
 	
 	
 	/**
@@ -228,11 +352,11 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						String sha1  = MD5Util.getFileSHA1(file);
 						
 						//Query the same MD5 from Redis 
-						String md5GetUuid = RedisPool.getFieldValue(CoreBase.MD5_UUID_IMAGE, Md5);
+						String md5GetUuid = RedisPool.hGet(CoreBase.MD5_UUID_IMAGE, Md5);
 						//Query the same sha1 from Redis 
-						String sha1GetUuid = RedisPool.getFieldValue(CoreBase.SHA1_UUID_IMAGE, sha1);
+						String sha1GetUuid = RedisPool.hGet(CoreBase.SHA1_UUID_IMAGE, sha1);
 						//Query the same sha512 from Redis 
-						String sha512GetUuid = RedisPool.getFieldValue(CoreBase.SHA512_UUID_IMAGE, sha512);
+						String sha512GetUuid = RedisPool.hGet(CoreBase.SHA512_UUID_IMAGE, sha512);
 						
 						if(md5GetUuid == null && sha1GetUuid == null && sha512GetUuid == null){
 							Image image = ImageIO.read(file);
@@ -306,10 +430,10 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		document.add(uuidField);
 		TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, imageJson.getString(CoreBase.HTML_KEYWORDS), Store.YES);
 		document.add(keywordsField);
-		TextField titleField = new TextField(CoreBase.HTML_TITLE, imageJson.getString(CoreBase.HTML_TITLE), Store.YES);
-		document.add(titleField);
-		TextField descriptionField = new TextField(CoreBase.HTML_DESCRIPTION, imageJson.getString(CoreBase.HTML_DESCRIPTION), Store.YES);
-		document.add(descriptionField);
+//		TextField titleField = new TextField(CoreBase.HTML_TITLE, imageJson.getString(CoreBase.HTML_TITLE), Store.YES);
+//		document.add(titleField);
+//		TextField descriptionField = new TextField(CoreBase.HTML_DESCRIPTION, imageJson.getString(CoreBase.HTML_DESCRIPTION), Store.YES);
+//		document.add(descriptionField);
 		StringField resolutionField = new StringField(CoreBase.RESOLUTION, imageJson.getString(CoreBase.RESOLUTION), Store.YES);
 		document.add(resolutionField);
 		// Web browsing path 

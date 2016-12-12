@@ -3,6 +3,7 @@ package com.ifreeshare.spider.verticle.validate;
 import java.net.MalformedURLException;
 
 import com.ifreeshare.spider.http.HttpUtil;
+import com.ifreeshare.spider.verticle.SpiderMainVerticle;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -26,10 +27,16 @@ public class RedisValidate implements MainVerticleValidate {
 
 	@Override
 	public  boolean urlExist(String url) {
+		
 		boolean flag = false;
 		Jedis jedis = null;
 		try {
 			String domain = HttpUtil.getDomain(url);
+			
+			if(SpiderMainVerticle.shieldBox.contains(domain)){
+				return true;
+			}
+			
 			jedis = jedisPool.getResource();
 			flag = jedis.hexists(domain, url);
 		} catch (MalformedURLException e) {

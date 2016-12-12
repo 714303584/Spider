@@ -130,7 +130,7 @@ public class RedisPool {
 	 * @param field
 	 * @return
 	 */
-	public static String  getFieldValue(String key, String field) {
+	public static String  hGet(String key, String field) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();

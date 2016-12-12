@@ -41,9 +41,17 @@ public class SearchImageRouter extends BaseRoute {
 		String keys = request.getParam("keys");
 		String index = request.getParam("index");
 		String size = request.getParam("size");
-		String[] value = { keys, keys, keys };
-		String[] field = { CoreBase.HTML_TITLE, CoreBase.HTML_KEYWORDS, CoreBase.HTML_DESCRIPTION };
-		Occur[] occur = { Occur.SHOULD, Occur.SHOULD, Occur.SHOULD };
+		String[] value = {keys};
+		String[] field = { 
+//				CoreBase.HTML_TITLE, 
+				CoreBase.HTML_KEYWORDS
+//				, CoreBase.HTML_DESCRIPTION
+				};
+		Occur[] occur = { 
+//				Occur.SHOULD, 
+				Occur.SHOULD
+//				, Occur.SHOULD
+				};
 		
 		int pageIndex = 1;
 		if(index != null && RegExpValidatorUtils.IsIntNumber(index)){

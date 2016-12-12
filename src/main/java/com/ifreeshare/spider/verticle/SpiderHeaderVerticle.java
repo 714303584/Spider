@@ -96,6 +96,7 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 		
 		
 		contentTypeMapVerticle.put(HttpUtil.TEXT_HTML, SpiderHtmlVerticle.WORKER_ADDRESS);
+		contentTypeMapVerticle.put(HttpUtil.IMAGE_GIF, SpiderImageVerticle.WORKER_ADDRESS);
 		contentTypeMapVerticle.put(HttpUtil.IMAGE_JPEG, SpiderImageVerticle.WORKER_ADDRESS);
 		contentTypeMapVerticle.put(HttpUtil.APPLICATION_OCTET_STREAM, SpiderFileVerticle.WORKER_ADDRESS);
 		

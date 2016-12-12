@@ -32,6 +32,8 @@ import com.ifreeshare.spider.http.server.route.image.GetImageRouter;
 import com.ifreeshare.spider.http.server.route.image.LoveImageRouter;
 import com.ifreeshare.spider.http.server.route.image.SearchImageRouter;
 import com.ifreeshare.spider.http.server.route.image.UpdateImageRouter;
+import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminUpdateHtml;
+import com.ifreeshare.spider.http.server.route.image.admin.ImagesAdminList;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPostRouter;
 import com.ifreeshare.spider.http.server.route.users.UserRegistPageRouter;
@@ -67,6 +69,8 @@ public class SpiderHttpServer extends AbstractVerticle {
 		routers.add(new UserLoginPostRouter());
 		routers.add(new UserLoginPageRouter());
 		routers.add(new LoveImageRouter());
+		routers.add(new ImagesAdminList());
+		routers.add(new ImageAdminUpdateHtml());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);
@@ -78,7 +82,6 @@ public class SpiderHttpServer extends AbstractVerticle {
 //	    router.route().handler(sessionHandler);
 
 		router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
-		
 		
 		
 		while (rit.hasNext()) {

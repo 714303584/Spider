@@ -221,44 +221,35 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 //						 Element charsetE = htmlDoc.select("meta[charset]").first();
 //						 if(charsetE != null) charset = charsetE.attr(HttpUtil.CHARSET);
 						 
+						 String domain = HttpUtil.getDomain(url);
+						 HtmlParser parser = getParserByWebsite(domain);
+						 Set<JsonObject> links = parser.getLinkValue(htmlDoc);
 						 
+//						 if(!message.containsKey(HttpUtil.HTML_TITLE)){
+//							 message.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
+//							 message.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
+//							 message.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
+//						 }
 						 
-						 HtmlParser parser = getParserByWebsite(HttpUtil.getMainDomain(url));
-						 Set<String> links = parser.getLinkValue(htmlDoc);
-						 
-						 message.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
-						 message.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
-						 message.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
+						
 						 
 						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
-						 
-						 org.apache.lucene.document.Document document = new  org.apache.lucene.document.Document();
-						 document.add( new Field(CoreBase.UUID, UUID.randomUUID().toString(), TextField.TYPE_STORED));
-						 document.add(new Field(CoreBase.HTML_KEYWORDS, message.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
-						document.add(new Field(CoreBase.HTML_TITLE, message.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
-						document.add(new Field(CoreBase.HTML_DESCRIPTION, message.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
-							IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
-							writer.addDocument(document);
-							writer.flush();
-							writer.commit();
-							
-						 Iterator<String> it = links.iterator();
+						 Iterator<JsonObject> it = links.iterator();
 						 while (it.hasNext()) {
-							 String href = it.next();
-							 if(href != null || href.trim().length() > 0){
+							 JsonObject href = it.next();
+							 if(href != null){
 								 JsonObject newUrl = new JsonObject();
-								 
 								 newUrl.put(MessageType.MESSAGE_TYPE, MessageType.URL_DISTR);
 								 
-								 JsonObject newBody = new JsonObject();
-								 newBody.put(HttpUtil.URL, href);
+//								 JsonObject newBody = new JsonObject();
+//								 newBody.put(HttpUtil.URL, href.getString(HttpUtil.URL));
 //								 newBody.put(HttpUtil.CHARSET, charset);
-								 newUrl.put(MessageType.MESSAGE_BODY, newBody);
-								 newBody.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
-								 newBody.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
-								 newBody.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
-								 
+								 newUrl.put(MessageType.MESSAGE_BODY, href);
+//								 newBody.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
+//								 newBody.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
+//								 newBody.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
+//								 
 								 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newUrl);
 							 }else{
 								 
@@ -268,6 +259,10 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.log(logger, Level.WARN, "html paser ----------------------------- Message:[%s];   e.message:[%s]", message,e.getMessage());
+						JsonObject newURl = new JsonObject();
+						newURl.put(MessageType.MESSAGE_TYPE, MessageType.Fail_URL);
+						newURl.put(MessageType.MESSAGE_BODY, message);
+						vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
 					}
 				}
 		});
@@ -278,12 +273,31 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 	
 	
 	
-	
+	/**
+	 * Get
+	 * @param webDomain
+	 * @return
+	 */
 	public HtmlParser getParserByWebsite(String webDomain){
 		HtmlParser parser =  websiteMapParser.get(webDomain);
 		if(parser == null){
-			parser = new BaseParser();
+			Iterator<String> it = websiteMapParser.keySet().iterator();
+			while (it.hasNext()) {
+				String domain = it.next();
+				if(webDomain.endsWith(domain)){
+					Log.log(logger, Level.WARN, "return domain parser ----------------------------- parserKey:[%s];  webDomain:[%s]", domain,webDomain);
+					parser = websiteMapParser.get(domain);
+					websiteMapParser.put(webDomain, parser);
+					return parser;
+				}
+			}
+			if(parser == null){
+				Log.log(logger, Level.WARN, "return default parser -----------------------------  webDomain:[%s]", webDomain);
+				return new BaseParser();
+			}
 		}
+		
+		Log.log(logger, Level.WARN, "get webdomain parser ----------------------------- parserKey:[%s];  parserClass:[%s]", webDomain, parser.getClass().getName());
 		return parser;
 	}
 	
@@ -312,6 +326,16 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 		
 	}
 	
+	
+//	 org.apache.lucene.document.Document document = new  org.apache.lucene.document.Document();
+//	 document.add( new Field(CoreBase.UUID, UUID.randomUUID().toString(), TextField.TYPE_STORED));
+//	 document.add(new Field(CoreBase.HTML_KEYWORDS, message.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
+//	document.add(new Field(CoreBase.HTML_TITLE, message.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
+//	document.add(new Field(CoreBase.HTML_DESCRIPTION, message.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
+//		IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
+//		writer.addDocument(document);
+//		writer.flush();
+//		writer.commit();
 	
 //	Map<String, List<String>> headers = response.headers().toMultimap();
 //  	

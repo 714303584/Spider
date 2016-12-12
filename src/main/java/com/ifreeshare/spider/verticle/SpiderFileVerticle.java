@@ -226,10 +226,10 @@ public class SpiderFileVerticle extends AbstractVerticle {
 					boolean existsha512 =  RedisPool.hExist(CoreBase.SHA512_UUID_COMPRESSED_FILE, sha512);
 					
 					if(existmd5 || existsha1 || existsha512){
-						RedisPool.addfield(CoreBase.MD5_SHA1_SHA512_EXIST_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
+						RedisPool.hSet(CoreBase.MD5_SHA1_SHA512_EXIST_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
 						continue;
 					}
-					RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
+					RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_COMPRESSED_FILE_KEY, uuid, fileInfo.toString());
 					
 					Date date = new Date();
 					int year = DateUtil.getYear(date);
@@ -326,10 +326,10 @@ public class SpiderFileVerticle extends AbstractVerticle {
 	 * @param json the File Information
 	 */
 	private void saveToRedis(String uuid, String md5,String sha1,String sha512,JsonObject json){
-		RedisPool.addfield(CoreBase.MD5_UUID_FILE, md5, uuid);
-		RedisPool.addfield(CoreBase.SHA1_UUID_FILE, sha1, uuid);
-		RedisPool.addfield(CoreBase.SHA512_UUID_FILE, sha512, uuid);
-		RedisPool.addfield(CoreBase.UUID_MD5_SHA1_SHA512_FILE_KEY, uuid, json.toString());
+		RedisPool.hSet(CoreBase.MD5_UUID_FILE, md5, uuid);
+		RedisPool.hSet(CoreBase.SHA1_UUID_FILE, sha1, uuid);
+		RedisPool.hSet(CoreBase.SHA512_UUID_FILE, sha512, uuid);
+		RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_FILE_KEY, uuid, json.toString());
 	}
 	
 	/**

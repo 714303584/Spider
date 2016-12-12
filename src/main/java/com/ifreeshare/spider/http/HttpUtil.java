@@ -32,6 +32,8 @@ public class HttpUtil {
 	
 	public static final String IMAGE_JPEG = "image/jpeg";
 	
+	public static final String IMAGE_GIF = "image/gif";
+	
 	public static final String IMAGE_PNG = "image/png";
 	
 	public static final String APPLICATION_OCTET_STREAM = "application/octet-stream"; 
@@ -357,7 +359,7 @@ public class HttpUtil {
 	public static void main(String[] args) {
 //		System.out.println(HttpUtil.getDomain("https://www.baidu.com/s?wd=java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%20%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2&rsv_spt=1&rsv_iqid=0x9b5994530000f315&issp=1&f=3&rsv_bp=0&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&rsv_sug3=33&rsv_sug1=41&rsv_sug7=100&rsv_sug2=0&prefixsug=java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%20zhiding&rsp=0&inputT=28427&rsv_sug4=28428"));;
 	
-		String urlS = "http://ifreeshare.tf:81/201607/books/JMeterzwsc_jb51.rar";
+		String urlS = "https://wall.alphacoders.com/big.php?i=71641&lang=Chinese";
 		
 		try {
 			System.out.println(HttpUtil.getDomain(urlS));

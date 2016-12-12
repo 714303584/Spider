@@ -31,7 +31,7 @@ public class GetImageRouter extends BaseRoute {
 			return;
 		}
 		
-		String info = RedisPool.getFieldValue(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
+		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
 		if(CoreBase.DATA_TYPE_JSON.equals(oType)){
 			response.end(info);
 			return;

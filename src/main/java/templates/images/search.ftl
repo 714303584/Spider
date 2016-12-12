@@ -79,9 +79,9 @@
 								            	
 								            	 <a href="#" class="ilike" onclick="loveImage('${item.uuid}')" style="display: none;">我喜欢</a>
 								          </div>
-								            <h3>${item.name}</h3>
+								            <h3></h3>
 								            <div class="iNum"><span>1</span><a href="http://www.niurenzm.com/demo/969/#">4</a></div>
-								          <p>${item.description}</p>
+								          <p>${item.keywords}</p>
 										</li>
 									</#list>
 							</ul>

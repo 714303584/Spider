@@ -44,7 +44,7 @@ public class UserLoginPostRouter extends BaseRoute {
 		String username = params.get(CoreBase.USERNAME);
 		String password = params.get(CoreBase.PASSWORD);
 		
-		String userInfo = RedisPool.getFieldValue(CoreBase.USERNAME_USER_INFO_IFREESHARE_COM, username);
+		String userInfo = RedisPool.hGet(CoreBase.USERNAME_USER_INFO_IFREESHARE_COM, username);
 		
 		if(userInfo != null && username.trim().length() > 0){
 			JsonObject userJson = new JsonObject(userInfo);
