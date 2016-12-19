@@ -18,25 +18,33 @@ import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 
-
+/**
+ * Analytic website (alphacoders.com)
+ * 
+ * @author zhuss
+ */
 public class AlphacodersComParser extends BaseParser  {
 
 	@Override
 	public Set<JsonObject> getLinkValue(Document doc) {
 		HashSet<JsonObject> results = new HashSet<JsonObject>();
 		Map<String, JsonObject> url_relation_info = new HashMap<String, JsonObject>();
+		//Picture display div class(item)
 		Elements items =  doc.getElementsByClass("item");
 		Iterator<Element> it = items.iterator();
 		while (it.hasNext()) {
 			Element item = it.next();
+			//Hyperlink to image label 
 			Elements links =  item.getElementsByTag("a");
 			Iterator<Element> lit = links.iterator();
+			//Keyword for this image , Separator is a ",". 
 			StringBuffer sb = new StringBuffer();
 			while(lit.hasNext()){
 				Element link = lit.next();
 				String href =  link.absUrl("href");
 				String value = link.attr(HttpUtil.LINK_A_HREF);
-				String text =  link.text();
+				//Image keyword acquisition 
+				String text =  link.ownText();
 				String title = link.attr("title");
 				try {
 					String domain = HttpUtil.getDomain(href);
@@ -53,52 +61,54 @@ public class AlphacodersComParser extends BaseParser  {
 					continue;
 				}
 				
-				if(url_relation_info.containsKey(href)){
-					continue;
-				}
+				String keywords = text+ BaseParser.KEYWORD_SEPARATOR+ title;
 				
-				String keywords = "";
-				
-				if(text.contains(title)){
-				 keywords = text;	
-				}else{
-					keywords = text + "," + title;
-				}
+//				if(text.contains(title)){
+//				 keywords = text;	
+//				}else{
+//					keywords = text + BaseParser.KEYWORD_SEPARATOR + title;
+//				}
 				
 				JsonObject newLink = new JsonObject();
 				newLink.put(CoreBase.URL, href);
-				newLink.put(CoreBase.HTML_KEYWORDS, keywords);
-				url_relation_info.put(href, newLink);
+				newLink.put(CoreBase.HTML_KEYWORDS, BaseParser.keywordDeWeight(keywords));
+			
 				if(sb.indexOf(text) == -1){
-					sb.append(text + ", ");
+					sb.append(text + BaseParser.KEYWORD_SEPARATOR);
 				}
 				
-				if(sb.indexOf(title) == -1){
-					sb.append(title + ", ");
+				if(url_relation_info.containsKey(href)){
+					continue;
 				}
+				url_relation_info.put(href, newLink);
+//				if(sb.indexOf(title) == -1){
+//					sb.append(title + BaseParser.KEYWORD_SEPARATOR);
+//				}
 					
 				
 			}
 			
-			Elements dataHrefs = doc.getElementsByAttribute("data-href");
+			String dataKeyword = BaseParser.keywordDeWeight(sb.toString());
+			
+
+			//Picture storage address 
+			Elements dataHrefs = item.getElementsByAttribute("data-href");
 			Iterator<Element> itdata = dataHrefs.iterator();
 			while (itdata.hasNext()) {
 				Element dataHref = itdata.next();
 				String dataHrefValue = dataHref.attr("data-href");
 				JsonObject downLink = new JsonObject();
 				
+				downLink.put(CoreBase.URL, dataHrefValue);
+				downLink.put(CoreBase.HTML_KEYWORDS, dataKeyword);
+				
 				if(url_relation_info.containsKey(dataHrefValue)){
 					continue;
 				}
-				downLink.put(CoreBase.URL, dataHrefValue);
-				downLink.put(CoreBase.HTML_KEYWORDS, sb.toString());
-				results.add(downLink);
+				url_relation_info.put(dataHrefValue, downLink);
 			}
-			
-			
 			item.remove();
 		}
-		
 		
 		Set<JsonObject> superLinks = super.getLinkValue(doc);
 		results.addAll(superLinks);
