@@ -1,17 +1,14 @@
 package com.ifreeshare.spider.http.server.route.image.admin;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.pdfbox.util.operator.NextLine;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import redis.clients.jedis.ScanResult;
 

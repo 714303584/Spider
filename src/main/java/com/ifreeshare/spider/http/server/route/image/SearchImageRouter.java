@@ -28,7 +28,7 @@ import com.ifreeshare.util.RegExpValidatorUtils;
 public class SearchImageRouter extends BaseRoute {
 
 	public SearchImageRouter() {
-		super("/search/image/:itype/:otype/", BaseRoute.GET, "templates/images/search.ftl");
+		super("/public/search/image/:itype/:otype/", BaseRoute.GET, "templates/images/search.ftl");
 	}
 
 	@Override

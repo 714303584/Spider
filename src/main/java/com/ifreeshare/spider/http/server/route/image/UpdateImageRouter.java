@@ -12,7 +12,7 @@ import com.ifreeshare.spider.http.server.route.BaseRoute;
 public class UpdateImageRouter extends BaseRoute {
 	
 	public UpdateImageRouter(FreeMarkerTemplateEngine freeMarkerTemplateEngine) {
-		super("/image/:id/:itype/:otype/", BaseRoute.POST, "templates/images/edit.ftl", freeMarkerTemplateEngine);
+		super("/public/image/:id/:itype/:otype/", BaseRoute.POST, "templates/images/edit.ftl", freeMarkerTemplateEngine);
 	}
 
 	@Override

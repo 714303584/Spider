@@ -2,24 +2,11 @@ package com.ifreeshare.spider.http.server.route.image;
 
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.BooleanClause.Occur;
-
-import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.core.CoreBase;
-import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
-import com.ifreeshare.spider.log.Log;
-import com.ifreeshare.spider.log.Loggable.Level;
-import com.ifreeshare.util.RegExpValidatorUtils;
 
 /**
  * @author zhuss
@@ -29,7 +16,7 @@ import com.ifreeshare.util.RegExpValidatorUtils;
 public class LoveImageRouter extends BaseRoute {
 
 	public LoveImageRouter() {
-		super("/love/image/:itype/:otype/:uuid/", BaseRoute.GET, "templates/images/search.ftl");
+		super("/public/love/image/:itype/:otype/:uuid/", BaseRoute.GET, "templates/images/search.ftl");
 	}
 
 	@Override

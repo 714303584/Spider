@@ -17,7 +17,7 @@ public class ImageResourceCreate extends BaseRoute {
 	public static final IndexWriter indexWriter = LuceneFactory.getIndexWriter("H:\\imageresource");
 
 	public ImageResourceCreate() {
-		super("/image/resource/:itype/:otype/", BaseRoute.POST, "templates/images/search.ftl");
+		super("/public/image/resource/:itype/:otype/", BaseRoute.POST, "templates/images/search.ftl");
 	}
 
 	/**

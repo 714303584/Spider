@@ -15,7 +15,7 @@ import com.ifreeshare.spider.redis.RedisPool;
 public class GetImageRouter extends BaseRoute {
 
 	public GetImageRouter(FreeMarkerTemplateEngine freeMarkerTemplateEngine) {
-		super("/image/:id/:itype/:otype/", BaseRoute.GET, "templates/images/edit.ftl", freeMarkerTemplateEngine);
+		super("/public/image/:id/:itype/:otype/", BaseRoute.GET, "templates/images/edit.ftl", freeMarkerTemplateEngine);
 	}
 
 	@Override
