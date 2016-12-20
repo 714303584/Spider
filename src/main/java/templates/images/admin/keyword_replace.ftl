@@ -73,9 +73,20 @@
 						id="example-text-input">
 				</div>
 			</div>
+			
+			<div class="form-group row">
+				<label for="example-text-input" class="col-xs-2 col-form-label">操作:</label>
+				<div class="col-xs-10">
+					  <select class="form-control" id="opType" name="optype">
+					      <option value="0">替换</option>
+					      <option value="1">移除</option>
+					    </select>
+				</div>
+			</div>
+			
 			<div class="form-group row">
 		      <div class="offset-sm-2 col-sm-10">
-		        <button type="submit" class="btn btn-primary">Replace</button>
+		        <button type="submit" class="btn btn-primary">提交执行</button>
 		      </div>
 		    </div>
 		</form>

@@ -45,7 +45,7 @@
 
 
 	<div class="container">
-		<form action="/user/login/form/html/" method="post" >
+		<form action="/login" method="post" >
 		
 				<div class="form-group row" >
 				<label for="example-text-input" class="col-xs-2 col-form-label">用户名称:</label>

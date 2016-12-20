@@ -55,7 +55,7 @@
 					    <input type="text" name="size"  style="width: 500px;display:none" value="20" class="form-control" id="exampleInputEmail2" required="required"/>
 						  <div class="form-group">
 						    <label for="exampleInputEmail2"></label>
-						    <input type="text" name="keys" style="width: 500px" value="${context.keys}" class="form-control" id="exampleInputEmail2" required="required"/>
+						    <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2" required="required"/>
 						  </div>
 						  <button type="submit" class="btn btn-primary">搜索一下</button>
 						</form>
@@ -101,13 +101,13 @@
 			<div class="container" style="text-align:center">
 				  <ul class="pagination pagination-lg">
 				    <li class="page-item">
-				      <a class="page-link" href="/admin/search/image/get/html/?keys=${context.keys}&index=${context.previous}&size=${context.sizep}" aria-label="Previous">
+				      <a class="page-link" href="/admin/search/image/get/html/?index=${context.previous}&size=${context.sizep}" aria-label="Previous">
 				        <span aria-hidden="true">&laquo;</span>
 				        <span class="sr-only">Previous</span>
 				      </a>
 				    </li>
 				    <li class="page-item">
-				      <a class="page-link" href="/admin/search/image/get/html/?keys=${context.keys}&index=${context.nextp }&size=${context.sizep}" aria-label="Next">
+				      <a class="page-link" href="/admin/search/image/get/html/?index=${context.nextp }&size=${context.sizep}" aria-label="Next">
 				        <span aria-hidden="true">&raquo;</span>
 				        <span class="sr-only">Next</span>
 				      </a>

@@ -26,7 +26,7 @@
    	
    
   </head>
-  <body>
+  <body style="background: url(/static/css/falls/images/body_bg.jpg);">
 
     <nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
       <button class="navbar-toggler visible-xs" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
@@ -72,7 +72,9 @@
 									<#list context.pages as item>
 										 <li class="masonry-brick" style="position: absolute; top: 0px; left: 0px;">
 								        	<div class="img_block">
+								        	 <a href="/show/image/get/html/?id=${ item.uuid }" >
 								            	<img src="http://192.168.3.148:808/thumbnail${item.thumbnail}" alt="">
+								             </a>
 								            	
 								            	 <a href="http://192.168.3.148:808/${item.src}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
 								               
