@@ -16,7 +16,7 @@ import com.ifreeshare.spider.http.server.route.BaseRoute;
 public class UserLoginPageRouter extends BaseRoute {
 
 	public UserLoginPageRouter() {
-		super("/user/login/:itype/:otype/", BaseRoute.GET, "/templates/users/login.ftl");
+		super("/public/login/:itype/:otype/", BaseRoute.GET, "/templates/users/login.ftl");
 	}
 
 	@Override

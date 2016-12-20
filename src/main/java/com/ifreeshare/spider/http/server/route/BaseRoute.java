@@ -14,12 +14,14 @@ import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
+
 /**
- * 
+ * The parent of the routing address
  * @author zhuss
  */
 public class BaseRoute {
 	
+	//Http request method
 	public final static String GET = "GET";
 	public final static String HEAD = "HEAD";
 	public final static String PUT = "PUT";
@@ -28,15 +30,17 @@ public class BaseRoute {
 	public final static String OPTIONS = "OPTIONS";
 	public final static String PATCH = "PATCH";
 	
-	
-	
+	//Log output
 	protected static  Logger logger  = Log.register(BaseRoute.class.getName());
 	
 	public static  Vertx vertx = Runner.vertx;
 	private  String url;
 	private String method;
 	private String template;
-	FreeMarkerTemplateEngine freeMarkerTemplateEngine = FreeMarkerTemplateEngine.create();; 
+	
+	//Template Engine (freemarker)
+	FreeMarkerTemplateEngine freeMarkerTemplateEngine = FreeMarkerTemplateEngine.create();
+	
 	public BaseRoute(String url, String method, FreeMarkerTemplateEngine freeMarkerTemplateEngine) {
 		this.url = url;
 		this.method = method;
@@ -113,6 +117,10 @@ public class BaseRoute {
 		context.response().end(end);
 	}
 	
+	/**
+	 * The rendering of the response
+	 * @param context  ------ The context of a request
+	 */
 	public void render(RoutingContext context){
 		freeMarkerTemplateEngine.render(context, template, res -> {
 			if (res.succeeded()) {
