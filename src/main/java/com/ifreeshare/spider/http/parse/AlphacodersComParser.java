@@ -20,7 +20,6 @@ import com.ifreeshare.spider.log.Loggable.Level;
 
 /**
  * Analytic website (alphacoders.com)
- * 
  * @author zhuss
  */
 public class AlphacodersComParser extends BaseParser  {
@@ -46,6 +45,11 @@ public class AlphacodersComParser extends BaseParser  {
 				//Image keyword acquisition 
 				String text =  link.ownText();
 				String title = link.attr("title");
+				
+				if(!validatUrl(href, value)){
+					continue;
+				}
+				
 				try {
 					String domain = HttpUtil.getDomain(href);
 					if(!domain.endsWith("alphacoders.com")){
@@ -53,13 +57,10 @@ public class AlphacodersComParser extends BaseParser  {
 					}
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
-					Log.log(logger, Level.DEBUG, "href[%s]",href);
+					Log.log(logger, Level.ERROR, "href[%s]",href);
 				}
 		
 				
-				if(!validatUrl(href, value)){
-					continue;
-				}
 				
 				String keywords = text+ BaseParser.KEYWORD_SEPARATOR+ title;
 				
