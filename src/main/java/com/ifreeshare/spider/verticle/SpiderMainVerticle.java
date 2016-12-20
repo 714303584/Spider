@@ -134,7 +134,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 					Log.log(logger, Level.DEBUG, "distributer fiber ----------------------------- send url:%s;   body:%s", url,info);
 					Log.log(logger, Level.DEBUG, "Distribute cache -----------------------------cache ---->size:%d", cache.size());
 					
-					
+					Fiber.sleep(5000);
 					if(cache.isEmpty()){
 						ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, "0", 1000);
 						List<Map.Entry<String, String>> entrys = sr.getResult();
@@ -149,7 +149,6 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 							Log.log(logger, Level.DEBUG, "put in cache ----------------------------- url:%s;   body:%s", key,value);
 						}
 					}
-					Fiber.sleep(5000);
 //					if(RedisPool.h)
 				} catch (Exception e) {
 					e.printStackTrace();
