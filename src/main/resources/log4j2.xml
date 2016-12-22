@@ -1,4 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>  
+<configuration status="OFF">
+  <ThresholdFilter level="debug"/>
+
+  <appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <ThresholdFilter level="debug"/>
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+
+    <File name="LogError" fileName="log/mcc-error.log" append="true">
+      <ThresholdFilter level="error"/>
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>
+    <RollingFile name="RollingFile" fileName="log/spider.log"
+                 filePattern="log/$${date:yyyy-MM}/spider-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <SizeBasedTriggeringPolicy size="100 MB" />
+    </RollingFile>
+
+  </appenders>  
+  <loggers>  
+    <Logger name="com.ifreeshare.spider" level="debug">
+    </Logger>
+    
+    
+    <root level="error">  
+      <appender-ref ref="Console"/>
+      <appender-ref ref="LogError"/>
+      <appender-ref ref="RollingFile"/>
+    </root>  
+  </loggers>  
+</configuration>  
+
+
+<!-- 
+
+
+<?xml version="1.0" encoding="UTF-8"?>  
 <configuration status="OFF">  
   <appenders>  
     <Console name="Console" target="SYSTEM_OUT">  
@@ -20,3 +58,13 @@
     </root>  
   </loggers>  
 </configuration>  
+
+
+
+
+ -->
+
+
+
+
+
