@@ -95,6 +95,16 @@ public class LuceneFactory {
     	return indexWriter;
 	}
 	
+	public static IndexReader getIndexReader(String path){
+		try {
+			return DirectoryReader.open(getDirectory(path));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
 	
 	public static IndexReader getIndexReader(){
 //		if(indexReader != null){
@@ -209,6 +219,45 @@ public class LuceneFactory {
 			return null;
 		}
 	}
+	
+	
+	public static Document[] search(IndexReader indexReader, String[] value, int pageSize, String[] field, Occur[] occur, int pageindex){
+		Query query = null;
+		try {
+			IndexSearcher searcher = new IndexSearcher(indexReader);
+			query = MultiFieldQueryParser.parse(value, field, occur, new IKAnalyzer4Lucene5());
+			
+			ScoreDoc last = null;
+			if(pageindex > 1){
+				int numb = pageSize * (pageindex - 1);
+				TopDocs tds = searcher.search(query, numb);
+				int lastNum = numb - 1;
+				if(tds.totalHits <  lastNum ){
+					return null;
+				}else{
+					last = tds.scoreDocs[lastNum];
+				}
+			}
+			
+			TopDocs docs = searcher.searchAfter(last,query, pageSize);
+			
+		
+			ScoreDoc[] scoreDocs =  docs.scoreDocs;
+			Document[] documents = new Document[scoreDocs.length];
+			for (int i = 0; i < scoreDocs.length; i++) {
+	           Document document = searcher.doc(scoreDocs[i].doc); 
+	           documents[i] = document;
+			}
+			 return documents;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	
 	
