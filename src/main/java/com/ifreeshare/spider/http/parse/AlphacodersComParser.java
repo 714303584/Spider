@@ -30,6 +30,7 @@ public class AlphacodersComParser extends BaseParser  {
 		Map<String, JsonObject> url_relation_info = new HashMap<String, JsonObject>();
 		//Picture display div class(item)
 		Elements items =  doc.getElementsByClass("item");
+		items.addAll(doc.getElementsByClass("thumb-container-big"));
 		Iterator<Element> it = items.iterator();
 		while (it.hasNext()) {
 			Element item = it.next();
@@ -90,7 +91,6 @@ public class AlphacodersComParser extends BaseParser  {
 			}
 			
 			String dataKeyword = BaseParser.keywordDeWeight(sb.toString());
-			
 
 			//Picture storage address 
 			Elements dataHrefs = item.getElementsByAttribute("data-href");
@@ -114,38 +114,6 @@ public class AlphacodersComParser extends BaseParser  {
 		Set<JsonObject> superLinks = super.getLinkValue(doc);
 		results.addAll(superLinks);
 		results.addAll(url_relation_info.values());
-		
-//		Iterator<Element> it = doc.select("a[href]").iterator();
-//		while (it.hasNext()) {
-//			Element ele = it.next();
-//			String link = ele.attr("abs:"+HttpUtil.LINK_A_HREF);
-//			String value = ele.attr(HttpUtil.LINK_A_HREF);
-//			if(link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0){
-//				try {
-//					String domain = HttpUtil.getDomain(link);
-//					if(domain.endsWith("alphacoders.com")){
-//						results.add(link);
-//					}
-//				} catch (MalformedURLException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		
-//		Elements dataHrefs = doc.getElementsByAttribute("data-href");
-//		Iterator<Element> itdata = dataHrefs.iterator();
-//		while (itdata.hasNext()) {
-//			Element dataHref = itdata.next();
-//			String dataHrefValue = dataHref.attr("data-href");
-//			try {
-//				String domain = HttpUtil.getDomain(dataHrefValue);
-//				if(domain.endsWith("alphacoders.com")){
-//					results.add(dataHrefValue);
-//				}
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			}
-//		}
 		return results;
 	}
 

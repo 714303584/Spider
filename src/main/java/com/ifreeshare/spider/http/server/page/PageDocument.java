@@ -1,5 +1,8 @@
 package com.ifreeshare.spider.http.server.page;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PageDocument {
 	
 	private String uuid;
@@ -22,6 +25,8 @@ public class PageDocument {
 	
 	private String origin;
 	
+	private List<String> tags = new ArrayList<String>();
+	
 	private long size;
 	
 	private long favorite;
@@ -40,6 +45,14 @@ public class PageDocument {
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 	public void setUuid(String uuid) {

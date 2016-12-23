@@ -80,7 +80,7 @@ public class SpiderAdminHttpVerticle extends AbstractVerticle {
   		AuthProvider authProvider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, new JsonObject());
   		
   	    router.route().handler(UserSessionHandler.create(authProvider));
-  		router.route("/admin/*").handler(RedirectAuthHandler.create(authProvider, "/user/login/get/html/"));
+  		router.route("/admin/*").handler(RedirectAuthHandler.create(authProvider, "/public/login/get/html/"));
   		router.route("/login/").handler(FormLoginHandler.create(authProvider).setDirectLoggedInOKURL("/admin/search/image/get/html/?keys=11"));
 	  		
 	    

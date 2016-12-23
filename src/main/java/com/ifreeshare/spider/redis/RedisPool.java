@@ -1,11 +1,14 @@
 package com.ifreeshare.spider.redis;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.ScanParams;
@@ -24,6 +27,7 @@ public class RedisPool {
 	 */
 	private static  JedisPool jedisPool = null;
 	
+	private static JedisCluster jedisCluster = null;
 	
 	static{
 		JedisPoolConfig config = new JedisPoolConfig();
@@ -32,6 +36,9 @@ public class RedisPool {
 		config.setMaxWaitMillis(1000l);
 		config.setTestOnBorrow(false);
 		jedisPool = new JedisPool(config, "127.0.0.1", 6379);
+		Set<HostAndPort> hostAndPorts = new HashSet<HostAndPort>();
+		hostAndPorts.add(new HostAndPort("127.0.0.1", 6379));
+		jedisCluster = new JedisCluster(hostAndPorts);
 	}
 
 	/**
