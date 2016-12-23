@@ -159,25 +159,25 @@
 		<dependency>
 		  <groupId>org.apache.lucene</groupId>
 		  <artifactId>lucene-core</artifactId>
-		  <version>6.2.0</version>
+		  <version>6.3.0</version>
 		</dependency>
 		
 		<dependency>
 		  <groupId>org.apache.lucene</groupId>
 		  <artifactId>lucene-memory</artifactId>
-		 <version>6.2.0</version>
+		 <version>6.3.0</version>
 		</dependency>
 		
 		<dependency>
 		  <groupId>org.apache.lucene</groupId>
 		  <artifactId>lucene-highlighter</artifactId>
-		  <version>6.2.0</version>
+		  <version>6.3.0</version>
 		</dependency>
 		
 		<dependency>
 		  <groupId>org.apache.lucene</groupId>
 		  <artifactId>lucene-queryparser</artifactId>
-		  <version>6.2.0</version>
+		  <version>6.3.0</version>
 		</dependency>
 		
 		
