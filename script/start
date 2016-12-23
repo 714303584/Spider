@@ -1,0 +1,1 @@
+exec java -cp "$classpath" -Djava.net.preferIPv4Stack=true -javaagent:/opt/mcc-unit/api/lib/quasar-core-0.7.6.jar com.svoc.mcc.Runner 1>/opt/mcc-unit/api/log/mcc-api.out 2>&1
