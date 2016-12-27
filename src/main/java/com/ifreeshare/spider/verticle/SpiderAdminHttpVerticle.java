@@ -4,6 +4,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuth;
@@ -27,9 +28,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
+import com.ifreeshare.spider.http.server.route.image.ShowResouceRouter;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminKeywordReplace;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminKeywordReplacePost;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminUpdateHtml;
+import com.ifreeshare.spider.http.server.route.image.admin.ImageResourceCreate;
+import com.ifreeshare.spider.http.server.route.image.admin.ImageResourceGet;
 import com.ifreeshare.spider.http.server.route.image.admin.ImagesAdminList;
 import com.ifreeshare.spider.http.server.route.users.UserDetailsPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPageRouter;
@@ -66,6 +70,9 @@ public class SpiderAdminHttpVerticle extends AbstractVerticle {
 		routers.add(new ImageAdminKeywordReplace());
 		routers.add(new ImageAdminKeywordReplacePost());
 		routers.add(new UserLoginPageRouter());
+		routers.add(new ImageResourceGet());
+		routers.add(new ImageResourceCreate());
+		routers.add(new ShowResouceRouter());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);
@@ -82,9 +89,6 @@ public class SpiderAdminHttpVerticle extends AbstractVerticle {
   	    router.route().handler(UserSessionHandler.create(authProvider));
   		router.route("/admin/*").handler(RedirectAuthHandler.create(authProvider, "/public/login/get/html/"));
   		router.route("/login/").handler(FormLoginHandler.create(authProvider).setDirectLoggedInOKURL("/admin/search/image/get/html/?keys=11"));
-	  		
-	    
-	
 	    
 //	    SessionStore store = ClusteredSessionStore.create(vertx);
 //	    SessionHandler sessionHandler = SessionHandler.create(store);

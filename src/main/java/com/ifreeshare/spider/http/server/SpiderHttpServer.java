@@ -4,12 +4,22 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.SocketAddress;
+import io.vertx.ext.auth.AuthProvider;
+import io.vertx.ext.auth.shiro.ShiroAuth;
+import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CookieHandler;
+import io.vertx.ext.web.handler.FormLoginHandler;
+import io.vertx.ext.web.handler.RedirectAuthHandler;
+import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.handler.UserSessionHandler;
+import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
 import java.util.ArrayList;
@@ -31,9 +41,9 @@ import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.http.server.route.image.GetImageRouter;
 import com.ifreeshare.spider.http.server.route.image.LoveImageRouter;
 import com.ifreeshare.spider.http.server.route.image.SearchImageRouter;
+import com.ifreeshare.spider.http.server.route.image.ShowImageRouter;
 import com.ifreeshare.spider.http.server.route.image.UpdateImageRouter;
-import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminUpdateHtml;
-import com.ifreeshare.spider.http.server.route.image.admin.ImagesAdminList;
+import com.ifreeshare.spider.http.server.route.users.UserDetailsPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPostRouter;
 import com.ifreeshare.spider.http.server.route.users.UserRegistPageRouter;
@@ -41,7 +51,10 @@ import com.ifreeshare.spider.http.server.route.users.UserRegistPostRouter;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 
-
+/**
+ * User services 
+ * @author zhuss
+ */
 public class SpiderHttpServer extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderHttpServer.class.getName());
 	
@@ -69,17 +82,52 @@ public class SpiderHttpServer extends AbstractVerticle {
 		routers.add(new UserLoginPostRouter());
 		routers.add(new UserLoginPageRouter());
 		routers.add(new LoveImageRouter());
-		routers.add(new ImagesAdminList());
-		routers.add(new ImageAdminUpdateHtml());
+		routers.add(new ShowImageRouter());
+		routers.add(new UserDetailsPageRouter());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);
-	    router.route().handler(BodyHandler.create());
+		
+		//cookies, sessions and request bodies
+		router.route().handler(BodyHandler.create());
+		router.route().handler(CookieHandler.create());
+		router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
+		
+		/**
+		 * login
+		 */
+		AuthProvider authProvider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, new JsonObject());
+		
+		
+//		authProvider.authenticate(new JsonObject(), result -> {
+//			User user = result.result();
+//		});
+//		
+		
+	    router.route().handler(UserSessionHandler.create(authProvider));
+		router.route("/private/*").handler(RedirectAuthHandler.create(authProvider, "/login/get/html/"));
+		router.route("/login/").handler(FormLoginHandler.create(authProvider).setDirectLoggedInOKURL("/user/details/get/html/"));
+		
+	    router.route().handler(context -> {
+	    	HttpServerRequest request = context.request();
+	    	SocketAddress clientAddress = request.remoteAddress();
+	    	String ipAddress = clientAddress.host();
+	    	String path = request.path();
+	    	Log.log(logger, Level.INFO, "client host[%s], request path[%s]", ipAddress, path);
+	    	context.next();
+	    });
 	    
 	    router.route().handler(CookieHandler.create());
 //	    SessionStore store = ClusteredSessionStore.create(vertx);
 //	    SessionHandler sessionHandler = SessionHandler.create(store);
 //	    router.route().handler(sessionHandler);
+	    
+	    router.route("/logout").handler(context -> {
+	        context.clearUser();
+	        // Redirect back to the index page
+	        context.response().putHeader("location", "/").setStatusCode(302).end();
+	      });
+	    
 
 		router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
 		
@@ -103,12 +151,14 @@ public class SpiderHttpServer extends AbstractVerticle {
 					r.process(context);
 				});
 				break;
-
-
 			default:
 				break;
 			}
 		}
+		
+		router.get("/private/mypage").handler(context -> {
+			context.response().end("ok");
+		});
 		
 
 		router.get("/file/search").handler(context -> {

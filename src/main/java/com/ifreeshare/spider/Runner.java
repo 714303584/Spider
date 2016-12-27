@@ -33,42 +33,48 @@ public class Runner {
 	public static final String defaultConfigPah = "/etc/ifreeshare/spider-config.xml";
 
 	static {
+		
 		System.setProperty("co.paralleluniverse.fibers.detectRunawayFibers",
 				"false");
 	}
 
 	public static void main(String[] args) {
-
-		vertx = Vertx.vertx();
-		Context context = vertx.getOrCreateContext();
-		
-		Configuration.load(defaultConfigPah, SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
-		
-		JsonArray baseUrls = new JsonArray();
-//		 baseUrls.add("https://alphacoders.com/");
-//		baseUrls.add("http://www.jb51.net/");
-
-		JsonArray regular = new JsonArray();
-		regular.add("^[.]+.taobao.com([\\w/]+)\\.$");
-		regular.add("^[.]+alphacoders.com([\\w/]+)\\.$");
-
-		context.put(BASE_ARRAY, baseUrls);
-		context.put(PASS_ARRAY, regular);
-
-		vertx.deployVerticle(new SpiderHeaderVerticle(vertx, context));
-		vertx.deployVerticle(new SpiderHtmlVerticle(vertx, context));
-		vertx.deployVerticle(new SpiderImageVerticle(vertx, context));
-		vertx.deployVerticle(new SpiderFileVerticle(vertx, context));
-
 		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		}
+			vertx = Vertx.vertx();
+			Context context = vertx.getOrCreateContext();
+			
+			Configuration.load(defaultConfigPah, SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
+			
+			JsonArray baseUrls = new JsonArray();
+//			baseUrls.add("https://alphacoders.com/");
+//			baseUrls.add("http://www.jb51.net/");
 
-		vertx.deployVerticle(new SpiderMainVerticle(vertx, context));
-		vertx.deployVerticle(new SpiderAdminHttpVerticle(vertx, context));
+			JsonArray regular = new JsonArray();
+			regular.add("^[.]+.taobao.com([\\w/]+)\\.$");
+			regular.add("^[.]+alphacoders.com([\\w/]+)\\.$");
+
+			context.put(BASE_ARRAY, baseUrls);
+			context.put(PASS_ARRAY, regular);
+
+			vertx.deployVerticle(new SpiderHeaderVerticle(vertx, context));
+			vertx.deployVerticle(new SpiderHtmlVerticle(vertx, context));
+			vertx.deployVerticle(new SpiderImageVerticle(vertx, context));
+			vertx.deployVerticle(new SpiderFileVerticle(vertx, context));
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+
+			vertx.deployVerticle(new SpiderMainVerticle(vertx, context));
+			vertx.deployVerticle(new SpiderAdminHttpVerticle(vertx, context));
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	
 	}
 	
 	

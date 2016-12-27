@@ -31,6 +31,9 @@ public class CoreBase {
 	//Image Storage Address  File Type :jpg,jpeg, png, icon........ Picture  Photo
 	public static final String UUID_MD5_SHA1_SHA512_IMAGES_KEY = "uuid_md5_sha1_sha512_images_info_ifreeshare_com";
 	
+	//A collection of pictures
+	public static final String UUID_MD5_SHA1_SHA512_IMAGES_RESOURCE_KEY_IFREESHARE_COM = "uuid_md5_sha1_sha512_images_resource_info_ifreeshare_com";
+	
 	public static final String MD5_SHA1_SHA512_EXIST_IMAGES_KEY = "md5_sha1_sha512_exist_image_key_ifreeshare_com";
 	
 	//Not grab URL 
@@ -40,6 +43,12 @@ public class CoreBase {
 	public static final String NEW_URL_BUT_GRAB_ERROR_CACHE_IFREESHARE_COM = "new_url_but_grab_error_cache_ifreeshare_com"; 
 	
 	public static final String ENGLISH_MAP_CHINESE_DICTIONARY_IFREESHARE_COM = "english_map_chinese_dictionary_ifreeshare_com";
+	
+	
+	
+//	public static final String tag
+	
+	
 	
 	
 	//Image Resource Prefix 
@@ -207,6 +216,8 @@ public class CoreBase {
 	public static final String DATA_TYPE_GET = "get";
 	
 	public static final String RESPONSE_RESULT_CACHE = "response_cache_result"; //Storage of results 
+
+	public static final String PATH = "path";
 	
 	/**
 	 * Add and Update the Info 

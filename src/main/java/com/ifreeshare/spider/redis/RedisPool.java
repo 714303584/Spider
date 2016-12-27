@@ -27,7 +27,6 @@ public class RedisPool {
 	 */
 	private static  JedisPool jedisPool = null;
 	
-	private static JedisCluster jedisCluster = null;
 	
 	static{
 		JedisPoolConfig config = new JedisPoolConfig();
@@ -37,8 +36,6 @@ public class RedisPool {
 		config.setTestOnBorrow(false);
 		jedisPool = new JedisPool(config, "127.0.0.1", 6379);
 		Set<HostAndPort> hostAndPorts = new HashSet<HostAndPort>();
-		hostAndPorts.add(new HostAndPort("127.0.0.1", 6379));
-		jedisCluster = new JedisCluster(hostAndPorts);
 	}
 
 	/**
