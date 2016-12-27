@@ -8,7 +8,7 @@
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
 
-    <File name="LogError" fileName="log/mcc-error.log" append="true">
+    <File name="LogError" fileName="log/spider-error.log" append="true">
       <ThresholdFilter level="error"/>
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </File>
