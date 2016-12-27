@@ -12,7 +12,6 @@ import com.ifreeshare.spider.verticle.msg.MessageType;
 
 public class ImageAdminKeywordReplacePost extends BaseRoute {
 	
-	
 	public ImageAdminKeywordReplacePost() {
 		super("/admin/image/replace/keyword/:itype/:otype/", BaseRoute.POST, "templates/images/admin/keyword_replace.ftl");
 	}
