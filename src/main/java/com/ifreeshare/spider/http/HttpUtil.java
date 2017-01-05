@@ -308,11 +308,20 @@ public class HttpUtil {
 		
 	}
 	
-	
+	/**
+	 * Obtain the file type according to the requested Content-type
+	 * @param contentType ---- The  Content-type of  requeste
+	 * @return  ------------------ the type of file.
+	 */
 	public static String getFileType(String contentType){
 		return ContentType_Map_FileType.get(contentType);
 	}
 	
+	/**
+	 * Get the file name
+	 * @param contentDisposition  ---- Requested Content Disposition
+	 * @return   ----------- Resolved to the file name
+	 */
 	public static String getFileNameByContentDisposition(String contentDisposition){
 		String fileName = null;
 		if(contentDisposition != null){
