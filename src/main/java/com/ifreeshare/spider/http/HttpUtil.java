@@ -3,6 +3,7 @@ package com.ifreeshare.spider.http;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -370,12 +371,12 @@ public class HttpUtil {
 	
 		String urlS = "https://wall.alphacoders.com/big.php?i=71641&lang=Chinese";
 		
-		try {
-			System.out.println(HttpUtil.getDomain(urlS));
-		} catch (MalformedURLException e1) {
-			// TODO 自动生成的 catch 块
-			e1.printStackTrace();
-		}
+			
+			
+			Map<String, String> params = getParams(urlS);
+			
+			
+//			System.out.println(HttpUtil.getDomain(urlS));
 //		System.out.println(urlss);
 		
 		
@@ -386,6 +387,36 @@ public class HttpUtil {
 			e.printStackTrace();
 		}
 	
+	}
+	
+	public static final String PARAMETER_SEGMENTATION = "&";
+	public static final String PARAMETER_BEGIN = "?";
+	
+	public static final String PARAMETER_ASSIGNMENT = "=";
+	
+	/**
+	 * Gets the parameters in the URL
+	 * @param url -------- URL with parameters
+	 * @return ---------- Parameter list
+	 */
+	public static Map<String, String> getParams(String url){
+		int index =  url.indexOf(PARAMETER_BEGIN);
+		if(index != -1){
+			String paramString =  url.substring(index+1, url.length());
+			String[] params = paramString.split(PARAMETER_SEGMENTATION);
+			int length = params.length;
+			if(length > 0){
+				Map<String, String> paramMap = new HashMap<String,String>();
+				for (int i = 0; i < params.length; i++) {
+					String param = params[i];
+					String[] key_val = param.split(PARAMETER_ASSIGNMENT);
+					paramMap.put(key_val[0], key_val[1]);
+				}
+				return paramMap;
+			}
+		}
+		
+		return new HashMap<String,String>();
 	}
 	
 	
