@@ -35,9 +35,12 @@ import com.ifreeshare.spider.verticle.msg.MessageType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-
-
-
+/**
+ * Gets the header of the http request
+ * 
+ *				
+ * @author zhuss
+ */
 public class SpiderHeaderVerticle extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderHeaderVerticle.class.getName());
 	
@@ -174,25 +177,6 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 						
 						String fileName = HttpUtil.getFileNameByContentDisposition(contentDisposition);
 						
-//						
-//					Map<String, List<String>> headers = response.headers().toMultimap();
-//				  	Iterator<String> keyIt = headers.keySet().iterator();
-//				  	
-//				  	while (keyIt.hasNext()) {
-//				  		String key = keyIt.next();
-//				  		System.out.println("-----------------key:"+key);
-//				  		Iterator<String> valIt = headers.get(key).iterator();
-//				  		while (valIt.hasNext()) {
-//						String value =  valIt
-//								.next();
-//						
-//						System.out
-//								.println("value:"+value);
-//						
-//					}
-//				}
-						
-						
 						String charset = body.getString(HttpUtil.CHARSET);
 
 						if(contentType.startsWith("\"")){
@@ -216,8 +200,12 @@ public class SpiderHeaderVerticle extends AbstractVerticle {
 						object.put(MessageType.MESSAGE_BODY, body);
 						
 						body.put(HttpUtil.Content_Type, contentType);
-						body.put(HttpUtil.CHARSET, charset);
-						body.put(HttpUtil.FILENAME, fileName);
+						if(charset != null){
+							body.put(HttpUtil.CHARSET, charset);
+						}
+						if(fileName != null){
+							body.put(HttpUtil.FILENAME, fileName);
+						}
 						
 						if(verticleAddress != null){
 							vertx.eventBus().send(verticleAddress, object); 

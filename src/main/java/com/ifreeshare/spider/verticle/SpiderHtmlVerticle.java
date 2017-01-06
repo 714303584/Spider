@@ -5,9 +5,12 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,12 +18,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+
+import org.apache.bcel.generic.NEW;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -31,6 +37,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberForkJoinScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
@@ -39,7 +46,9 @@ import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
+
 import com.ifreeshare.lucene.LuceneFactory;
+import com.ifreeshare.persistence.IDataPersistence;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.parse.AlphacodersComParser;
@@ -231,7 +240,10 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 //							 message.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
 //						 }
 						 
-						
+						 body.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
+						 body.put(IDataPersistence.TYPE, CoreBase.TYPE_TEXTHTML);
+						 body.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
+						 vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, body);
 						 
 						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
@@ -241,15 +253,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 							 if(href != null){
 								 JsonObject newUrl = new JsonObject();
 								 newUrl.put(MessageType.MESSAGE_TYPE, MessageType.URL_DISTR);
-								 
-//								 JsonObject newBody = new JsonObject();
-//								 newBody.put(HttpUtil.URL, href.getString(HttpUtil.URL));
-//								 newBody.put(HttpUtil.CHARSET, charset);
 								 newUrl.put(MessageType.MESSAGE_BODY, href);
-//								 newBody.put(HttpUtil.HTML_TITLE, parser.getTitle(htmlDoc));
-//								 newBody.put(HttpUtil.HTML_KEYWORDS, parser.getKeywords(htmlDoc));
-//								 newBody.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
-//								 
 								 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newUrl);
 							 }else{
 								 

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,7 @@ import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
 import com.ifreeshare.lucene.LuceneFactory;
+import com.ifreeshare.persistence.IDataPersistence;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
@@ -60,7 +62,6 @@ import com.squareup.okhttp.Response;
 
 /**
  * image verticle
- * 
  * @author zhuss
  * @date 2016-11-28PM5:06:17
  * @description download images and process images;
@@ -151,13 +152,16 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 	@Override
 	public void start() throws Exception {
-
+		//Subscribe to the message
+		//Mainly to receive the file download message
+		//A message from SpiderHeaderVerticle
 		vertx.eventBus().consumer(WORKER_ADDRESS, message -> {
 			JsonObject mbody = (JsonObject) message.body();
 			processor(mbody);
 		});
 
-		//
+		//Mainly receive the message to modify picture information
+		//From the administrator
 		vertx.eventBus().consumer(IMAGE_CHANGE_ADDRESS, message -> {
 			JsonObject mbody = (JsonObject) message.body();
 			Log.log(logger, Level.INFO, "images update  -----------------------------  exist message [%s]", message);
@@ -379,9 +383,9 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 							String thumbnailName = uuid + "." + fileType;
 
-							String thumbnail = thumbnailPath + "\\" + year + "\\" + month + "\\" + day;
+							String thumbnail = thumbnailPath + "/" + year + "/" + month + "/" + day;
 							if (FileAccess.createDir(thumbnail)) {
-								ThumbnailTools.getThumbnail(imagePath, thumbnail + "\\" + thumbnailName, 300, 300);
+								ThumbnailTools.getThumbnail(imagePath, thumbnail + "/" + thumbnailName, 300, 300);
 								imageJson.put(CoreBase.DOC_THUMBNAIL, "/" + year + "/" + month + "/" + day + "/" + thumbnailName);
 							}
 							RedisPool.hSet(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
@@ -392,6 +396,12 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							imageJson.put(CoreBase.UUID, uuid);
 							// Create an index for the picture
 							createIndex(imageJson);
+							
+							imageJson.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
+							imageJson.put(IDataPersistence.TYPE, CoreBase.TYPE_IMAGE);
+							 imageJson.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
+							 vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, imageJson);
+							
 							Log.log(logger, Level.DEBUG, "process image   -----------------------------  image [%s]", imageJson);
 						} else {
 							// Have the same unique code ,Put the file in the specified
@@ -452,6 +462,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 	/**
 	 * Start a fiber to process Images URL
+	 * Download picture
 	 */
 	private void processUrl() {
 		Fiber fiber = new Fiber(() -> {
