@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
+import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.http.parse.BaseParser;
@@ -16,6 +17,7 @@ import com.ifreeshare.spider.redis.RedisPool;
 
 public class ShowImageRouter extends BaseRoute {
 	
+	IDataSearch<JsonObject> search = IDataSearch.instance();
 	public ShowImageRouter() {
 		super("/public/show/image/:itype/:otype/", BaseRoute.GET, "templates/images/show.ftl");
 	}
@@ -34,9 +36,11 @@ public class ShowImageRouter extends BaseRoute {
 			return;
 		}
 		
-		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
+//		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
+		JsonObject docJson = search.getValueById(CoreBase.INDEX_HTML, CoreBase.TYPE_IMAGE, id);
+		Log.log(logger, Level.DEBUG, "router[%s],id[%s], image info[%s]", this.getUrl(), id , docJson);
 		if(CoreBase.DATA_TYPE_JSON.equals(oType)){
-			response.end(info);
+			response.end(docJson.toString());
 			return;
 		}else if(CoreBase.DATA_TYPE_XML.equals(oType)){
 			response.end("Temporarily not available ");
@@ -44,7 +48,7 @@ public class ShowImageRouter extends BaseRoute {
 		}
 		
 		
-		JsonObject docJson = new JsonObject(info);
+//		JsonObject docJson = new JsonObject(info);
 		String keywords = docJson.getString(CoreBase.HTML_KEYWORDS);
 		
 		PageDocument doc = new PageDocument();
@@ -57,7 +61,7 @@ public class ShowImageRouter extends BaseRoute {
 		doc.setSrc(docJson.getString(CoreBase.FILE_URL_PATH));
 		doc.setResolution(docJson.getString(CoreBase.RESOLUTION));
 		
-		Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), doc);
+//		Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), doc);
 	 	String[] keys = keywords.split(BaseParser.KEYWORD_SEPARATOR);
 	 	
 	 	for (int i = 0; i < keys.length; i++) {

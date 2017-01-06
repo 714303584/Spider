@@ -6,14 +6,19 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
+import com.ifreeshare.persistence.IDataSearch;
+import com.ifreeshare.persistence.elasticsearch.ElasticSearchSearch;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
+import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.redis.RedisPool;
 
 public class GetImageRouter extends BaseRoute {
 
+	IDataSearch<JsonObject> search = IDataSearch.instance();
 	public GetImageRouter(FreeMarkerTemplateEngine freeMarkerTemplateEngine) {
 		super("/public/image/:id/:itype/:otype/", BaseRoute.GET, "templates/images/edit.ftl", freeMarkerTemplateEngine);
 	}
@@ -31,16 +36,15 @@ public class GetImageRouter extends BaseRoute {
 			return;
 		}
 		
-		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
-		if(CoreBase.DATA_TYPE_JSON.equals(oType)){
-			response.end(info);
-			return;
-		}else if(CoreBase.DATA_TYPE_XML.equals(oType)){
+//		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
+		JsonObject docJson = search.getValueById(CoreBase.INDEX_HTML, CoreBase.TYPE_IMAGE, id);
+		if(docJson == null){
 			response.end("Temporarily not available ");
 			return;
 		}
 		
-		JsonObject docJson = new JsonObject(info);
+		Log.log(logger, Level.DEBUG, "router[%s],id[%s], image info[%s]", this.getUrl(), id , docJson);
+//		JsonObject  = new JsonObject(info);
 		PageDocument doc = new PageDocument();
 		doc.setUuid(docJson.getString(CoreBase.UUID));
 		doc.setKeywords(docJson.getString(CoreBase.HTML_KEYWORDS));
