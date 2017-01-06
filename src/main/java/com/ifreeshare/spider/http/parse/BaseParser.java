@@ -122,7 +122,7 @@ public class BaseParser implements HtmlParser {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < keys.length; i++) {
 			String one = keys[i].trim();
-			if(sb.indexOf(one) > -1 || one.length() == 0){
+			if(sb.indexOf(one) > -1 || one.trim().length() == 0 ){
 				continue;
 			}
 			if(i == (keys.length - 1)){

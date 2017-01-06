@@ -111,14 +111,57 @@ public class AlphacodersComParser extends BaseParser  {
 			item.remove();
 		}
 		
-		Set<JsonObject> superLinks = super.getLinkValue(doc);
+		
+		
+		HashSet<JsonObject> superLinks = new HashSet<JsonObject>();
+		Iterator<Element> itOthers = doc.select("a[href]").iterator();
+		HashSet<String> links = new HashSet<>();
+		while (itOthers.hasNext()) {
+			Element ele = itOthers.next();
+			String link = ele.attr("abs:"+HttpUtil.LINK_A_HREF);
+			String value = ele.attr(HttpUtil.LINK_A_HREF);
+			if(validatUrl(link, value)){
+				if(links.contains(link)){
+					continue;
+				}
+				links.add(link);
+				JsonObject linkJson = new JsonObject();
+				linkJson.put(HttpUtil.URL, link);
+				linkJson.put(HttpUtil.HTML_KEYWORDS, getKeywords(doc));
+				results.add(linkJson);
+			}
+		}
+		
 		results.addAll(superLinks);
 		results.addAll(url_relation_info.values());
 		return results;
 	}
+	
+
+	public boolean validatUrl(String link,String value){
+		boolean result = link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0;
+		try {
+			String domain = HttpUtil.getDomain(link);
+			result = result && domain.endsWith("alphacoders.com");
+			if(value.contains("lang=")){
+				result = result && value.contains("lang=Chinese");
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return result;
+		
+	}
 
 	
-	
+	public static void main(String[] args) {
+		
+		AlphacodersComParser acp = new AlphacodersComParser();
+		
+		System.out.println(acp.validatUrl("https://alphacoders1.com/", "arts/view/38400?lang=Chinese"));
+		
+	}
 	
 
 }
