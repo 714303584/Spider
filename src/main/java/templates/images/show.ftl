@@ -57,7 +57,7 @@
 		<div class="card" style="background-color: white;">
 			<div class="card-header">
 					<#list context.doc.tags as item>
-						<a href="/search/image/get/html/?keys=${ item }&size=20&index=0" class="btn btn-secondary btn-sm" role="button">${item}</a>
+						<a href="/public/search/image/get/html/?keys=${ item }&size=20&index=0" class="btn btn-secondary btn-sm" role="button">${item}</a>
 					</#list>
 			</div>
 			<img style="width: 100%"
@@ -69,7 +69,7 @@
 				<a class="btn btn-success download-button"
 					data-href="https://initiate.alphacoders.com/download/art/16236/jpg">
 					<span class="glyphicon glyphicon-download-alt"></span>&nbsp;Download
-					(2560x1600)
+					(${context.doc.resolution})
 				</a>
 			</div>
 		</div>

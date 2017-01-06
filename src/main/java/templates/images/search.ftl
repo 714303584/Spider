@@ -52,10 +52,9 @@
 					  <hr class="m-y-md">
 					  <p class="lead">
 					    <form class="form-inline" method="get" action="/search/image/get/html/" style="text-align: center;">
-					    <input type="text" name="size"  style="width: 500px;display:none" value="20" class="form-control" id="exampleInputEmail2" required="required"/>
 						  <div class="form-group">
 						    <label for="exampleInputEmail2"></label>
-						    <input type="text" name="keys" style="width: 500px" value="${context.keys}" class="form-control" id="exampleInputEmail2" required="required"/>
+						    <input type="text" name="keys" style="width: 500px" value="${context.keys}" class="form-control" id="exampleInputEmail2"/>
 						  </div>
 						  <button type="submit" class="btn btn-primary">搜索一下</button>
 						</form>
@@ -69,20 +68,20 @@
 						 
 						 <div id="main">
 							<ul id="waterfall" class="masonry" style="position: relative;">
-									<#list context.pages as item>
+									<#list context.pages.elements as item>
 										 <li class="masonry-brick" style="position: absolute; top: 0px; left: 0px;">
 								        	<div class="img_block">
-								        	 <a href="/show/image/get/html/?id=${ item.uuid }" >
+								        	 <a href="/public/show/image/get/html/?id=${ item.uuid }" >
 								            	<img src="http://192.168.3.148:808/thumbnail${item.thumbnail}" alt="">
 								             </a>
 								            	
 								            	 <a href="http://192.168.3.148:808/${item.src}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
 								               
 								            	
-								            	 <a href="#" class="ilike" onclick="loveImage('${item.uuid}')" style="display: none;">我喜欢</a>
+								            	 <!-- <a href="#" class="ilike" onclick="loveImage('${item.uuid}')" style="display: none;">我喜欢</a> -->
 								          </div>
 								            <h3></h3>
-								            <div class="iNum"><span>1</span><a href="http://www.niurenzm.com/demo/969/#">4</a></div>
+								          		<!--   <div class="iNum"><span>1</span><a href="http://www.niurenzm.com/demo/969/#">4</a></div> -->
 								          <p>${item.keywords}</p>
 										</li>
 									</#list>
@@ -102,13 +101,13 @@
 			<div class="container" style="text-align:center">
 				  <ul class="pagination pagination-lg">
 				    <li class="page-item">
-				      <a class="page-link" href="/search/image/get/html/?keys=${context.keys}&index=${context.previous}&size=${context.sizep}" aria-label="Previous">
+				      <a class="page-link" href="/public/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
 				        <span aria-hidden="true">&laquo;</span>
 				        <span class="sr-only">Previous</span>
 				      </a>
 				    </li>
 				    <li class="page-item">
-				      <a class="page-link" href="/search/image/get/html/?keys=${context.keys}&index=${context.nextp }&size=${context.sizep}" aria-label="Next">
+				      <a class="page-link" href="/public/search/image/get/html/?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
 				        <span aria-hidden="true">&raquo;</span>
 				        <span class="sr-only">Next</span>
 				      </a>

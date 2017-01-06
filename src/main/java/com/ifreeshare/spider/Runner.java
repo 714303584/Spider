@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.spider.verticle.PersistenceVertical;
 import com.ifreeshare.spider.verticle.SpiderAdminHttpVerticle;
 import com.ifreeshare.spider.verticle.SpiderFileVerticle;
 import com.ifreeshare.spider.verticle.SpiderHeaderVerticle;
@@ -46,7 +47,7 @@ public class Runner {
 			Configuration.load(defaultConfigPah, SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
 			
 			JsonArray baseUrls = new JsonArray();
-//			baseUrls.add("https://alphacoders.com/");
+			baseUrls.add("https://alphacoders.com/");
 //			baseUrls.add("http://www.jb51.net/");
 
 			JsonArray regular = new JsonArray();
@@ -60,6 +61,7 @@ public class Runner {
 			vertx.deployVerticle(new SpiderHtmlVerticle(vertx, context));
 			vertx.deployVerticle(new SpiderImageVerticle(vertx, context));
 			vertx.deployVerticle(new SpiderFileVerticle(vertx, context));
+			vertx.deployVerticle(new PersistenceVertical());
 
 			try {
 				Thread.sleep(1000);

@@ -49,6 +49,12 @@ public class CoreBase {
 //	public static final String tag
 	
 	
+	//the name of Elasticsearch index ------------ image 
+	public static final String ELASTICSEARCH_IMAGES_INDEX = "imagesindex";
+	
+	// 
+	public static final String ELASTICSEARCH_IMAGES_INDEX_ALL = "all";
+	
 	
 	
 	//Image Resource Prefix 
@@ -118,9 +124,14 @@ public class CoreBase {
 	public static final String SOURCE_ADDRESS = "sourceAddress";
 	
 	
-	/**
-	 * detailed information 
-	 */
+	//The index type ------------- Stores information about web pages
+	public static final String TYPE_TEXTHTML = "html";
+	//The index type ------------- Stores information about web images
+	public static final String TYPE_IMAGE = "image";
+	
+	//The index in ElasticSearch
+	public static final String INDEX_HTML = "url";
+	
 	public static final String HTML_TITLE = "title";
 	public static final String HTML_KEYWORDS = "keywords";
 	public static final String HTML_DESCRIPTION = "description";
@@ -209,7 +220,7 @@ public class CoreBase {
 	public static final String DATA_TYPE = "dtype";
 	public static final String DATA_I_TYPE = "itype"; //Input parameter format 
 	public static final String DATA_O_TYPE = "otype"; //Output parameter format 
-	public static final String DATA_TYPE_HTML = "html"; //Web page format  
+	public static final String   DATA_TYPE_HTML = "html"; //Web page format  
 	public static final String DATA_TYPE_JSON = "json"; //Json
 	public static final String DATA_TYPE_XML = "xml"; 	//XML
 	public static final String DATA_TYPE_FORM = "form"; 
@@ -218,6 +229,8 @@ public class CoreBase {
 	public static final String RESPONSE_RESULT_CACHE = "response_cache_result"; //Storage of results 
 
 	public static final String PATH = "path";
+
+	public static final String CREATE_DATE = "create_date";
 	
 	/**
 	 * Add and Update the Info 

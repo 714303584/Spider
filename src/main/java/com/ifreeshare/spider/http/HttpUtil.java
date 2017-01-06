@@ -415,7 +415,6 @@ public class HttpUtil {
 				return paramMap;
 			}
 		}
-		
 		return new HashMap<String,String>();
 	}
 	
