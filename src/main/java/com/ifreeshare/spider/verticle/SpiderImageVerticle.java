@@ -378,6 +378,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							imageJson.put(CoreBase.MD5, Md5);
 							imageJson.put(CoreBase.UUID, uuid);
 							imageJson.put(CoreBase.SHA1, sha1);
+							imageJson.put(CoreBase.SHA512, sha512);
 
 							// Put The infomation of Image into Redis
 
@@ -391,11 +392,11 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							RedisPool.hSet(CoreBase.MD5_UUID_IMAGE, Md5, uuid);
 							RedisPool.hSet(CoreBase.SHA1_UUID_IMAGE, sha1, uuid);
 							RedisPool.hSet(CoreBase.SHA512_UUID_IMAGE, sha512, uuid);
-							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
+//							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, imageJson.toString());
 
 							imageJson.put(CoreBase.UUID, uuid);
 							// Create an index for the picture
-							createIndex(imageJson);
+//							createIndex(imageJson);
 							
 							imageJson.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
 							imageJson.put(IDataPersistence.TYPE, CoreBase.TYPE_IMAGE);
@@ -427,38 +428,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		imageFiber.start();
 	}
 
-	/**
-	 * Create full text index using Lucene, Prepare for full text retrieval
-	 * 
-	 * @param imageJson
-	 *            Image info
-	 * @throws IOException
-	 *             Create The index of Image
-	 */
-	private void createIndex(JsonObject imageJson) throws IOException {
-		Document document = new Document();
-		// The uuid of image, Storage but not segmentation , The unique in Redis
-		StringField uuidField = new StringField(CoreBase.UUID, imageJson.getString(CoreBase.UUID), Store.YES);
-		document.add(uuidField);
-		TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, imageJson.getString(CoreBase.HTML_KEYWORDS), Store.YES);
-		document.add(keywordsField);
-		// TextField titleField = new TextField(CoreBase.HTML_TITLE,
-		// imageJson.getString(CoreBase.HTML_TITLE), Store.YES);
-		// document.add(titleField);
-		// TextField descriptionField = new TextField(CoreBase.HTML_DESCRIPTION,
-		// imageJson.getString(CoreBase.HTML_DESCRIPTION), Store.YES);
-		// document.add(descriptionField);
-		StringField resolutionField = new StringField(CoreBase.RESOLUTION, imageJson.getString(CoreBase.RESOLUTION), Store.YES);
-		document.add(resolutionField);
-		// Web browsing path
-		StringField urlPath = new StringField(CoreBase.FILE_URL_PATH, imageJson.getString(CoreBase.FILE_URL_PATH), Store.YES);
-		StringField thumbnail = new StringField(CoreBase.DOC_THUMBNAIL, imageJson.getString(CoreBase.DOC_THUMBNAIL), Store.YES);
-		document.add(urlPath);
-		document.add(thumbnail);
-		imageIndexWriter.addDocument(document);
-		imageIndexWriter.flush();
-		imageIndexWriter.commit();
-	}
+
 
 	/**
 	 * Start a fiber to process Images URL
@@ -537,4 +507,79 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 		fiber.start();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Create full text index using Lucene, Prepare for full text retrieval
+	 * 
+	 * @param imageJson
+	 *            Image info
+	 * @throws IOException
+	 *             Create The index of Image
+	 */
+//	private void createIndex(JsonObject imageJson) throws IOException {
+//		Document document = new Document();
+//		// The uuid of image, Storage but not segmentation , The unique in Redis
+//		StringField uuidField = new StringField(CoreBase.UUID, imageJson.getString(CoreBase.UUID), Store.YES);
+//		document.add(uuidField);
+//		TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, imageJson.getString(CoreBase.HTML_KEYWORDS), Store.YES);
+//		document.add(keywordsField);
+//		// TextField titleField = new TextField(CoreBase.HTML_TITLE,
+//		// imageJson.getString(CoreBase.HTML_TITLE), Store.YES);
+//		// document.add(titleField);
+//		// TextField descriptionField = new TextField(CoreBase.HTML_DESCRIPTION,
+//		// imageJson.getString(CoreBase.HTML_DESCRIPTION), Store.YES);
+//		// document.add(descriptionField);
+//		StringField resolutionField = new StringField(CoreBase.RESOLUTION, imageJson.getString(CoreBase.RESOLUTION), Store.YES);
+//		document.add(resolutionField);
+//		// Web browsing path
+//		StringField urlPath = new StringField(CoreBase.FILE_URL_PATH, imageJson.getString(CoreBase.FILE_URL_PATH), Store.YES);
+//		StringField thumbnail = new StringField(CoreBase.DOC_THUMBNAIL, imageJson.getString(CoreBase.DOC_THUMBNAIL), Store.YES);
+//		document.add(urlPath);
+//		document.add(thumbnail);
+//		imageIndexWriter.addDocument(document);
+//		imageIndexWriter.flush();
+//		imageIndexWriter.commit();
+//	}
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

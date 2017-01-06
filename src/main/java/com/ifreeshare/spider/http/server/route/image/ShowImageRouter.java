@@ -36,7 +36,6 @@ public class ShowImageRouter extends BaseRoute {
 			return;
 		}
 		
-//		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
 		JsonObject docJson = search.getValueById(CoreBase.INDEX_HTML, CoreBase.TYPE_IMAGE, id);
 		Log.log(logger, Level.DEBUG, "router[%s],id[%s], image info[%s]", this.getUrl(), id , docJson);
 		if(CoreBase.DATA_TYPE_JSON.equals(oType)){
@@ -48,7 +47,6 @@ public class ShowImageRouter extends BaseRoute {
 		}
 		
 		
-//		JsonObject docJson = new JsonObject(info);
 		String keywords = docJson.getString(CoreBase.HTML_KEYWORDS);
 		
 		PageDocument doc = new PageDocument();
@@ -60,8 +58,6 @@ public class ShowImageRouter extends BaseRoute {
 		doc.setOrigin(docJson.getString(CoreBase.URL));
 		doc.setSrc(docJson.getString(CoreBase.FILE_URL_PATH));
 		doc.setResolution(docJson.getString(CoreBase.RESOLUTION));
-		
-//		Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), doc);
 	 	String[] keys = keywords.split(BaseParser.KEYWORD_SEPARATOR);
 	 	
 	 	for (int i = 0; i < keys.length; i++) {

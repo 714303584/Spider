@@ -60,8 +60,8 @@ public class SearchImageRouter extends BaseRoute {
 		String index = request.getParam("index");
 		String size = request.getParam("size");
 
-		int pageIndex = 1;
-		if ((index != null && RegExpValidatorUtils.IsIntNumber(index)) || index.equals("0")) {
+		int pageIndex = 0;
+		if ((index != null && RegExpValidatorUtils.IsIntNumber(index))) {
 			pageIndex = Integer.parseInt(index);
 		}
 

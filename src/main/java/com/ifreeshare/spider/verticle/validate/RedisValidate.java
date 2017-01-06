@@ -32,13 +32,11 @@ public class RedisValidate implements MainVerticleValidate {
 		Jedis jedis = null;
 		try {
 			String domain = HttpUtil.getDomain(url);
-			
 			if(SpiderMainVerticle.shieldBox.contains(domain)){
 				return true;
 			}
-			
 			jedis = jedisPool.getResource();
-			flag = jedis.hexists(domain, url);
+			flag = jedis.sismember(domain, url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}finally {
@@ -57,7 +55,8 @@ public class RedisValidate implements MainVerticleValidate {
 		try {
 			String domain = HttpUtil.getDomain(url);
 			jedis = jedisPool.getResource();
-			flag = jedis.hexists(domain, url);
+			jedis.srem(domain, url);
+			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -76,7 +75,7 @@ public class RedisValidate implements MainVerticleValidate {
 		try {
 			String domain = HttpUtil.getDomain(url);
 			jedis = jedisPool.getResource();
-			jedis.hset(domain, url, info.toString());
+			jedis.sadd(domain, url);
 			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,25 +85,6 @@ public class RedisValidate implements MainVerticleValidate {
 			}
 		}
 		return flag;
-	}
-
-	@Override
-	public  JsonObject getUrlInfo(String url) {
-		JsonObject result  = null;
-		Jedis jedis = null;
-		try {
-			String domain = HttpUtil.getDomain(url);
-			jedis = jedisPool.getResource();
-			String info =jedis.hget(domain, url);
-			result = new JsonObject(info);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			if(jedis != null){
-				jedis.close();
-			}
-		}
-		return result;
 	}
 	
 	

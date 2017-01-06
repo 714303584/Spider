@@ -8,7 +8,7 @@ public interface MainVerticleValidate {
 	
 	public boolean urlExist(String url);
 	
-	public JsonObject getUrlInfo(String url);
+//	public JsonObject getUrlInfo(String url);
 	
 	public boolean delUrl(String url);
 

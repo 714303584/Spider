@@ -247,20 +247,29 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 	public void urlCheck(JsonObject message){
 		JsonObject body =  message.getJsonObject(MessageType.MESSAGE_BODY);
 		String url = body.getString(HttpUtil.URL);
-		if(!validate.urlExist(url) && !works.containsKey(url) && !inCache(url)){
-			try {
-//				urlChannel.send(url);
-				putCache(url, message);
-				Log.log(logger, Level.DEBUG, "new url to cache ----------------------------- url:%s;   body:%s", url,body);		
-//				waitQueue.put(url, message);
-			} catch (Exception e) {
-				Log.log(logger, Level.DEBUG, "urlChannel new  ----------------------------- url:%s;   body:%s", url,body);			
-				e.printStackTrace();
-			}
-		}else{
-			Log.log(logger, Level.DEBUG, "exist url ----------------------------- url:%s;", url);	
+		
+		if(validate.urlExist(url)){
+			Log.log(logger, Level.DEBUG, "This link has been crawled ----------------------------- url:%s;   body:%s", url,body);	
+			return;
 		}
 		
+		if(works.containsKey(url)){
+			Log.log(logger, Level.DEBUG, "This link is in the crawl queue ----------------------------- url:%s;   body:%s", url,body);	
+			return;
+		}
+		
+		if(inCache(url)){
+			Log.log(logger, Level.DEBUG, "This link is in the cache, waiting to be crawled ----------------------------- url:%s;   body:%s", url,body);	
+			return;
+		}
+		
+		try {
+			putCache(url, message);
+			Log.log(logger, Level.DEBUG, "new url to cache ----------------------------- url:%s;   body:%s", url,body);		
+		} catch (Exception e) {
+			Log.log(logger, Level.DEBUG, "urlChannel new  ----------------------------- url:%s;   body:%s", url,body);			
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean isShield(String domain){
