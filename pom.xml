@@ -38,6 +38,11 @@
 		    <version>0.7.0</version>
 		</dependency>
 		
+				<dependency>
+			<groupId>co.paralleluniverse</groupId>
+			<artifactId>quasar-core</artifactId>
+			<version>0.7.7</version>
+		</dependency>
 		
 			<!-- https://mvnrepository.com/artifact/co.paralleluniverse/comsat-httpclient -->
 		<dependency>
@@ -53,15 +58,6 @@
 		    <version>3.3.3</version>
 		</dependency>
 		
-		
-			
-	
-			<!-- https://mvnrepository.com/artifact/co.paralleluniverse/comsat-httpclient -->
-		<dependency>
-		    <groupId>co.paralleluniverse</groupId>
-		    <artifactId>comsat-httpclient</artifactId>
-		    <version>0.7.0</version>
-		</dependency>
 	
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -130,15 +126,6 @@
 		    <version>1.7.21</version>
 		</dependency>
 
-		<!-- 
-			<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.3</version>
-		</dependency>
-		
-		 -->
-		
 		
 		<dependency>
 		    <groupId>org.apache.logging.log4j</groupId>
@@ -231,13 +218,6 @@
 		</dependency>
 		
 		-->
-				
-		
-		<!-- <dependency>
-		    <groupId>com.vlkan</groupId>
-		    <artifactId>quasar-maven-plugin</artifactId>
-		    <version>0.7.3</version>
-		</dependency> -->
 		<dependency>
 			<groupId>ifreeshare</groupId>
 			<artifactId>util</artifactId>
@@ -264,6 +244,7 @@
 				</configuration>
 			</plugin>
 			<!-- 
+			
 			<plugin>
 				<groupId>com.vlkan</groupId>
 				<artifactId>quasar-maven-plugin</artifactId>
@@ -282,6 +263,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			 -->
 		</plugins>
 	</build>
