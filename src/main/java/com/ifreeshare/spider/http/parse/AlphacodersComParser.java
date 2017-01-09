@@ -140,6 +140,9 @@ public class AlphacodersComParser extends BaseParser  {
 
 	public boolean validatUrl(String link,String value){
 		boolean result = link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0;
+		if(!result){
+			return result;
+		}
 		try {
 			String domain = HttpUtil.getDomain(link);
 			result = result && domain.endsWith("alphacoders.com");
@@ -147,6 +150,7 @@ public class AlphacodersComParser extends BaseParser  {
 				result = result && value.contains("lang=Chinese");
 			}
 		} catch (MalformedURLException e) {
+			Log.log(logger, Level.ERROR, "href[%s]",link);
 			e.printStackTrace();
 			return false;
 		}

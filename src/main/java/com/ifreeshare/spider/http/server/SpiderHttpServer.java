@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
@@ -111,9 +112,18 @@ public class SpiderHttpServer extends AbstractVerticle {
 	    router.route().handler(context -> {
 	    	HttpServerRequest request = context.request();
 	    	SocketAddress clientAddress = request.remoteAddress();
+	    	
+	    	
+	    	System.out.println();
 	    	String ipAddress = clientAddress.host();
 	    	String path = request.path();
 	    	Log.log(logger, Level.INFO, "client host[%s], request path[%s]", ipAddress, path);
+	    	
+	    	Iterator<Entry<String, String>>  it = request.headers().iterator();
+	     	while (it.hasNext()) {
+	     		Entry<String, String> entry = it.next();
+	     		Log.log(logger, Level.DEBUG, "header info -------------------- key[%s], value[%s] ", entry.getKey(), entry.getValue());
+			}
 	    	context.next();
 	    });
 	    

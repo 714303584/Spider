@@ -67,7 +67,7 @@
 				<button id="btn_love" type="button" onclick="loveImage('${context.doc.uuid}')" class="btn btn-success">喜欢(111)</button>
 				<button type="btn_collect" onclick="loveImage('${context.doc.uuid}')" class="btn btn-info">收藏(1)</button>
 				<a class="btn btn-success download-button"
-					data-href="https://initiate.alphacoders.com/download/art/16236/jpg">
+					href="http://localhost:808/${ context.doc.src }" download> 
 					<span class="glyphicon glyphicon-download-alt"></span>&nbsp;Download
 					(${context.doc.resolution})
 				</a>
@@ -93,7 +93,7 @@
    function loveImage(uuid){
 		   	$.ajax({
 				type: "GET",
-				url: "/love/image/get/get/"+uuid+"/",
+				url: "/public/love/image/get/get/"+uuid+"/",
 				success:function(data){
 					$("#btn_love").text("已喜欢")
 					console.log("success:"+data);
@@ -107,7 +107,7 @@
       function collectImage(uuid){
 		   	$.ajax({
 				type: "GET",
-				url: "/collect/image/get/get/"+uuid+"/",
+				url: "/public/collect/image/get/get/"+uuid+"/",
 				success:function(data){
 					$("#btn_collect").text("已收藏")
 					console.log("success:"+data);
