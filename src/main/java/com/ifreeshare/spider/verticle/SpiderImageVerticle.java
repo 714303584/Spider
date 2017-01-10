@@ -398,9 +398,14 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							// Create an index for the picture
 //							createIndex(imageJson);
 							
+							String keywords = BaseParser.keywordDeWeight(imageJson.getString(CoreBase.HTML_KEYWORDS));
+							imageJson.put(CoreBase.HTML_KEYWORDS, keywords);
+							
+							//data storage
 							imageJson.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
 							imageJson.put(IDataPersistence.TYPE, CoreBase.TYPE_IMAGE);
-							 imageJson.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
+							imageJson.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
+							imageJson.put(CoreBase.OPERATE, CoreBase.OPERATE_I);
 							 vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, imageJson);
 							
 							Log.log(logger, Level.DEBUG, "process image   -----------------------------  image [%s]", imageJson);

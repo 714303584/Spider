@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 
+
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -19,11 +20,13 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 
 
 import org.apache.bcel.generic.NEW;
@@ -38,13 +41,16 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
+
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberForkJoinScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
+
 
 
 import com.ifreeshare.lucene.LuceneFactory;
@@ -240,10 +246,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 //							 message.put(HttpUtil.HTML_DESCRIPTION, parser.getDescription(htmlDoc));
 //						 }
 						 
-						 body.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
-						 body.put(IDataPersistence.TYPE, CoreBase.TYPE_TEXTHTML);
-						 body.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
-						 vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, body);
+					
 						 
 						 message.put(MessageType.MESSAGE_TYPE, MessageType.SUCC_URL);
 						 vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, message);
@@ -260,6 +263,12 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 							 }
 						}
 						Log.log(logger, Level.WARN, "html pase success ----------------------------- url:[%s];   e.message:[%s]", url,body);
+						
+						 body.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
+						 body.put(IDataPersistence.TYPE, CoreBase.TYPE_TEXTHTML);
+						 body.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
+						 body.put(CoreBase.OPERATE, CoreBase.OPERATE_I);
+						 vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, body);
 					} catch (Exception e) {
 						e.printStackTrace();
 						Log.log(logger, Level.WARN, "html paser ----------------------------- Message:[%s];   e.message:[%s]", message,e.getMessage());
@@ -268,6 +277,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 						newURl.put(MessageType.MESSAGE_BODY, message);
 						vertx.eventBus().send(SpiderMainVerticle.MAIN_ADDRESS, newURl);
 					}
+					
 				}
 		});
  		
@@ -282,6 +292,7 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 	 * @param webDomain
 	 * @return
 	 */
+	@Suspendable
 	public HtmlParser getParserByWebsite(String webDomain){
 		HtmlParser parser =  websiteMapParser.get(webDomain);
 		if(parser == null){
@@ -329,39 +340,5 @@ public class SpiderHtmlVerticle extends AbstractVerticle {
 		return flag;
 		
 	}
-	
-	
-//	 org.apache.lucene.document.Document document = new  org.apache.lucene.document.Document();
-//	 document.add( new Field(CoreBase.UUID, UUID.randomUUID().toString(), TextField.TYPE_STORED));
-//	 document.add(new Field(CoreBase.HTML_KEYWORDS, message.getString(CoreBase.HTML_KEYWORDS), TextField.TYPE_STORED));
-//	document.add(new Field(CoreBase.HTML_TITLE, message.getString(CoreBase.HTML_TITLE), TextField.TYPE_STORED));
-//	document.add(new Field(CoreBase.HTML_DESCRIPTION, message.getString(CoreBase.HTML_DESCRIPTION), TextField.TYPE_STORED));
-//		IndexWriter writer = LuceneFactory.getIndexWriter(OpenMode.CREATE);
-//		writer.addDocument(document);
-//		writer.flush();
-//		writer.commit();
-	
-//	Map<String, List<String>> headers = response.headers().toMultimap();
-//  	
-//  	Iterator<String> keyIt = headers.keySet().iterator();
-//  	
-//  	while (keyIt.hasNext()) {
-//  		String key = keyIt.next();
-//  		System.out.println("-----------------key:"+key);
-//  		Iterator<String> valIt = headers.get(key).iterator();
-//  		while (valIt.hasNext()) {
-//		String value =  valIt
-//				.next();
-//		
-//		System.out
-//				.println("value:"+value);
-//		
-//	}
-//}
-	
-	
-	
-	
-	
 
 }
