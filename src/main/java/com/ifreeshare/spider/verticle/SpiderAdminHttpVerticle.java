@@ -32,6 +32,7 @@ import com.ifreeshare.spider.http.server.route.image.ShowResouceRouter;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminKeywordReplace;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminKeywordReplacePost;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminUpdateHtml;
+import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminUpdatePost;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageResourceCreate;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageResourceGet;
 import com.ifreeshare.spider.http.server.route.image.admin.ImagesAdminList;
@@ -73,6 +74,7 @@ public class SpiderAdminHttpVerticle extends AbstractVerticle {
 		routers.add(new ImageResourceGet());
 		routers.add(new ImageResourceCreate());
 		routers.add(new ShowResouceRouter());
+		routers.add(new ImageAdminUpdatePost());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);
