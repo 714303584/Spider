@@ -59,9 +59,9 @@
 
 
 	<div class="container">
-		<form action="/image/${context.doc.uuid}/form/html/" method="post" >
+		<form action="/admin/image/update/form/html/" method="post" >
 		
-				<div class="form-group row" >
+				<div class="form-group row" style="display:none">
 				<label for="example-text-input" class="col-xs-2 col-form-label">唯一标识:</label>
 				<div class="col-xs-10">
 					<input id="uuid" name="uuid" class="form-control" type="" value="${context.doc.uuid}"
@@ -69,22 +69,17 @@
 				</div>
 			</div>
 		
-			<div class="form-group row">
-				<label for="example-text-input" class="col-xs-2 col-form-label">文件名称:</label>
-				<div class="col-xs-10">
-					<input id="filename" name="filename" class="form-control" type="text" value="${context.doc.name}"
-						id="example-text-input">
-				</div>
-			</div>
-			
-			<div class="form-group row">
-				<label for="example-text-input" class="col-xs-2 col-form-label">标题:</label>
-				<div class="col-xs-10">
-					<input id="title" name="title" class="form-control" type="text"  value="${context.doc.title}"
-						id="example-text-input">
-				</div>
-			</div>
-			
+		<!--
+					<div class="form-group row">
+						<label for="example-text-input" class="col-xs-2 col-form-label">文件名称:</label>
+						<div class="col-xs-10">
+							<input id="filename" name="filename" class="form-control" type="text" value="${context.doc.name}"
+								id="example-text-input">
+						</div>
+					</div>
+		
+		
+		 -->
 			
 			
 			<div class="form-group row">
@@ -94,48 +89,6 @@
 						id="example-text-input">
 				</div>
 			</div>
-			
-			<div class="form-group row">
-				<label for="example-text-input" class="col-xs-2 col-form-label">描述:</label>
-				<div class="col-xs-10">
-					<input id="description" name="description" class="form-control" type="text"   value="${context.doc.description}"
-						id="example-text-input">
-				</div>
-			</div>
-			
-		
-			
-			
-			
-			<!--
-					<div class="form-group row">
-						<label for="example-text-input" class="col-xs-2 col-form-label">描述:</label>
-						<div class="col-xs-10">
-							<input id="description" name="description" class="form-control" type="text"   value="${context.doc.description}"
-								id="example-text-input">
-						</div>
-					</div>
-			
-					<div class="form-group row">
-						<label for="example-text-input" class="col-xs-2 col-form-label">来源:</label>
-						<div class="col-xs-10">
-							<input id="description" name="origin" class="form-control" type="text"   value="${context.doc.origin}"
-								id="example-text-input">
-						</div>
-					</div>
-			 -->
-			<!--
-					<div class="form-group row">
-						<label for="example-text-input" class="col-xs-2 col-form-label">分辨率:</label>
-						<div class="col-xs-10">
-							<input id="description" class="form-control" type="text"   value="${context.doc.resolution}"
-								id="example-text-input">
-						</div>
-					</div>
-			-->
-			
-			
-		
 			
 			<div class="form-group row">
 		      <div class="offset-sm-2 col-sm-10">
