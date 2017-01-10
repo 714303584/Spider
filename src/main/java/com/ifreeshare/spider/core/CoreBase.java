@@ -131,6 +131,7 @@ public class CoreBase {
 	
 	//The index in ElasticSearch
 	public static final String INDEX_HTML = "url";
+	public static final String TYPE = "type";
 	
 	public static final String HTML_TITLE = "title";
 	public static final String HTML_KEYWORDS = "keywords";
@@ -149,6 +150,21 @@ public class CoreBase {
 	public static final String  CHARSET = "charset";
 	
 	public static final String FILE_NAME = "filename";
+	
+	public static final String OPERATE = "operate";
+	//insert
+	public static final int OPERATE_I = 1;
+	//update
+	public static final int OPERATE_U = 2;
+	//remove
+	public static final int OPERATE_R = 3;
+	
+	//Multiple inserts 
+	public static final int OPERATE_IM = 4;
+	//Multiple update
+	public static final int OPERATE_UM = 5;
+	//Multiple remove
+	public static final int OPERATE_RM = 6;
 	
 	
 	/**
@@ -231,7 +247,7 @@ public class CoreBase {
 	public static final String PATH = "path";
 
 	public static final String CREATE_DATE = "create_date";
-	
+
 	/**
 	 * Add and Update the Info 
 	 * @param info  Calculated file information 
@@ -272,23 +288,5 @@ public class CoreBase {
 	public static void saveExceptionFileInfo(JsonObject value){
 		RedisPool.hSet(CoreBase.EXCEPTION_FILE_KEY, value.getString(CoreBase.UUID), value.toString());
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 }
