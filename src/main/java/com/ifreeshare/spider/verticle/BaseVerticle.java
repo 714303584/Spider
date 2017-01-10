@@ -7,6 +7,7 @@ import io.vertx.core.Vertx;
 import org.apache.logging.log4j.Logger;
 
 import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
@@ -31,8 +32,9 @@ public abstract class BaseVerticle<T> extends AbstractVerticle {
 	//Need to deal with the entity's buffer
 	protected  Channel<T> buffer = null;
 	
-	public BaseVerticle(String vAddress, int bufferSize) {
-		super();
+	public BaseVerticle(Vertx vertx , Context context, String vAddress, int bufferSize) {
+		this.vertx = vertx;
+		this.context = context;
 		this.vAddress = vAddress;
 		this.bufferSize = bufferSize;
 		logger  = Log.register(this.getClass().getName());
@@ -57,6 +59,7 @@ public abstract class BaseVerticle<T> extends AbstractVerticle {
 		
 	}
 
+	@Suspendable
 	public abstract void startworker();
 
 
