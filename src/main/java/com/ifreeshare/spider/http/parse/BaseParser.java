@@ -2,8 +2,10 @@ package com.ifreeshare.spider.http.parse;
 
 import io.vertx.core.json.JsonObject;
 
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
@@ -12,7 +14,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.ifreeshare.spider.http.HttpUtil;
+import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.util.PropertiesUtil;
 
 /**
  * Analysis of web pages 
@@ -28,6 +32,17 @@ public class BaseParser implements HtmlParser {
 	public static final String A = "a";
 	
 	public static final String META= "meta";
+	
+	static Properties dic = null;
+	
+	static{
+		try {
+			dic = PropertiesUtil.getProperties(BaseParser.class.getResource("/dic.properties").getPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);;
+		} 
+	}
 
 	/**
 	 * Gets the title of the web page 
@@ -120,18 +135,50 @@ public class BaseParser implements HtmlParser {
 	public static  String keywordDeWeight(String key){
 		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < keys.length; i++) {
+		
+		int size = keys.length;
+		int end = size - 1;
+		
+		for (int i = 0; i < size; i++) {
 			String one = keys[i].trim();
-			if(sb.indexOf(one) > -1 || one.trim().length() == 0 ){
+			if(sb.indexOf(one) > -1 || one.length() == 0 ){
 				continue;
 			}
-			if(i == (keys.length - 1)){
+			
+			String zh_cn = dic.getProperty(one);
+			if(zh_cn != null && sb.indexOf(zh_cn) == -1){
+				sb.insert(0, zh_cn+",");
+				System.out.println(zh_cn);
+			}
+			
+			
+			
+			if(i == end){
 				sb.append(one);
 			}else{
 				sb.append(one).append(BaseParser.KEYWORD_SEPARATOR);
 			}
 		}
 		return sb.toString();
+	}
+	
+	
+	public static void main(String[] args) {
+		try {
+			dic = PropertiesUtil.getProperties(SpiderHttpServer.class.getResource("/dic.properties").getPath());
+			Enumeration enums = dic.propertyNames();
+			while (enums.hasMoreElements()) {
+				String object = (String) enums.nextElement();
+				System.out.println(object);
+				System.out.println(dic.getProperty(object));
+				
+			}
+		System.out.println(dic.getProperty("bruce lee"));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);;
+		} 
 	}
 
 	

@@ -73,7 +73,7 @@ public class AlphacodersComParser extends BaseParser  {
 				
 				JsonObject newLink = new JsonObject();
 				newLink.put(CoreBase.URL, href);
-				newLink.put(CoreBase.HTML_KEYWORDS, BaseParser.keywordDeWeight(keywords));
+				newLink.put(CoreBase.HTML_KEYWORDS, keywords);
 			
 				if(sb.indexOf(text) == -1){
 					sb.append(text + BaseParser.KEYWORD_SEPARATOR);
@@ -90,7 +90,7 @@ public class AlphacodersComParser extends BaseParser  {
 				
 			}
 			
-			String dataKeyword = BaseParser.keywordDeWeight(sb.toString());
+			String dataKeyword = sb.toString();
 
 			//Picture storage address 
 			Elements dataHrefs = item.getElementsByAttribute("data-href");

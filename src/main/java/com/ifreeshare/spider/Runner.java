@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonArray;
 
 import org.apache.logging.log4j.Logger;
 
+import com.ifreeshare.persistence.elasticsearch.ElasticSearchPersistence;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
@@ -38,6 +39,7 @@ public class Runner {
 		System.setProperty("co.paralleluniverse.fibers.detectRunawayFibers",
 				"false");
 	}
+	
 
 	public static void main(String[] args) {
 		try {
@@ -56,12 +58,14 @@ public class Runner {
 
 			context.put(BASE_ARRAY, baseUrls);
 			context.put(PASS_ARRAY, regular);
+			
+			ElasticSearchPersistence persistence = new ElasticSearchPersistence();
 
 			vertx.deployVerticle(new SpiderHeaderVerticle(vertx, context));
 			vertx.deployVerticle(new SpiderHtmlVerticle(vertx, context));
 			vertx.deployVerticle(new SpiderImageVerticle(vertx, context));
 			vertx.deployVerticle(new SpiderFileVerticle(vertx, context));
-			vertx.deployVerticle(new PersistenceVertical());
+			vertx.deployVerticle(new PersistenceVertical(vertx, context, persistence));
 
 			try {
 				Thread.sleep(1000);
