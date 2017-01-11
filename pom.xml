@@ -12,6 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<stack.version>3.3.3</stack.version>
 	</properties>
 
 	<profiles>
@@ -30,35 +31,29 @@
 	</profiles>
 
 	<dependencies>
-	
+
 		<!-- https://mvnrepository.com/artifact/co.paralleluniverse/comsat-okhttp -->
 		<dependency>
-		    <groupId>co.paralleluniverse</groupId>
-		    <artifactId>comsat-okhttp</artifactId>
-		    <version>0.7.0</version>
-		</dependency>
-		
-				<dependency>
 			<groupId>co.paralleluniverse</groupId>
-			<artifactId>quasar-core</artifactId>
-			<version>0.7.7</version>
+			<artifactId>comsat-okhttp</artifactId>
+			<version>0.7.0</version>
 		</dependency>
-		
-			<!-- https://mvnrepository.com/artifact/co.paralleluniverse/comsat-httpclient -->
+
+		<!-- https://mvnrepository.com/artifact/co.paralleluniverse/comsat-httpclient -->
 		<dependency>
-		    <groupId>co.paralleluniverse</groupId>
-		    <artifactId>comsat-httpclient</artifactId>
-		    <version>0.7.0</version>
+			<groupId>co.paralleluniverse</groupId>
+			<artifactId>comsat-httpclient</artifactId>
+			<version>0.7.0</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/io.vertx/vertx-web-templ-freemarker -->
 		<dependency>
-		    <groupId>io.vertx</groupId>
-		    <artifactId>vertx-web-templ-freemarker</artifactId>
-		    <version>3.3.3</version>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-web-templ-freemarker</artifactId>
+			<version>${stack.version}</version>
 		</dependency>
-		
-	
+
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -74,43 +69,43 @@
 			<artifactId>httpmime</artifactId>
 			<version>4.4</version>
 		</dependency>
-	
-	
+
+
 		<dependency>
-		  <groupId>org.jsoup</groupId>
-		  <artifactId>jsoup</artifactId>
-		  <version>1.9.2</version>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.9.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
-			<version>3.3.3</version>
+			<version>${stack.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-unit</artifactId>
-			<version>3.3.3</version>
+			<version>${stack.version}</version>
 		</dependency>
-		
-		    <dependency>
-		      <groupId>io.vertx</groupId>
-		      <artifactId>vertx-auth-shiro</artifactId>
-		      <version>3.3.3</version>
-		    </dependency>
-		
+
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-auth-shiro</artifactId>
+			<version>${stack.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-codetrans</artifactId>
-			<version>3.3.3</version>
+			<version>${stack.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-web</artifactId>
-			<version>3.3.3</version>
+			<version>${stack.version}</version>
 		</dependency>
 
 		<dependency>
@@ -118,26 +113,26 @@
 			<artifactId>log4j-api</artifactId>
 			<version>2.3</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-log4j12</artifactId>
-		    <version>1.7.21</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.21</version>
 		</dependency>
 
-		
+
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-api</artifactId>
-		    <version>2.7</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.7</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-core</artifactId>
-		    <version>2.7</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.7</version>
 		</dependency>
-		
+
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -149,88 +144,75 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-jgroups</artifactId>
-			<version>3.2.1</version>
+			<version>${stack.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-sync</artifactId>
-			<version>3.2.1</version>
+			<version>${stack.version}</version>
 		</dependency>
-		
-		
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-core</artifactId>
-		  <version>6.3.0</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-memory</artifactId>
-		 <version>6.3.0</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-highlighter</artifactId>
-		  <version>6.3.0</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-queryparser</artifactId>
-		  <version>6.3.0</version>
-		</dependency>
-		
-		
-		<dependency>
-		    <groupId>redis.clients</groupId>
-		    <artifactId>jedis</artifactId>
-		    <version>2.8.1</version>
-		    <type>jar</type>
-		    <scope>compile</scope>
-		</dependency>
-		
-				
-		<dependency>
-		  <groupId>IKAnalyzer</groupId>
-		  <artifactId>IKAnalyzer</artifactId>
-		  <version>2012FF_hf1</version>
-		</dependency>
-		
-		
-		<!--
-		<dependency>
-		    <groupId>net.sourceforge.htmlunit</groupId>
-		    <artifactId>htmlunit</artifactId>
-		    <version>2.23</version>
-		</dependency>
-		
 
 
-		-->
-		<!-- https://mvnrepository.com/artifact/com.artofsolving/jodconverter 
 		<dependency>
-		    <groupId>com.artofsolving</groupId>
-		    <artifactId>jodconverter-core</artifactId>
-		    <version>3.0-beta-4</version>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>6.3.0</version>
 		</dependency>
-		
-		-->
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-memory</artifactId>
+			<version>6.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-highlighter</artifactId>
+			<version>6.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>6.3.0</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.8.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>IKAnalyzer</groupId>
+			<artifactId>IKAnalyzer</artifactId>
+			<version>2012FF_hf1</version>
+		</dependency>
+
+
+		<!-- <dependency> <groupId>net.sourceforge.htmlunit</groupId> <artifactId>htmlunit</artifactId> 
+			<version>2.23</version> </dependency> -->
+		<!-- https://mvnrepository.com/artifact/com.artofsolving/jodconverter <dependency> 
+			<groupId>com.artofsolving</groupId> <artifactId>jodconverter-core</artifactId> 
+			<version>3.0-beta-4</version> </dependency> -->
 		<dependency>
 			<groupId>ifreeshare</groupId>
 			<artifactId>util</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>ifreeshare</groupId>
 			<artifactId>ElasticSearch</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
-		
+
+
 	</dependencies>
 
 	<build>
@@ -243,28 +225,10 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<!-- 
-			
-			<plugin>
-				<groupId>com.vlkan</groupId>
-				<artifactId>quasar-maven-plugin</artifactId>
-				<version>0.7.3</version>
-				<configuration>
-					<check>true</check>
-					
-					<debug>true</debug>
-					<verbose>true</verbose>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>instrument</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
-			 -->
+			<!-- <plugin> <groupId>com.vlkan</groupId> <artifactId>quasar-maven-plugin</artifactId> 
+				<version>0.7.3</version> <configuration> <check>true</check> <debug>true</debug> 
+				<verbose>true</verbose> </configuration> <executions> <execution> <goals> 
+				<goal>instrument</goal> </goals> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 </project>
