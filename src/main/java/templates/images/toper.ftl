@@ -24,7 +24,7 @@
 					    <form class="form-inline" method="get" action="/public/search/image/get/html/" style="text-align: center;">
 						  <div class="form-group">
 						    <label for="exampleInputEmail2"></label>
-						    <input type="text" name="keys" style="width: 500px" value="${context.keys}" class="form-control" id="exampleInputEmail2"/>
+						    <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
 						  </div>
 						  <button type="submit" class="btn btn-primary">搜索一下</button>
 						</form>

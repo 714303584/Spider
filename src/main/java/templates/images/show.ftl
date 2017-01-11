@@ -14,8 +14,8 @@
 </head>
 <body style="background: url(/static/css/falls/images/body_bg.jpg);">
 
-	  <!-- include  footer -->
-   <#include "toper.ftl">
+	 	<!-- include  top -->
+  	 <#include "toper.ftl">
 
 	<div class="container">
 		<div class="card" style="background-color: white;">

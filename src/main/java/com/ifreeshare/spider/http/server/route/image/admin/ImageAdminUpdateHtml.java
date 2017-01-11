@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
+import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
@@ -15,6 +16,8 @@ import com.ifreeshare.spider.redis.RedisPool;
  * @author zhuss 
  */
 public class ImageAdminUpdateHtml extends BaseRoute  {
+	
+	IDataSearch<JsonObject> searcher = IDataSearch.instance();
 	
 	public ImageAdminUpdateHtml() {
 		super("/admin/image/update/:itype/:otype/", BaseRoute.GET, "templates/images/admin/edit.ftl");
@@ -33,16 +36,17 @@ public class ImageAdminUpdateHtml extends BaseRoute  {
 			return;
 		}
 		
-		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
+		JsonObject docJson =  searcher.getValueById(CoreBase.INDEX_HTML, CoreBase.TYPE_IMAGE, id);
+				//RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY,id);
 		if(CoreBase.DATA_TYPE_JSON.equals(oType)){
-			response.end(info);
+			response.end(docJson.toString());
 			return;
 		}else if(CoreBase.DATA_TYPE_XML.equals(oType)){
 			response.end("Temporarily not available ");
 			return;
 		}
 		
-		JsonObject docJson = new JsonObject(info);
+//		= new JsonObject(info);
 		PageDocument doc = new PageDocument();
 		doc.setUuid(docJson.getString(CoreBase.UUID));
 		doc.setKeywords(docJson.getString(CoreBase.HTML_KEYWORDS));
