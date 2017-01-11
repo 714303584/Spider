@@ -102,13 +102,13 @@
 			<div class="container" style="text-align:center">
 				  <ul class="pagination pagination-lg">
 				    <li class="page-item">
-				      <a class="page-link" href="/public/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
+				      <a class="page-link" href="/admin/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
 				        <span aria-hidden="true">&laquo;</span>
 				        <span class="sr-only">Previous</span>
 				      </a>
 				    </li>
 				    <li class="page-item">
-				     <a class="page-link" href="/public/search/image/get/html/?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
+				     <a class="page-link" href="/admin/search/image/get/html/?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
 				        <span aria-hidden="true">&raquo;</span>
 				        <span class="sr-only">Next</span>
 				      </a>
