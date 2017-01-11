@@ -110,17 +110,25 @@ public class CoreBase {
 	
 	public static final String DOT = ".";
 	
+	//A unique identifier for the data
 	public static final String UUID = "uuid";
 	
+	// the MD5 value  of File or other
 	public static final String MD5 = "md5";
 
+	// the sha512 value  of File or other
 	public static final String SHA512 = "sha512";
+	
+	// the sha1 value  of File or other
 	public static final String SHA1 = "sha1";
 	
+	//The resolution of the image
 	public static final String RESOLUTION = "resolution";
 
+	//The size of the file
 	public static final String FILE_SIZE = "fileSize";
 	
+	//The source of this data ------- Usually a URL
 	public static final String SOURCE_ADDRESS = "sourceAddress";
 	
 	
@@ -131,26 +139,41 @@ public class CoreBase {
 	
 	//The index in ElasticSearch
 	public static final String INDEX_HTML = "url";
+	
+	//The type in ElasticSearch -----  Equivalent to the table
 	public static final String TYPE = "type";
 	
+	//
 	public static final String HTML_TITLE = "title";
 	public static final String HTML_KEYWORDS = "keywords";
 	public static final String HTML_DESCRIPTION = "description";
+	//
 	public static final String Content_Type = "Content-Type";
 	public static final String  TEXT_HTML = "text/html";
 	public static final String  OBJECTS = "objects";
 	
+	//File storage path
 	public  static final  String FILE_PATH = "file_path";
+	
+	//The document's web access path
 	public static final String FILE_URL_PATH = "file_url_path";
+	
+	//The state of the data
 	public static final String FILE_STATUS = "status";
 	
+	//
 	public static final String DOC_PAGE_SIZE = "page_size";
+	
+	//Thumbnail address ---- Picture or document thumbnail address
 	public static final String DOC_THUMBNAIL = "thumbnail";
 	
+	//Encoding format ----- Usually gbk or UTF-8
 	public static final String  CHARSET = "charset";
 	
+	//the name of file
 	public static final String FILE_NAME = "filename";
 	
+	//The type of data operation
 	public static final String OPERATE = "operate";
 	//insert
 	public static final int OPERATE_I = 1;
