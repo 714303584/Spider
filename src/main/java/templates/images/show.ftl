@@ -11,8 +11,10 @@
 	href="/static/js/bootstrap/dist/css/bootstrap.css">
 <!-- jQuery first, then Bootstrap JS. -->
 
+  <link rel="stylesheet" href="/static/css/falls/style.css"> 
+
 </head>
-<body style="background: url(/static/css/falls/images/body_bg.jpg);">
+<body >
 
 	 	<!-- include  top -->
   	 <#include "toper.ftl">

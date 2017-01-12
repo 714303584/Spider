@@ -1,17 +1,20 @@
  <nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
-      <button class="navbar-toggler visible-xs" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">ifreeshare</a>
-      <nav class="nav navbar-nav pull-left">
-        <a class="nav-item nav-link" href="#">首页</a>
-        <a class="nav-item nav-link" href="#">分类</a>
-        <a class="nav-item nav-link" href="#">论坛</a>
-        <a class="nav-item nav-link" href="#">关于</a>
-      </nav>
+     <div class="container"> 
+     	 <button class="navbar-toggler visible-xs" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">ifreeshare</a>
+	      <nav class="nav navbar-nav pull-left">
+	        <a class="nav-item nav-link" href="#">首页</a>
+	        <a class="nav-item nav-link" href="#">分类</a>
+	        <a class="nav-item nav-link" href="#">论坛</a>
+	        <a class="nav-item nav-link" href="#">关于</a>
+	      </nav>
+     
+     	</div>
     </nav>
     
     <div class="jumbotron">
