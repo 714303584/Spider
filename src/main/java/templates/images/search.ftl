@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/static/js/bootstrap/dist/css/bootstrap.css">
+    
+    <!-- include linker.ftl -->
+	<#include "../linker.ftl">
+    
     
     <link rel="stylesheet" href="/static/css/falls/style.css"> 
     <link rel="stylesheet" href="/static/css/lightbox/lightbox.css">
@@ -29,7 +32,7 @@
   <body>
   
 	<!-- include  top -->
-   <#include "toper.ftl">
+   <#include "../toper.ftl">
     
 	 	<div id="mainScreen" class="container"> 
 						 
@@ -83,7 +86,7 @@
 			</div>
     
    <!-- include  footer -->
-   <#include "footer.ftl">
+   <#include "../footer.ftl">
 	
 		<div id="lightboxOverlay" style="display: none;"></div>
 	<div id="lightbox" style="display: none;">
@@ -129,6 +132,7 @@
    
    
    <script type="text/javascript">
+   
    $(document).ready(function() {
    			 var $maincontainer = $("#main");
 				$maincontainer.imagesLoaded( function() {

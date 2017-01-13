@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- <meta http-equiv="x-ua-compatible" content="ie=edge"> -->
 <!-- Bootstrap CSS -->
-<link rel="stylesheet"
-	href="/static/js/bootstrap/dist/css/bootstrap.css">
+
+<!-- include linker.ftl -->
+<#include "../linker.ftl">
 <!-- jQuery first, then Bootstrap JS. -->
 
   <link rel="stylesheet" href="/static/css/falls/style.css"> 
@@ -17,7 +18,7 @@
 <body >
 
 	 	<!-- include  top -->
-  	 <#include "toper.ftl">
+  	 <#include "../toper.ftl">
 
 	<div class="container">
 		<div class="card" style="background-color: white;">
@@ -45,7 +46,7 @@
 
 
 	  <!-- include  footer -->
-   <#include "footer.ftl">
+   <#include "../footer.ftl">
 </body>
 
 <script src="/static/js/jquery/jquery.min.js"></script>
