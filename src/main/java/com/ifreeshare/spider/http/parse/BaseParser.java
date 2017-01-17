@@ -2,6 +2,7 @@ package com.ifreeshare.spider.http.parse;
 
 import io.vertx.core.json.JsonObject;
 
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ public class BaseParser implements HtmlParser {
 	
 	static{
 		try {
-			dic = PropertiesUtil.getProperties(BaseParser.class.getResource("/dic.properties").getPath());
+			dic = PropertiesUtil.getProperties(BaseParser.class.getResourceAsStream("/dic.properties"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);;

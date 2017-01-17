@@ -92,11 +92,9 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 	private long loadValue;
 
-	// Word segmentation And Create index
-	private IndexWriter imageIndexWriter;
 
 	// Word segmentation And Create index
-	private IndexReader indexReader;
+//	private IndexReader indexReader;
 
 	OkHttpClient sClient;
 
@@ -140,13 +138,6 @@ public class SpiderImageVerticle extends AbstractVerticle {
 			});
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}
-
-		if (FileAccess.createDir(imageIndexPath)) {
-			imageIndexWriter = LuceneFactory.getIndexWriter(imageIndexPath);
-		} else {
-			Log.log(logger, Level.WARN, "Failed to save path for the index of image");
-			System.exit(0);
 		}
 	}
 
@@ -230,10 +221,6 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		int opType = message.getInteger(MessageType.MESSAGE_TYPE);
 		Log.log(logger, Level.DEBUG, "change documents   -----------------------------  old_keyword[%s], new_keyword[%s], optype[%d]", oldKeyword, newKeyword, opType);
 
-		if (indexReader == null) {
-			indexReader = LuceneFactory.getIndexReader(imageIndexPath);
-		}
-
 		String[] value = { oldKeyword };
 		String[] field = {
 				// CoreBase.HTML_TITLE,
@@ -250,58 +237,55 @@ public class SpiderImageVerticle extends AbstractVerticle {
 			boolean flage = true;
 			int index = 0;
 			while (flage) {
-				Document[] documents = LuceneFactory.search(indexReader, value, 100, field, occur, index);
-				Log.log(logger, Level.DEBUG, "change documents   -----------------------------  exist document size[%s]", documents.length);
-				for (int i = 0; i < documents.length; i++) {
-					Document document = documents[i];
-					String uuid = document.get(CoreBase.UUID);
-					String keywords = document.get(CoreBase.HTML_KEYWORDS);
-				
-
-					document.removeField(CoreBase.HTML_KEYWORDS);
-
-					if (opType == MessageType.KEYWORD_REPLACE) {
-						 if(keywords.contains(newKeyword)){
-							 Log.log(logger, Level.DEBUG, "images update  -----------------------------  keywords[%s] contains new_keywords[%s]", keywords, newKeyword);
-							 continue;
-						 }
-						
-						keywords = newKeyword + " " + keywords;
-					} else if (opType == MessageType.KEYWORD_REMOVE) {
-						keywords = keywords.replaceAll(oldKeyword, " ");
-					}
-
-
-					keywords = BaseParser.keywordDeWeight(keywords);
-					TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, keywords, Store.YES);
-					document.add(keywordsField);
-
-					String thumbnail = document.get(CoreBase.DOC_THUMBNAIL);
-					String src = document.get(CoreBase.FILE_URL_PATH);
-					try {
-						Log.log(logger, Level.DEBUG, "images update  -----------------------------  exist document uuid[%s], keywords[%s]", uuid, keywords);
-						imageIndexWriter.updateDocument(new Term(CoreBase.UUID, uuid), document);
-						imageIndexWriter.flush();
-						imageIndexWriter.commit();
-						
-						String redisJson = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid);
-						if(redisJson != null){
-							Log.log(logger, Level.DEBUG, "redis image update keys -----------------------------  uuid[%s], image_info[%s]", uuid, redisJson);
-							JsonObject json = new JsonObject(redisJson);
-							json.put(CoreBase.HTML_KEYWORDS, keywords);
-							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, json.toString());
-						}else{
-							Log.log(logger, Level.WARN, "redis object not found  ----------------------------- uuid[%s]",uuid);
-						}
-					} catch (Exception e) {
-						Log.log(logger, Level.ERROR, "images update  -----------------------------  exist document [%s]", document);
-						e.printStackTrace();
-					}
-				}
-
-				if (documents.length < 100) {
-					flage = false;
-				}
+//				Document[] documents = LuceneFactory.search(indexReader, value, 100, field, occur, index);
+//				Log.log(logger, Level.DEBUG, "change documents   -----------------------------  exist document size[%s]", documents.length);
+//				for (int i = 0; i < documents.length; i++) {
+//					Document document = documents[i];
+//					String uuid = document.get(CoreBase.UUID);
+//					String keywords = document.get(CoreBase.HTML_KEYWORDS);
+//				
+//
+//					document.removeField(CoreBase.HTML_KEYWORDS);
+//
+//					if (opType == MessageType.KEYWORD_REPLACE) {
+//						 if(keywords.contains(newKeyword)){
+//							 Log.log(logger, Level.DEBUG, "images update  -----------------------------  keywords[%s] contains new_keywords[%s]", keywords, newKeyword);
+//							 continue;
+//						 }
+//						
+//						keywords = newKeyword + " " + keywords;
+//					} else if (opType == MessageType.KEYWORD_REMOVE) {
+//						keywords = keywords.replaceAll(oldKeyword, " ");
+//					}
+//
+//
+//					keywords = BaseParser.keywordDeWeight(keywords);
+//					TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, keywords, Store.YES);
+//					document.add(keywordsField);
+//
+//					String thumbnail = document.get(CoreBase.DOC_THUMBNAIL);
+//					String src = document.get(CoreBase.FILE_URL_PATH);
+//					try {
+//						Log.log(logger, Level.DEBUG, "images update  -----------------------------  exist document uuid[%s], keywords[%s]", uuid, keywords);
+//						
+//						String redisJson = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid);
+//						if(redisJson != null){
+//							Log.log(logger, Level.DEBUG, "redis image update keys -----------------------------  uuid[%s], image_info[%s]", uuid, redisJson);
+//							JsonObject json = new JsonObject(redisJson);
+//							json.put(CoreBase.HTML_KEYWORDS, keywords);
+//							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, json.toString());
+//						}else{
+//							Log.log(logger, Level.WARN, "redis object not found  ----------------------------- uuid[%s]",uuid);
+//						}
+//					} catch (Exception e) {
+//						Log.log(logger, Level.ERROR, "images update  -----------------------------  exist document [%s]", document);
+//						e.printStackTrace();
+//					}
+//				}
+//
+//				if (documents.length < 100) {
+//					flage = false;
+//				}
 			}
 		}	).start();
 
