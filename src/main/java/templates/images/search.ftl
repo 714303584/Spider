@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="爱分享免费为您提供动物，美女，汽车，搞笑、艺术、科技等图片和高清壁纸。">
     <!-- Bootstrap CSS -->
     
     <!-- include linker.ftl -->

@@ -9,6 +9,7 @@
 <!-- Bootstrap CSS -->
 
 <!-- include linker.ftl -->
+ <meta name="description" content="${context.doc.keyword}">
 <#include "../linker.ftl">
 <!-- jQuery first, then Bootstrap JS. -->
 
