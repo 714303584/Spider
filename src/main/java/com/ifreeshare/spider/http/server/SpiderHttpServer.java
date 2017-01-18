@@ -35,6 +35,7 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.ScoreDoc;
 
 import com.ifreeshare.lucene.LuceneFactory;
+import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
@@ -137,8 +138,6 @@ public class SpiderHttpServer extends AbstractVerticle {
 	        // Redirect back to the index page
 	        context.response().putHeader("location", "/").setStatusCode(302).end();
 	      });
-	    
-
 		router.route("/static/*").handler(StaticHandler.create().setCachingEnabled(false));
 		
 		
@@ -166,64 +165,6 @@ public class SpiderHttpServer extends AbstractVerticle {
 			}
 		}
 		
-		router.get("/private/mypage").handler(context -> {
-			context.response().end("ok");
-		});
-		
-
-		router.get("/file/search").handler(context -> {
-			String keys = context.request().getParam("keys");
-			String[] value = { keys, keys, keys };
-			String[] field = { CoreBase.HTML_TITLE, CoreBase.HTML_KEYWORDS, CoreBase.HTML_DESCRIPTION };
-			Occur[] occur = { Occur.SHOULD, Occur.SHOULD, Occur.SHOULD };
-
-			ScoreDoc scoreDoc = null;
-			Document[] documents = LuceneFactory.search(value, 100, field, occur, scoreDoc);
-
-			List<PageDocument> page = new ArrayList<PageDocument>();
-
-			JsonObject result = new JsonObject();
-			JsonArray objects = new JsonArray();
-
-			for (int i = 0; i < documents.length; i++) {
-				Document document = documents[i];
-				String uuid = document.get(CoreBase.UUID);
-				String keywords = document.get(CoreBase.HTML_KEYWORDS);
-				String description = document.get(CoreBase.HTML_DESCRIPTION);
-				String title = document.get(CoreBase.HTML_TITLE);
-				String file_url_path = document.get(CoreBase.FILE_URL_PATH);
-				JsonObject docJson = new JsonObject();
-				PageDocument pd = new PageDocument();
-				pd.setUuid(uuid);
-				
-				try {
-					pd.setThumbnail(file_url_path);
-					pd.setName(title);
-					pd.setKeywords(keywords);
-					pd.setDescription(description);
-					page.add(pd);
-					Log.log(logger, Level.WARN, "File Info [%s]", pd.toString());
-				} catch (Exception e) {
-					// TODO 自动生成的 catch 块
-				e.printStackTrace();
-			}
-			objects.add(docJson);
-		}
-
-		context.put("pages", page);
-		context.put("keys", keys);
-
-		freeMarkerTemplateEngine.render(context, "templates/search.ftl", res -> {
-			if (res.succeeded()) {
-				// context.response.putHeader("content-type",
-				// "application/json;charset=UTF-8");
-				context.response().end(res.result());
-			} else {
-				context.fail(res.cause());
-			}
-		});
-	});
-		
 		String listen_port = Configuration.getConfig(CoreBase.HTTP_SERVER, CoreBase.LISTEN_PORT);
 		httpServer.requestHandler(router::accept).listen(Integer.parseInt(listen_port));
 	}
@@ -234,8 +175,7 @@ public class SpiderHttpServer extends AbstractVerticle {
 	}
 
 	public static void main(String[] args) {
-		Configuration.load("",SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
-		// System.setProperty("vertx.disableFileCaching", "true");
+		Configuration.load(Runner.defaultConfigPah,SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
 		Vertx vertx = Vertx.vertx();
 		Context context = vertx.getOrCreateContext();
 		vertx.deployVerticle(new SpiderHttpServer(vertx, context));
