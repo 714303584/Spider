@@ -52,9 +52,9 @@
 			<hr>
 			<div class="row footer-bottom">
 				<ul class="list-inline text-center">
-					<li><a href="http://www.miibeian.gov.cn/" target="_blank">京ICP备11008151号</a></li>
+					<li><a href="http://www.miibeian.gov.cn/" target="_blank"> 京ICP备15051618号 </a></li>
 					|
-					<li>京公网安备11010802014853</li>
+					<li><a href="/static/core/page/disclaimer.html" target="_blank">使用前必读</a></li>
 				</ul>
 			</div>
 		</div>

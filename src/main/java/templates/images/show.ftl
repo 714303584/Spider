@@ -28,13 +28,13 @@
 					</#list>
 			</div>
 			<img style="width: 100%"
-				src="http://localhost:808/${ context.doc.src }"
+				src="http://${context.domain}/${ context.doc.src }"
 				data-holder-rendered="true">
 			<div class="card-footer">
 				<button id="btn_love" type="button" onclick="loveImage('${context.doc.uuid}')" class="btn btn-success">喜欢(111)</button>
 				<button type="btn_collect" onclick="loveImage('${context.doc.uuid}')" class="btn btn-info">收藏(1)</button>
 				<a class="btn btn-success download-button"
-					href="http://localhost:808/${ context.doc.src }" download> 
+					href="http://${context.domain}/${ context.doc.src }" download> 
 					<span class="glyphicon glyphicon-download-alt"></span>&nbsp;Download
 					(${context.doc.resolution})
 				</a>

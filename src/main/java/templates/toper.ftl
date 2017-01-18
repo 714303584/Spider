@@ -6,12 +6,16 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="#">ifreeshare</a>
+	      <a class="navbar-brand" href="http://www.ifreeshare.com">ifreeshare</a>
 	      <nav class="nav navbar-nav pull-left">
-	        <a class="nav-item nav-link" href="#">首页</a>
-	        <a class="nav-item nav-link" href="#">分类</a>
+	        <a class="nav-item nav-link" href="http://www.ifreeshare.com">首页</a>
+	     	<!--
+	     		   <a class="nav-item nav-link" href="#">分类</a>
 	        <a class="nav-item nav-link" href="#">论坛</a>
 	        <a class="nav-item nav-link" href="#">关于</a>
+	     	
+	     	
+	     	 -->
 	      </nav>
      
      	</div>

@@ -42,10 +42,10 @@
 										 <li class="masonry-brick" style="position: absolute; top: 0px; left: 0px;">
 								        	<div class="img_block">
 								        	 <a href="/public/show/image/get/html/?id=${ item.uuid }" >
-								            	<img src="http://192.168.3.148:808/thumbnail${item.thumbnail}" alt="">
+								            	<img src="http://${context.domain}/thumbnail${item.thumbnail}" alt="">
 								             </a>
 								            	
-								            	 <a href="http://192.168.3.148:808/${item.src}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
+								            	 <a href="http://${context.domain}/${item.src}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
 								               
 								            	
 								            	 <!-- <a href="#" class="ilike" onclick="loveImage('${item.uuid}')" style="display: none;">我喜欢</a> -->
