@@ -119,4 +119,7 @@
 	></script>
 
 <script src="/static/js/bootstrap/dist/js/bootstrap.js"></script>
+
+<!--  Submit the link address to the search engine -->
+<#include "../linkpush.ftl">
 </html>

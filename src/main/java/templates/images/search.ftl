@@ -191,5 +191,6 @@ $(document).ready(function(){
    
    
   
-
+<!--  Submit the link address to the search engine -->
+<#include "../linkpush.ftl">
 </html>

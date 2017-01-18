@@ -11,7 +11,7 @@
 <!-- include linker.ftl -->
  <meta name="description" content="${context.doc.keyword}">
 <#include "../linker.ftl">
-<!-- jQuery first, then Bootstrap JS. -->
+	<!-- jQuery first, then Bootstrap JS. -->
 
   <link rel="stylesheet" href="/static/css/falls/style.css"> 
 
@@ -91,6 +91,9 @@
    
 			 
    </script>
-
+   
+   
+<!--  Submit the link address to the search engine -->
+<#include "../linkpush.ftl">
 
 </html>
