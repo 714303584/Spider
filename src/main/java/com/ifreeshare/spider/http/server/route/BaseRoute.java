@@ -21,6 +21,9 @@ import com.ifreeshare.spider.log.Loggable.Level;
  */
 public class BaseRoute {
 	
+//	public static final String DOMAIN = "localhost:808";
+	public static final String DOMAIN = "www.ifreeshare.com";
+	
 	//Http request method
 	public final static String GET = "GET";
 	public final static String HEAD = "HEAD";
@@ -122,6 +125,7 @@ public class BaseRoute {
 	 * @param context  ------ The context of a request
 	 */
 	public void render(RoutingContext context){
+		context.put("domain", DOMAIN);
 		freeMarkerTemplateEngine.render(context, template, res -> {
 			if (res.succeeded()) {
 				// context.response.putHeader("content-type",
