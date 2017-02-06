@@ -1,5 +1,6 @@
  
  
+ 
      <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -36,22 +37,16 @@
     
     <div class="jumbotron" >
 	  <div class="container" style="text-align: center">
-			  <div class="row" style="text-align: center">
-			  		<h1 class="display-3" style="text-align: center;">ifreeshare</h1>
-					  <p class="lead"  style="text-align: center;">我们致力于数据的免费分享！</p>
+	  					<h1 class="display-4" style="text-align: center;">ifreeshare</h1>
+					  <p  style="text-align: center;">本网站所有数据均来自于网络上的公开数据并致力于对其进行免费的分享。</p>
 					  <hr class="m-y-md">
-					  <p class="lead">
-					    <form class="form-inline" method="get" action="/public/search/image/resouce/" style="text-align: center;">
-						  <div class="form-group">
-						    <label for="exampleInputEmail2"></label>
-						    <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
-						  </div>
-						  <button type="submit" class="btn btn-primary">搜索资源</button>
+					  <div class="row justify-content-md-center">
+                  		 <form class="form-inline" method="get" action="/public/search/image/resouce/" style="text-align: center;">
+						  <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
+						  <button type="submit" class="btn btn-primary">搜索图片</button>
 						</form>
-					  </p>
-			  </div>
-	  
+					</div>
 	  </div>
 	</div>
-	
+	 
 	
