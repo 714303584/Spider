@@ -1,0 +1,37 @@
+
+* {
+	
+}
+
+
+#nav {
+	background:url(../falls/images/pic_repeat_x.png) 
+	background: repeat-x;
+	padding: 0 0 4px 0;
+}
+
+#nav ul li {
+	float: left;
+	display: inline;
+}
+
+#nav ul li a {
+	_float: left;
+	display: block;
+	text-align: center;
+	width: 83px;
+	font-size: 14px;
+	color: #000;
+	line-height: 50px;
+	font-family: "Î¢ÈíÑÅºÚ", Arial;
+	text-decoration: none;
+	background: url(../falls/images/pic_ilike.png) no-repeat -200px 0;
+}
+
+#nav ul li a.link, #nav ul li a:hover {
+	background-position: -92px 0;
+}
+
+#nav ul li a.hover {
+	background-position: 12px 0;
+}
