@@ -12,6 +12,7 @@
 	 -->
 	<images storage="G:\nginx-1.9.4\html"  thumbnail="G:\nginx-1.9.4\html\thumbnail" uri="" index="H:\imagesLucene"></images>
 	
+	<images storage="G:\nginx-1.9.4\html\iresource" ></images>
 	<!-- Grab the PDF to the storage address
 		storage := the storage address --- Absolute path 
 		thumbnail := Thumbnail to the storage address --- Absolute path 
