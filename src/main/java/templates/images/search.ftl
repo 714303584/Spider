@@ -69,7 +69,7 @@
 						  
 
 		
-			<div class="container" style="text-align:center">
+			<div class="container" >
 				  <ul class="pagination pagination-lg">
 				    <li class="page-item">
 				      <a class="page-link" href="/public/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
