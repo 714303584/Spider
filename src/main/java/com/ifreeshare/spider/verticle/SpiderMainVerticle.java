@@ -136,7 +136,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 					
 					Fiber.sleep(5000);
 					if(cache.isEmpty()){
-						ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, "0", 1000);
+						ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, "1", 1000);
 						List<Map.Entry<String, String>> entrys = sr.getResult();
 						Iterator<Map.Entry<String, String>> it = entrys.iterator();
 						while (it.hasNext()) {

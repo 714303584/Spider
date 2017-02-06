@@ -103,6 +103,7 @@ public class SearchResourceRouter extends BaseRoute {
 				pd.setName(title);
 				pd.setKeywords(keywords);
 				pd.setDescription(description);
+				pd.setTitle(title);
 				pd.setThumbnail("/iresource/"+path+"/"+thumbnail);
 				Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), pd);
 				result.add(pd);

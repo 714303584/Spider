@@ -1,5 +1,6 @@
 
 <!-- Baidu submit link address -->
+<!--
 <script>
 		(function(){
 		    var bp = document.createElement('script');
@@ -14,3 +15,6 @@
 		    s.parentNode.insertBefore(bp, s);
 		})();
 </script>
+
+
+ -->
