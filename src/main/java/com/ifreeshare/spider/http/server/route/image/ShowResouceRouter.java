@@ -7,6 +7,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import java.io.File;
 
+import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
@@ -16,8 +17,9 @@ import com.ifreeshare.spider.redis.RedisPool;
 
 public class ShowResouceRouter extends BaseRoute {
 	
+	IDataSearch<JsonObject> search = IDataSearch.instance();
 	public ShowResouceRouter() {
-		super("/public/show/image/resource/", BaseRoute.GET, "templates/images/rshow.ftl");
+		super("/public/show/image/resource/", BaseRoute.GET, "templates/images/resources/show.ftl");
 	}
 
 
@@ -27,18 +29,20 @@ public class ShowResouceRouter extends BaseRoute {
 		HttpServerResponse response = context.response();
 		String id = request.getParam("id");
 		
-		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_RESOURCE_KEY_IFREESHARE_COM,id);
+//		String info = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_RESOURCE_KEY_IFREESHARE_COM,id);
 		
-		JsonObject docJson = new JsonObject(info);
+		
+		JsonObject docJson = search.getValueById(CoreBase.IMAGES, CoreBase.RESOURCES, id);
+		
 		String keywords = docJson.getString(CoreBase.HTML_KEYWORDS);
 		
 		PageDocument doc = new PageDocument();
-		doc.setUuid(docJson.getString(CoreBase.UUID));
 		doc.setKeywords(keywords);
 		doc.setDescription(docJson.getString(CoreBase.HTML_DESCRIPTION));
 		doc.setName(docJson.getString(CoreBase.HTML_TITLE));
 		doc.setTitle(docJson.getString(CoreBase.HTML_TITLE));
 		doc.setSrc(docJson.getString(CoreBase.PATH));
+		doc.setUuid(id);
 		
 		Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), docJson);
 	 	File file = new File("G:\\nginx-1.9.4\\html\\iresource\\"+doc.getSrc());

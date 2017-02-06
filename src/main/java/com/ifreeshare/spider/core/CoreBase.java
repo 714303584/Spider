@@ -230,6 +230,8 @@ public class CoreBase {
     
     public static final String RESOURCES_PATH = System.getProperty("user.dir");
     
+    public static final String RESOURCES = "resources";
+    
     
     /**
      * config field

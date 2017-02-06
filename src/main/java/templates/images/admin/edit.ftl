@@ -77,8 +77,6 @@
 								id="example-text-input">
 						</div>
 					</div>
-		
-		
 		 -->
 			
 			

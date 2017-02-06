@@ -7,7 +7,7 @@ import com.ifreeshare.spider.http.server.route.BaseRoute;
 public class ImageResourceGet extends BaseRoute {
 
 	public ImageResourceGet() {
-		super("/admin/image/resource/create/", BaseRoute.GET, "templates/images/admin/resource_create_get.ftl");
+		super("/admin/image/resource/create/", BaseRoute.GET, "templates/images/resources/resource_create_get.ftl");
 	}
 	
 	@Override

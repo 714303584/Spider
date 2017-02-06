@@ -74,13 +74,22 @@
 				</div>
 			</div>
 			
-				<div class="form-group row">
+			<div class="form-group row">
 				<label for="example-text-input" class="col-xs-2 col-form-label">关键字:</label>
 				<div class="col-xs-10">
 					<input id="id_keywords" name="keywords" class="form-control" type="text"   
 						id="example-text-input">
 				</div>
 			</div>
+			
+			<div class="form-group row">
+				<label for="example-text-input" class="col-xs-2 col-form-label">缩略图:</label>
+				<div class="col-xs-10">
+					<input id="id_thumbnail" name="thumbnail" class="form-control" type="text"   
+						id="example-text-input">
+				</div>
+			</div>
+			
 			
 			<div class="form-group row">
 				<label for="example-text-input" class="col-xs-2 col-form-label">描述:</label>

@@ -21,8 +21,8 @@ import com.ifreeshare.spider.log.Loggable.Level;
  */
 public class BaseRoute {
 	
-//	public static final String DOMAIN = "localhost:808";
-	public static final String DOMAIN = "www.ifreeshare.com";
+	public static final String DOMAIN = "localhost:808";
+//	public static final String DOMAIN = "www.ifreeshare.com";
 	
 	//Http request method
 	public final static String GET = "GET";

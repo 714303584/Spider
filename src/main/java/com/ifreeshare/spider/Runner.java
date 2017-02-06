@@ -74,7 +74,7 @@ public class Runner {
 				e.printStackTrace();
 			}
 
-			vertx.deployVerticle(new SpiderMainVerticle(vertx, context));
+//			vertx.deployVerticle(new SpiderMainVerticle(vertx, context));
 			vertx.deployVerticle(new SpiderAdminHttpVerticle(vertx, context));
 		} catch (Exception e) {
 			e.printStackTrace();

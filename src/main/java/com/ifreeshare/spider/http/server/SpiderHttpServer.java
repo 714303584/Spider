@@ -43,7 +43,9 @@ import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.http.server.route.image.GetImageRouter;
 import com.ifreeshare.spider.http.server.route.image.LoveImageRouter;
 import com.ifreeshare.spider.http.server.route.image.SearchImageRouter;
+import com.ifreeshare.spider.http.server.route.image.SearchResourceRouter;
 import com.ifreeshare.spider.http.server.route.image.ShowImageRouter;
+import com.ifreeshare.spider.http.server.route.image.ShowResouceRouter;
 import com.ifreeshare.spider.http.server.route.image.UpdateImageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserDetailsPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserLoginPageRouter;
@@ -84,8 +86,10 @@ public class SpiderHttpServer extends AbstractVerticle {
 		routers.add(new UserLoginPostRouter());
 		routers.add(new UserLoginPageRouter());
 		routers.add(new LoveImageRouter());
+		routers.add(new ShowResouceRouter());
 		routers.add(new ShowImageRouter());
 		routers.add(new UserDetailsPageRouter());
+		routers.add(new SearchResourceRouter());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);

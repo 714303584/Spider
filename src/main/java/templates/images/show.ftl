@@ -9,7 +9,7 @@
 <!-- Bootstrap CSS -->
 
 <!-- include linker.ftl -->
- <meta name="description" content="${context.doc.keyword}">
+ <meta name="description" content="${context.doc.keywords}">
 <#include "../linker.ftl">
 	<!-- jQuery first, then Bootstrap JS. -->
 
