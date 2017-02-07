@@ -27,8 +27,22 @@
    
   </head>
   <body>
-      <#include "../../toper.ftl">
-    
+      <#include "../../topMenu.ftl">
+      
+      
+          <div class="jumbotron" >
+			  <div class="container" style="text-align: center">
+			  					<h1 class="display-4" style="text-align: center;">ifreeshare</h1>
+							  <p  style="text-align: center;">本网站所有数据均来自于网络上的公开数据并致力于对其进行免费的分享。</p>
+							  <hr class="m-y-md">
+							  <div class="row justify-content-md-center">
+		                  		 <form class="form-inline" method="get" action="/admin/search/image/get/html/" style="text-align: center;">
+								  <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
+								  <button type="submit" class="btn btn-primary">搜索图片</button>
+								</form>
+							</div>
+			  </div>
+			</div>
     
 	 	<div id="mainScreen" class="container"> 
 						 
@@ -65,7 +79,8 @@
 
 		
 			<div class="container" style="text-align:center">
-				  <ul class="pagination pagination-lg">
+				<div class="row justify-content-md-center">
+					 <ul class="pagination pagination-lg">
 				    <li class="page-item">
 				      <a class="page-link" href="/admin/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
 				        <span aria-hidden="true">&laquo;</span>
@@ -79,11 +94,11 @@
 				      </a>
 				    </li>
 				  </ul>
+				</div>
 			</div>
-    
-    <div class="jumbotron" style="margin-bottom: 0px">
-	  
-	</div>
+			
+			 <!-- include  footer -->
+		   <#include "../../footer.ftl">
 	
 		<div id="lightboxOverlay" style="display: none;"></div>
 	<div id="lightbox" style="display: none;">

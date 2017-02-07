@@ -15,44 +15,22 @@
 </head>
 <body>
 
-	<nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
-		<button class="navbar-toggler visible-xs" aria-expanded="false"
-			aria-controls="navbar" type="button" data-toggle="collapse"
-			data-target="#navbar">
-			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
-			<span class="icon-bar"></span> <span class="icon-bar"></span>
-		</button>
-		<a class="navbar-brand" href="#">ifreeshare</a>
-		<nav class="nav navbar-nav pull-left">
-			<a class="nav-item nav-link" href="#">首页</a> <a
-				class="nav-item nav-link" href="#">资源</a> 
-		</nav>
-	</nav>
-
-	<div class="jumbotron">
-		<div class="container">
-			<div class="row">
-				<h1 class="display-3" style="text-align: center;">ifreeshare</h1>
-				<p class="lead" style="text-align: center;">This is a simple
-					hero unit, a simple jumbotron-style component for calling extra
-					attention to featured content or information.</p>
-				<hr class="m-y-md">
-				<p class="lead">
-				<form class="form-inline" method="get" action="/file/search"
-					style="text-align: center;">
-					<div class="form-group">
-						<label for="exampleInputEmail2"></label> <input type="text"
-							name="keys" style="width: 500px" class="form-control"
-							id="exampleInputEmail2" required="required">
-					</div>
-					<button type="submit" class="btn btn-primary">搜索一下</button>
-				</form>
-				</p>
+ 		<#include "../../topMenu.ftl">
+      
+      
+          <div class="jumbotron" >
+			  <div class="container" style="text-align: center">
+			  					<h1 class="display-4" style="text-align: center;">ifreeshare</h1>
+							  <p  style="text-align: center;">本网站所有数据均来自于网络上的公开数据并致力于对其进行免费的分享。</p>
+							  <hr class="m-y-md">
+							  <div class="row justify-content-md-center">
+		                  		 <form class="form-inline" method="get" action="/admin/search/image/get/html/" style="text-align: center;">
+								  <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
+								  <button type="submit" class="btn btn-primary">搜索图片</button>
+								</form>
+							</div>
+			  </div>
 			</div>
-
-		</div>
-	</div>
-
 
 
 	<div class="container">
@@ -79,10 +57,8 @@
 			
 			<div class="form-group row">
 				<label for="example-text-input" class="col-xs-2 col-form-label">关键字:</label>
-				<div class="col-xs-10">
 					<input id="keywords" name="keywords" class="form-control" type="text"  value="${context.doc.keywords}"
 						id="example-text-input">
-				</div>
 			</div>
 			
 			<div class="form-group row">

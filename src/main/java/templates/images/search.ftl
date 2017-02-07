@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="爱分享免费为您提供动物，美女，汽车，搞笑、艺术、科技等图片和高清壁纸。">
     <!-- Bootstrap CSS -->
     
     <!-- include linker.ftl -->
@@ -70,7 +69,8 @@
 
 		
 			<div class="container" >
-				  <ul class="pagination pagination-lg">
+				  <div class="row justify-content-md-center">
+				  	<ul class="pagination pagination-lg">
 				    <li class="page-item">
 				      <a class="page-link" href="/public/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
 				        <span aria-hidden="true">&laquo;</span>
@@ -84,6 +84,8 @@
 				      </a>
 				    </li>
 				  </ul>
+				  
+				   </div>
 			</div>
     
    <!-- include  footer -->
