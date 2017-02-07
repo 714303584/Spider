@@ -32,9 +32,13 @@
    <#include "toper.ftl">
     
 	 	<div id="mainScreen" class="container"> 
-			 	<div class="container">
-          <h2>${context.doc.title}:<small>${context.doc.keywords}</small></h2>
-    	</div>
+					<div class="row justify-content-md-start">
+				    	 <h2>&nbsp;&nbsp;${context.doc.title}</h2>
+				    </div>
+				 	 <div class="row justify-content-md-end">
+						<h6>标签:${context.doc.keywords}</h6>
+					</div>
+				
 						 <div id="main">
 							<ul id="waterfall" class="masonry" style="position: relative;">
 									<#list context.doc.tags as item>

@@ -59,9 +59,9 @@
 								            	<!-- <a href="#" class="ilike" onclick="loveImage('${item.uuid}')" style="display: none;">我喜欢</a> -->
 								          </div>
 								            <h3></h3>
-								            <div class="iNum">
-								          <!---   <span>1</span><a href="http://www.niurenzm.com/demo/969/#">4</a> --->
-								             <a href="/admin/image/update/get/html/?uuid=${item.uuid}">编辑</a></div>
+								            <div >
+								          <!---  class="iNum"  <span>1</span><a href="http://www.niurenzm.com/demo/969/#">4</a> --->
+								             <a href="/admin/image/update/get/html/?uuid=${item.uuid}">编辑</a>  <a href="/admin/image/delete/get/html/?uuid=${item.uuid}">删除</a> </div>
 								          <p style="word-wrap:break-word; word-break:normal;">${item.keywords}</p>
 										</li>
 									</#list>
