@@ -25,35 +25,43 @@
 <body >
 
 	 	<!-- include  top -->
-	 	 <nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
-     <div class="container"> 
-     	 <button class="navbar-toggler visible-xs" aria-expanded="false" aria-controls="navbar" type="button" data-toggle="collapse" data-target="#navbar">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
-	         <a class="navbar-brand" href="http://www.ifreeshare.com">ifreeshare</a>
-	      <nav class="nav navbar-nav pull-left">
-	        <a class="nav-item nav-link" href="http://www.ifreeshare.com">首页</a>
-	     	<!--
-	     		   <a class="nav-item nav-link" href="#">分类</a>
-	        <a class="nav-item nav-link" href="#">论坛</a>
-	        <a class="nav-item nav-link" href="#">关于</a>
-	     	
-	     	
-	     	 -->
-	      </nav>
-     
-     	</div>
+	     <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="http://www.ifreeshare.com">ifreeshare</a>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-item nav-link" href="http://www.ifreeshare.com">首页</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-item nav-link" href="/public/search/image/resouce/">资源</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li> -->
+        </ul>
+    		<!--     <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form> -->
+      </div>
     </nav>
     
     <div class="jumbotron">
 	  <div class="container">
-			  <div class="row">
 			  		<h1 style="text-align: center;">ifreeshare网站声明</h1>
 					  <p class="lead"  style="text-align: center;">本页包含：网站声明,服务内容,免责声明,上传内容,终止服务的一些条款。</p>
-			  </div>
 	  
 	  </div>
 	</div>
@@ -139,19 +147,20 @@
   </div>
 </div>
 	
-	<footer class="footer " style="color: #777; border-top: 1px solid #e5e5e5; margin-top: 30px; padding: 30px 0;">
-      <div class="container">
-        <div class="row footer-top">
-          <div class="col-sm-6 col-lg-6">
-            <h4>
-              <img src="/static/logo.png">
-            </h4>
-            <p>本站所有资源均来自于网络采集，若侵犯到您的利益，请致电网站管理员交涉处理。</p>
-          </div>
-         	<div class="col-sm-6  col-lg-5 col-lg-offset-1">
+	<footer class="footer "
+		style="color: #777; border-top: 1px solid #e5e5e5; margin-top: 30px; padding: 30px 0;">
+		<div class="container">
+			<div class="row footer-top">
+				<div class="col-sm-6">
+					<h4>
+						<img src="/static/logo.png">
+					</h4>
+					<p>本站所有资源均来自于网络采集，若侵犯到您的利益，请致电网站管理员交涉处理。</p>
+				</div>
+				<div class="col-sm-6">
 					<div class="row about">
-						<div class="col-xs-3"></div>
-						<div class="col-xs-3">
+						<div class="col-3"></div>
+						<div class="col-3">
 							<h4 style="color: #563d7c; font-size: 16px;">关于</h4>
 							<ul class="list-unstyled">
 								<li><a style="" href="/static/core/page/us.html">关于我们</a></li>
@@ -159,17 +168,17 @@
 								<li><a href="/static/core/page/disclaimer.html">网站声明</a></li>
 							</ul>
 						</div>
-						<div class="col-xs-3">
+						<div class="col-3">
 							<h4 style="color: #563d7c; font-size: 16px;">联系方式</h4>
 							<ul class="list-unstyled">
 								<li><a href="mailto:zhushunshan@foxmail.com" >电子邮件</a></li>
-								<li><a rel="tooltip"
+									<li><a rel="tooltip"
 									href="tencent://message/?uin=2733175679&amp;Site=ifreeshare&amp;Menu=yes"
 									data-original-title="QQ">QQ<img
 										src="/static/images/socialicons/th.png"></a></li>
 							</ul>
 						</div>
-						<div class="col-xs-3">
+						<div class="col-3">
 							<h4 style="color: #563d7c; font-size: 16px;">旗下网站</h4>
 							<ul class="list-unstyled">
 								<li><a href="#" target="_blank">暂无</a></li>
@@ -188,17 +197,13 @@
 					</div>
 
 				</div>
-        </div>
-        <hr>
-        <div class="row footer-bottom">
-          <ul class="list-inline text-center">
-            <li><a href="http://www.miibeian.gov.cn/" target="_blank"> 京ICP备15051618号 </a></li>
-					|
-					<li><a href="/static/core/page/disclaimer.html" target="_blank">使用前必读</a></li>
-          </ul>
-        </div>
-      </div>
-    </footer>
+			</div>
+			<hr>
+			<div class="row justify-content-md-center">
+                    <a href="http://www.miibeian.gov.cn/" target="_blank"> 京ICP备15051618号 </a> | <a href="/static/core/page/disclaimer.html" target="_blank">使用前必读</a>
+			</div>
+		</div>
+	</footer>
 
 
 </body>
