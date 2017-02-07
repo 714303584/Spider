@@ -88,7 +88,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	private String thumbnailPath;
 
 	// Storage path for image indexing ---------- lucene
-	private String imageIndexPath;
+//	private String imageIndexPath;
 
 	private long loadValue;
 
@@ -105,7 +105,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		sClient = new FiberOkHttpClient();
 
 		imageSavePath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.STORAGE);
-		imageIndexPath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.INDEX);
+//		imageIndexPath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.INDEX);
 		thumbnailPath = Configuration.getConfig(CoreBase.IMAGES, CoreBase.DOC_THUMBNAIL);
 
 		sClient.setConnectTimeout(2, TimeUnit.MINUTES);

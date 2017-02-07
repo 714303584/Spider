@@ -63,13 +63,19 @@ public class PersistenceVertical extends BaseVerticle<JsonObject> {
 							Log.log(this.logger, Level.INFO, "persistence update failed -----------------------------    message:[%s]", message);
 						}
 					break;
-
+					
+					case CoreBase.OPERATE_R:
+						if(persistence.remove(message)){
+							Log.log(this.logger, Level.INFO, "persistence delete success -----------------------------    message:[%s]", message);
+						}else{
+							Log.log(this.logger, Level.INFO, "persistence delete failed -----------------------------    message:[%s]", message);
+							buffer.send(message);
+						}
+					break;
+					
 					default:
 						break;
 					}
-
-						
-				 	
 					
 				} catch (Exception e) {
 					e.printStackTrace();
