@@ -217,4 +217,14 @@ public class BaseRoute {
 	}
 	
 	
+	/**
+	 * For redirection
+	 * @param response
+	 * @param url
+	 */
+	public void doRedirect(HttpServerResponse response, String url) {
+		    response.putHeader("location", url).setStatusCode(302).end();
+	}
+	
+	
 }

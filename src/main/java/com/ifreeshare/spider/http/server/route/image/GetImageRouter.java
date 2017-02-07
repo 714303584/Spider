@@ -57,7 +57,4 @@ public class GetImageRouter extends BaseRoute {
 		context.put("doc", doc);
 		render(context);
 	}
-	
-	
-
 }
