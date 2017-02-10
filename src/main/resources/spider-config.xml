@@ -23,5 +23,5 @@
 	<pdf storage=""  thumbnail=""  uri="" index=""></pdf>
 	
 	<!-- server listening port  -->
-	<http-server listen-port="8000" request-timeout="10000"/>
+	<http-server listen-port="8000" request-timeout="10000" http-domain="localhost:808"/>
 </config>
