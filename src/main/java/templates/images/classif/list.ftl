@@ -27,46 +27,49 @@
    
   </head>
   <body>
-      <#include "topMenu.ftl">
+      <#include "../admin/topMenu.ftl">
       
       
           <div class="jumbotron" >
 			  <div class="container" style="text-align: center">
-			  					<h1 class="display-4" style="text-align: center;">ifreeshare图片管理</h1>
+			  				<h1 class="display-4" style="text-align: center;">ifreeshare分类列表</h1>
 							  <p  style="text-align: center;">本网站所有数据均来自于网络上的公开数据并致力于对其进行免费的分享。</p>
 							  <hr class="m-y-md">
 							  <div class="row justify-content-md-center">
-		                  		 <form class="form-inline" method="get" action="/admin/search/image/get/html/" style="text-align: center;">
-								  <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
-								  <button type="submit" class="btn btn-primary">搜索图片</button>
-								</form>
+				                    <a  href="/admin/classif/create/" class="btn btn-primary btn-sm">添加</a>
 							</div>
+							  
 			  </div>
 			</div>
     
 	 	<div id="mainScreen" class="container"> 
-	 				
-	 				
 	 				<table class="table">
 						  <thead class="thead-default">
 						    <tr>
-						      <th>缩略图</th>
-						      <th>分辨率</th>
+						      <th>名称</th>
+						      <th>别名</th>
+						      <th>父分类</th>
 						      <th>关键字</th>
+						      <th>标识</th>
+						      <th>描述</th>
 						      <th>操作</th>
 						    </tr>
 						  </thead>
 						  <tbody>
 						  <#list context.pages.elements as item>
 						    <tr>
-						      <td> <a href="http://${context.domain}/${item.src}"  rel="lightbox[plants]" class="enlarge" >
-						       <img src="http://${context.domain}/thumbnail${item.thumbnail}" height="50" width="50"></img>
-						       </a>
-						       </td>
-						      <td>${item.resolution}</td>
+						      <td>
+						      	${item.name}
+						      </td>
+						       <td>
+						      	${item.alias}
+						      </td>
+						      <td>${item.parent}</td>
 						      <td>${item.keywords}</td>
-						      <td><a  href="/admin/image/update/get/html/?uuid=${item.uuid}" class="btn btn-primary btn-sm">编辑</a>
-						      	 <a  href="/admin/image/delete/get/html/?uuid=${item.uuid}" class="btn btn-primary btn-sm">删除</a> </td>
+						      <td>${item.tags}</td>
+						      <td>${item.description}</td>
+						      <td><a  href="/admin/image/update/get/html/?uuid=${item.id}" class="btn btn-primary btn-sm">编辑</a>
+						      	 <a  href="/admin/classif/delete/?uuid=${item.id}" class="btn btn-primary btn-sm">删除</a> </td>
 						    </tr>
 						    </#list>
 						  </tbody>

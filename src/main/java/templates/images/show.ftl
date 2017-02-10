@@ -8,7 +8,12 @@
 <!-- <meta http-equiv="x-ua-compatible" content="ie=edge"> -->
 <!-- Bootstrap CSS -->
 <!-- include linker.ftl -->
-<#include "../linker.ftl">
+<title>爱享网 -- 免费的分享平台</title>
+<meta name="keywords" content="${context.doc.keywords},图片">
+<meta name="description" content="爱享网免费为您提供动物，美女，汽车，搞笑、艺术、科技,电影,电视,摄影等图片和高清壁纸。">
+<link rel="stylesheet"
+	href="/static/js/bootstrap/dist/css/bootstrap.css">
+<link href="/static/ifreeshare.ico" rel="shortcut icon">
 	<!-- jQuery first, then Bootstrap JS. -->
 
   <link rel="stylesheet" href="/static/css/falls/style.css"> 

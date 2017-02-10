@@ -383,7 +383,12 @@ public class SpiderImageVerticle extends AbstractVerticle {
 //							createIndex(imageJson);
 							
 							String keywords = BaseParser.keywordDeWeight(imageJson.getString(CoreBase.HTML_KEYWORDS));
-							imageJson.put(CoreBase.HTML_KEYWORDS, keywords);
+							
+							String enkeyword = BaseParser.enKeywords(keywords);
+							String zhKeyword = BaseParser.zhKeyowrds(keywords);
+							
+							imageJson.put(CoreBase.HTML_KEYWORDS, zhKeyword);
+							imageJson.put(CoreBase.ENGLISH_KEYWORDS, enkeyword);
 							
 							//data storage
 							imageJson.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);

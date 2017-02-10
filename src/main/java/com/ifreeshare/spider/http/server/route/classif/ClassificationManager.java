@@ -1,4 +1,4 @@
-package com.ifreeshare.spider.http.server.route.image.admin;
+package com.ifreeshare.spider.http.server.route.classif;
 
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -8,9 +8,7 @@ import io.vertx.ext.web.RoutingContext;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -24,20 +22,18 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
-import redis.clients.jedis.ScanResult;
-
 import com.ifreeshare.spider.core.CoreBase;
+import com.ifreeshare.spider.http.server.page.Classification;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
-import com.ifreeshare.spider.redis.RedisPool;
 import com.ifreeshare.util.DefaultPage;
 import com.ifreeshare.util.RegExpValidatorUtils;
 
-public class ImagesAdminList extends BaseRoute {
-	public ImagesAdminList() {
-		super("/admin/search/image/:itype/:otype/", BaseRoute.GET, "templates/images/admin/search.ftl");
+public class ClassificationManager extends BaseRoute {
+	public ClassificationManager() {
+		super("/admin/classif/list/", BaseRoute.GET, "templates/images/classif/list.ftl");
 		try {
 			client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 		} catch (UnknownHostException e) {
@@ -52,8 +48,6 @@ public class ImagesAdminList extends BaseRoute {
 	public void process(RoutingContext context) {
 		HttpServerRequest request = context.request();
 		HttpServerResponse response = context.response();
-		String iType = request.getParam(CoreBase.DATA_I_TYPE);
-		String oType = request.getParam(CoreBase.DATA_O_TYPE);
 
 		String keys = request.getParam("keys");
 		String index = request.getParam("index");
@@ -69,13 +63,13 @@ public class ImagesAdminList extends BaseRoute {
 			pageSize = Integer.parseInt(size);
 		}
 		
-		SearchRequestBuilder srb = client.prepareSearch(CoreBase.INDEX_HTML).setTypes(CoreBase.TYPE_IMAGE);
+		SearchRequestBuilder srb = client.prepareSearch(CoreBase.INDEX_CLASSIFICATION).setTypes(CoreBase.TYPE_IMAGE);
 
 		if (keys != null && keys.trim().length() != 0) {
 			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.HTML_KEYWORDS, keys);
 			srb.setQuery(qb);
 		}else{
-			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
+//			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
 			keys="";
 		}
 
@@ -85,34 +79,43 @@ public class ImagesAdminList extends BaseRoute {
 		SearchHits sh = scrollResp.getHits();
 		long totalCount = sh.getTotalHits();
 		Log.log(logger, Level.DEBUG, "router[%s],SearchHits.size[%d]", this.getUrl(), totalCount );
-		List<PageDocument> result = new ArrayList<PageDocument>();
+		List<Classification> result = new ArrayList<Classification>();
 		for (SearchHit hit : sh.getHits()) {
 			JsonObject document = new JsonObject(hit.getSourceAsString());
-			String uuid = document.getString(CoreBase.UUID);
+			
+			String uuid = hit.getId();
 			String keywords = document.getString(CoreBase.HTML_KEYWORDS);
-			String resolution = document.getString(CoreBase.RESOLUTION);
+			String name = document.getString(CoreBase.NAME);
 			String description = document.getString(CoreBase.HTML_DESCRIPTION);
-			String title = document.getString(CoreBase.HTML_TITLE);
-			String thumbnail = document.getString(CoreBase.DOC_THUMBNAIL);
-			String src = document.getString(CoreBase.FILE_URL_PATH);
-			PageDocument pd = new PageDocument();
-			pd.setUuid(uuid);
+			String alias = document.getString(CoreBase.ALIAS);
+			String parent = document.getString(CoreBase.PARENT);
+			String tags = document.getString(CoreBase.TAGS);
+			Classification classif = new Classification();
+			classif.setId(uuid);
 			try {
-				pd.setUuid(uuid);
-				pd.setName(title);
-				pd.setKeywords(keywords);
-				pd.setResolution(resolution);
-				pd.setDescription(description);
-				pd.setThumbnail(thumbnail);
-				pd.setSrc(src);
-				Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), pd);
-				result.add(pd);
+				classif.setKeywords(keywords);
+				classif.setDescription(description);
+				classif.setAlias(alias);
+				classif.setName(name);
+				if(parent == null){
+					parent = CoreBase.PARENT_TOP;
+				}
+				
+				if(tags == null){
+					tags = new String();
+				}
+				classif.setTags(tags);
+				
+				classif.setParent(parent);
+				
+				Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), classif);
+				result.add(classif);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		DefaultPage<PageDocument> pages = new DefaultPage<PageDocument>(pageIndex, pageSize, result, totalCount);
+		DefaultPage<Classification> pages = new DefaultPage<Classification>(pageIndex, pageSize, result, totalCount);
 		context.put("pages", pages);
 		context.put("keys", keys);
 		render(context);

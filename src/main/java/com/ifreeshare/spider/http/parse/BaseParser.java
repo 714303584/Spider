@@ -2,7 +2,6 @@ package com.ifreeshare.spider.http.parse;
 
 import io.vertx.core.json.JsonObject;
 
-import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,6 +16,7 @@ import org.jsoup.select.Elements;
 import com.ifreeshare.spider.http.HttpUtil;
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
+import com.ifreeshare.util.CharUtil;
 import com.ifreeshare.util.PropertiesUtil;
 
 /**
@@ -152,8 +152,6 @@ public class BaseParser implements HtmlParser {
 				System.out.println(zh_cn);
 			}
 			
-			
-			
 			if(i == end){
 				sb.append(one);
 			}else{
@@ -163,6 +161,71 @@ public class BaseParser implements HtmlParser {
 		return sb.toString();
 	}
 	
+	/**
+	 * @param key
+	 * @return
+	 */
+	public static String chinaKeyword(String key){
+		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
+		StringBuffer sb = new StringBuffer();
+		
+		int size = keys.length;
+		int end = size - 1;
+		
+		for (int i = 0; i < size; i++) {
+			String one = keys[i].trim();
+			if(sb.indexOf(one) > -1 || one.length() == 0 ){
+				continue;
+			}
+			
+			String zh_cn = dic.getProperty(one);
+			if(zh_cn != null && sb.indexOf(zh_cn) == -1){
+				sb.insert(0, zh_cn+",");
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static String enKeywords(String key){
+		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
+		StringBuffer sb = new StringBuffer();
+		
+		int size = keys.length;
+		for (int i = 0; i < size; i++) {
+			String one = keys[i].trim();
+			if(sb.indexOf(one) > -1 || one.length() == 0 || !CharUtil.isEnglish(one) ){
+				continue;
+			}
+			sb.insert(0, one+",");
+		}
+		
+		if(sb.length() > 0){
+			return sb.substring(0, sb.length() - 1);
+		}
+		return null;
+		
+	}
+	
+	
+	
+	public static String zhKeyowrds(String key){
+		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
+		StringBuffer sb = new StringBuffer();
+		
+		int size = keys.length;
+		for (int i = 0; i < size; i++) {
+			String one = keys[i].trim();
+			if(sb.indexOf(one) > -1 || one.length() == 0  || !CharUtil.isChinese(one.charAt(0))){
+				continue;
+			}
+			sb.insert(0, one+",");
+		}
+		
+		if(sb.length() > 0){
+			return sb.substring(0, sb.length() - 1);
+		}
+		return null;
+	}
 	
 	public static void main(String[] args) {
 		try {

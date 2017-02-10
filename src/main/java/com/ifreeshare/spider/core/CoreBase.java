@@ -137,6 +137,9 @@ public class CoreBase {
 	//The index type ------------- Stores information about web images
 	public static final String TYPE_IMAGE = "image";
 	
+	//The classification information is stored
+	public static final String INDEX_CLASSIFICATION = "classification";
+	
 	//The index in ElasticSearch
 	public static final String INDEX_HTML = "url";
 	
@@ -146,6 +149,7 @@ public class CoreBase {
 	//
 	public static final String HTML_TITLE = "title";
 	public static final String HTML_KEYWORDS = "keywords";
+	public static final String ENGLISH_KEYWORDS = "enkeywords";
 	public static final String HTML_DESCRIPTION = "description";
 	//
 	public static final String Content_Type = "Content-Type";
@@ -200,6 +204,10 @@ public class CoreBase {
 	
 	
 	public static final String NAME = "name";
+	public static final String ALIAS = "alias";
+	public static final String PARENT = "parent";
+	public static final String TAGS = "tags";
+	public static final String PARENT_TOP = "0";
 	
     public static final String TOKEN = "token";
     public static final String ACCOUNTS = "accounts";
@@ -243,6 +251,7 @@ public class CoreBase {
     public static final String MAXIDLE = "idle";
     public static final String LISTEN_PORT = "listen-port";
     public static final String HTTP_SERVER = "http-server";
+    public static final String HTTP_DOMAIN = "http-domain";
 	
 	
 	/**

@@ -9,10 +9,23 @@
           <li class="nav-item active">
             <a class="nav-item nav-link" href="http://www.ifreeshare.com">首页</a>
           </li>
-          <li class="nav-item active">
-            <a class="nav-item nav-link" href="/public/search/image/resouce/">资源</a>
+           <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">分类</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="">动物</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
           </li>
-          <!-- <li class="nav-item">
+          
+         
+          <!--
+          
+        	<li class="nav-item active">
+            <a class="nav-item nav-link" href="/public/search/image/resouce/"></a>
+          </li>
+          
+           <li class="nav-item">
             <a class="nav-link disabled" href="#">Disabled</a>
           </li>
           <li class="nav-item dropdown">

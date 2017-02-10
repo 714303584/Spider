@@ -28,6 +28,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
+import com.ifreeshare.spider.http.server.route.classif.ClassificationCreate;
+import com.ifreeshare.spider.http.server.route.classif.ClassificationCreatePage;
+import com.ifreeshare.spider.http.server.route.classif.ClassificationDeletePage;
+import com.ifreeshare.spider.http.server.route.classif.ClassificationManager;
 import com.ifreeshare.spider.http.server.route.image.ShowResouceRouter;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminDelete;
 import com.ifreeshare.spider.http.server.route.image.admin.ImageAdminKeywordReplace;
@@ -77,6 +81,10 @@ public class SpiderAdminHttpVerticle extends AbstractVerticle {
 		routers.add(new ShowResouceRouter());
 		routers.add(new ImageAdminUpdatePost());
 		routers.add(new ImageAdminDelete());
+		routers.add(new ClassificationCreatePage());
+		routers.add(new ClassificationCreate());
+		routers.add(new ClassificationManager());
+		routers.add(new  ClassificationDeletePage());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);

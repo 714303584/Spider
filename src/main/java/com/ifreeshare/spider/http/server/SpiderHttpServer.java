@@ -5,7 +5,6 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.auth.AuthProvider;
@@ -22,27 +21,21 @@ import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.ScoreDoc;
 
-import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
-import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.http.server.route.image.GetImageRouter;
 import com.ifreeshare.spider.http.server.route.image.LoveImageRouter;
 import com.ifreeshare.spider.http.server.route.image.SearchImageRouter;
+import com.ifreeshare.spider.http.server.route.image.SearchImageTagRouter;
 import com.ifreeshare.spider.http.server.route.image.SearchResourceRouter;
 import com.ifreeshare.spider.http.server.route.image.ShowImageRouter;
 import com.ifreeshare.spider.http.server.route.image.ShowResouceRouter;
@@ -90,6 +83,7 @@ public class SpiderHttpServer extends AbstractVerticle {
 		routers.add(new ShowImageRouter());
 		routers.add(new UserDetailsPageRouter());
 		routers.add(new SearchResourceRouter());
+		routers.add(new SearchImageTagRouter());
 		
 		Iterator<BaseRoute> rit = routers.iterator();
 		Router router = Router.router(vertx);

@@ -108,6 +108,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 			int fullTimes = 0;
 			String url = null;
 			Map<String, JsonObject> cache = new HashMap<String,JsonObject>();
+			String cursor = "0";
 			while ((url = urlChannel.receive()) != null) {
 				try {
 					if(fullTimes >= 10){
@@ -136,17 +137,30 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 					
 					Fiber.sleep(5000);
 					if(cache.isEmpty()){
-						ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, "1", 1000);
-						List<Map.Entry<String, String>> entrys = sr.getResult();
-						Iterator<Map.Entry<String, String>> it = entrys.iterator();
-						while (it.hasNext()) {
-							Map.Entry<String, String> entry = it.next();
-							String key = entry.getKey();
-							String value = entry.getValue();
-							urlChannel.send(key);
-							cache.put(key, new JsonObject(value));
-//							cache.get(new JsonObject(value));
-							Log.log(logger, Level.DEBUG, "put in cache ----------------------------- url:%s;   body:%s", key,value);
+						int start =  0;
+						while (true) {
+							ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, start+"", 10);
+							List<Map.Entry<String, String>> entrys = sr.getResult();
+							Iterator<Map.Entry<String, String>> it = entrys.iterator();
+							while (it.hasNext()) {
+								Map.Entry<String, String> entry = it.next();
+								String key = entry.getKey();
+								String value = entry.getValue();
+								urlChannel.send(key);
+								cache.put(key, new JsonObject(value));
+	//							cache.get(new JsonObject(value));
+								Log.log(logger, Level.DEBUG, "put in cache ----------------------------- url:%s;   body:%s", key,value);
+							}
+							if(cache.isEmpty()){
+								if(RedisPool.hLen(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM) > 0){
+									start ++;
+								}else{
+									Log.log(logger, Level.DEBUG, "FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM ----------------------------- empty");
+									break;
+								}
+							}else{
+								break;
+							}
 						}
 					}
 //					if(RedisPool.h)

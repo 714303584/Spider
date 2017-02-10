@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.spider.Runner;
+import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
 import com.ifreeshare.spider.log.Log;
@@ -21,7 +22,7 @@ import com.ifreeshare.spider.log.Loggable.Level;
  */
 public class BaseRoute {
 	
-	public static final String DOMAIN = "localhost:808";
+	public static final String DOMAIN = Configuration.getConfig(CoreBase.HTTP_SERVER, CoreBase.HTTP_DOMAIN);;
 //	public static final String DOMAIN = "www.ifreeshare.com";
 	
 	//Http request method
