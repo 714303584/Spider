@@ -108,7 +108,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 			int fullTimes = 0;
 			String url = null;
 			Map<String, JsonObject> cache = new HashMap<String,JsonObject>();
-			String cursor = "0";
+			String  cursor = "0";
 			while ((url = urlChannel.receive()) != null) {
 				try {
 					if(fullTimes >= 10){
@@ -137,11 +137,14 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 					
 					Fiber.sleep(5000);
 					if(cache.isEmpty()){
-						int start =  0;
+						int start = 0;
 						while (true) {
-							ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, start+"", 10);
+							ScanResult<Map.Entry<String, String>> sr = RedisPool.hScan(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM, cursor, 10);
 							List<Map.Entry<String, String>> entrys = sr.getResult();
 							Iterator<Map.Entry<String, String>> it = entrys.iterator();
+							Log.log(logger, Level.DEBUG, "FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM redis get  ----------------------------- "
+									+ "start:%s;   size:%s", cursor, entrys.size());
+							cursor = sr.getStringCursor();
 							while (it.hasNext()) {
 								Map.Entry<String, String> entry = it.next();
 								String key = entry.getKey();
@@ -154,6 +157,7 @@ public class SpiderMainVerticle extends AbstractVerticle  {
 							if(cache.isEmpty()){
 								if(RedisPool.hLen(CoreBase.FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM) > 0){
 									start ++;
+									cursor = start+"";
 								}else{
 									Log.log(logger, Level.DEBUG, "FIND_NEW_URL_BUT_NO_GRAB_AND_CACHE_IFREESHARE_COM ----------------------------- empty");
 									break;

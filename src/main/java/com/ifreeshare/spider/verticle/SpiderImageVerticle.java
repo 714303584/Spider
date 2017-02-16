@@ -387,7 +387,16 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							String enkeyword = BaseParser.enKeywords(keywords);
 							String zhKeyword = BaseParser.zhKeyowrds(keywords);
 							
-							imageJson.put(CoreBase.HTML_KEYWORDS, zhKeyword);
+							if(zhKeyword == null){
+								zhKeyword = "";
+							}
+							
+							if(enkeyword == null){
+								enkeyword = "";
+							}
+							
+							imageJson.put(CoreBase.HTML_KEYWORDS, keywords);
+							imageJson.put(CoreBase.CHINESE_KEYWORDS, zhKeyword);
 							imageJson.put(CoreBase.ENGLISH_KEYWORDS, enkeyword);
 							
 							//data storage

@@ -23,7 +23,9 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
+import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.core.CoreBase;
+import com.ifreeshare.spider.http.server.page.Classification;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.log.Log;
@@ -37,16 +39,16 @@ import com.ifreeshare.util.RegExpValidatorUtils;
  * @description Image search and paging
  */
 public class SearchImageTagRouter extends BaseRoute {
-	TransportClient client = null;
+	TransportClient client = IDataSearch.instance().getSearchClient();
 
 	public SearchImageTagRouter() {
-		super("/public/classic/image/:keys/", BaseRoute.GET, "templates/images/search.ftl");
-		try {
-			client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			Log.log(logger, Level.DEBUG, "router[%s],TransportClient[%s]", this.getUrl(), e.getMessage());
-		}
+		super("/public/classic/image/:keys/", BaseRoute.GET, "templates/images/classif/search.ftl");
+//		try {
+//			client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+//		} catch (UnknownHostException e) {
+//			e.printStackTrace();
+//			Log.log(logger, Level.DEBUG, "router[%s],TransportClient[%s]", this.getUrl(), e.getMessage());
+//		}
 	}
 
 	@Override
@@ -68,15 +70,30 @@ public class SearchImageTagRouter extends BaseRoute {
 			pageSize = Integer.parseInt(size);
 		}
 		
+		 JsonObject classif = (JsonObject) IDataSearch.instance().getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TYPE_IMAGE, keys);
+		 String alias = classif.getString(CoreBase.ALIAS);
+		 String ckeywords = classif.getString(CoreBase.HTML_KEYWORDS);
+		 String cdescription = classif.getString(CoreBase.HTML_DESCRIPTION);
+		 String name = classif.getString(CoreBase.NAME);
+		 
+		 Classification classification = new Classification();
+		 classification.setId(classif.getString("id"));
+		 classification.setName(name);
+		 classification.setKeywords(ckeywords);
+		 classification.setDescription(cdescription);
+		 
+		
 		SearchRequestBuilder srb = client.prepareSearch(CoreBase.INDEX_HTML).setTypes(CoreBase.TYPE_IMAGE);
 
 		if (keys != null && keys.trim().length() != 0) {
-			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, keys);
+			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, alias);
 			srb.setQuery(qb);
 		}else{
 			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
 			keys="";
 		}
+		
+		
 
 		int pageFrom =  pageIndex*pageSize;
 		SearchResponse scrollResp = srb.setFrom(pageFrom).setSize(pageSize).get();
@@ -111,7 +128,7 @@ public class SearchImageTagRouter extends BaseRoute {
 
 		DefaultPage<PageDocument> pages = new DefaultPage<PageDocument>(pageIndex, pageSize, result, totalCount);
 		context.put("pages", pages);
-		context.put("keys", keys);
+		context.put("classification", classification);
 		render(context);
 	}
 

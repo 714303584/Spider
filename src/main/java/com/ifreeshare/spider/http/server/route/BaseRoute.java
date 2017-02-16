@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.spider.Runner;
+import com.ifreeshare.spider.SpiderUtils;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.core.ErrorBase;
@@ -127,6 +128,7 @@ public class BaseRoute {
 	 */
 	public void render(RoutingContext context){
 		context.put("domain", DOMAIN);
+		context.put("imgclassi", SpiderUtils.imageClassification);
 		freeMarkerTemplateEngine.render(context, template, res -> {
 			if (res.succeeded()) {
 				// context.response.putHeader("content-type",

@@ -181,7 +181,6 @@ public class RedisPool {
 			ScanResult<Map.Entry<String, String>> sr = 
 				jedis.hscan(key, cursor,params);
 			Iterator<Map.Entry<String, String>> it = sr.getResult().iterator();
-			System.out.println("sr.getStringCursor():"+sr.getStringCursor());
 //			while (it.hasNext()) {
 //				Map.Entry<String, String> entity = it.next();
 //				System.out.println("entity.getKey():"+entity.getKey());

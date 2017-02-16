@@ -20,44 +20,46 @@ import com.ifreeshare.util.CharUtil;
 import com.ifreeshare.util.PropertiesUtil;
 
 /**
- * Analysis of web pages 
- * The use of the tool is JSOUP 
+ * Analysis of web pages The use of the tool is JSOUP
+ * 
  * @author zhuss
  */
 public class BaseParser implements HtmlParser {
-	
-	protected static  Logger logger  = Log.register(BaseParser.class.getName());
-	
+
+	protected static Logger logger = Log.register(BaseParser.class.getName());
+
 	public static final String KEYWORD_SEPARATOR = ",";
-	
+
 	public static final String A = "a";
-	
-	public static final String META= "meta";
-	
+
+	public static final String META = "meta";
+
 	static Properties dic = null;
-	
-	static{
+
+	static {
 		try {
 			dic = PropertiesUtil.getProperties(BaseParser.class.getResourceAsStream("/dic.properties"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);;
-		} 
+			System.exit(0);
+			;
+		}
 	}
 
 	/**
-	 * Gets the title of the web page 
+	 * Gets the title of the web page
 	 */
 	@Override
 	public String getTitle(Document doc) {
 		String title = null;
-		Element ele =  doc.getElementsByTag("title").first();
-		if(ele != null) title = ele.text();
+		Element ele = doc.getElementsByTag("title").first();
+		if (ele != null)
+			title = ele.text();
 		return title;
 	}
 
 	/**
-	 * Get the keyword for the web page 
+	 * Get the keyword for the web page
 	 */
 	@Override
 	public String getKeywords(Document doc) {
@@ -65,7 +67,7 @@ public class BaseParser implements HtmlParser {
 	}
 
 	/**
-	 * Get a description of the web page 
+	 * Get a description of the web page
 	 */
 	@Override
 	public String getDescription(Document doc) {
@@ -73,7 +75,7 @@ public class BaseParser implements HtmlParser {
 	}
 
 	/**
-	 * Gets the hyperlink to the web page 
+	 * Gets the hyperlink to the web page
 	 */
 	@Override
 	public Elements getLinks(Document doc) {
@@ -86,7 +88,7 @@ public class BaseParser implements HtmlParser {
 	}
 
 	/**
-	 * Access to web pages 
+	 * Access to web pages
 	 */
 	@Override
 	public Set<JsonObject> getLinkValue(Document doc) {
@@ -95,138 +97,155 @@ public class BaseParser implements HtmlParser {
 		HashSet<String> links = new HashSet<>();
 		while (it.hasNext()) {
 			Element ele = it.next();
-			String link = ele.attr("abs:"+HttpUtil.LINK_A_HREF);
+			String link = ele.attr("abs:" + HttpUtil.LINK_A_HREF);
 			String value = ele.attr(HttpUtil.LINK_A_HREF);
-			if(link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0){
-				if(links.contains(link)){
+			if (link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0) {
+				if (links.contains(link)) {
 					continue;
 				}
-				
+
 				links.add(link);
 				JsonObject linkJson = new JsonObject();
 				linkJson.put(HttpUtil.URL, link);
-//				 newBody.put(HttpUtil.CHARSET, charset);
-//				linkJson.put(HttpUtil.HTML_TITLE, getTitle(doc));
+				// newBody.put(HttpUtil.CHARSET, charset);
+				// linkJson.put(HttpUtil.HTML_TITLE, getTitle(doc));
 				linkJson.put(HttpUtil.HTML_KEYWORDS, getKeywords(doc));
-//				linkJson.put(HttpUtil.HTML_DESCRIPTION, getDescription(doc));
+				// linkJson.put(HttpUtil.HTML_DESCRIPTION, getDescription(doc));
 				results.add(linkJson);
 			}
 		}
 		return results;
 	}
-	
-	
+
 	/**
-	 * Verify the legitimacy of the connection 
+	 * Verify the legitimacy of the connection
+	 * 
 	 * @param link
 	 * @param value
 	 * @return
 	 */
-	public boolean validatUrl(String link, String value){
+	public boolean validatUrl(String link, String value) {
 		return link.startsWith("http") && !"#".equals(value) && value != null && value.trim().length() > 0;
-		
+
 	}
-	
+
 	/**
-	 * Remove duplicate keywords 
-	 * Use a comma to separate
+	 * Remove duplicate keywords Use a comma to separate
+	 * 
 	 * @param key
 	 * @return
 	 */
-	public static  String keywordDeWeight(String key){
+	public static String keywordDeWeight(String key) {
 		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
 		StringBuffer sb = new StringBuffer();
-		
+
 		int size = keys.length;
 		int end = size - 1;
-		
+
 		for (int i = 0; i < size; i++) {
 			String one = keys[i].trim();
-			if(sb.indexOf(one) > -1 || one.length() == 0 ){
+			if (sb.indexOf(one) > -1 || one.length() == 0) {
 				continue;
 			}
-			
+
 			String zh_cn = dic.getProperty(one);
-			if(zh_cn != null && sb.indexOf(zh_cn) == -1){
-				sb.insert(0, zh_cn+",");
+			if (zh_cn != null && sb.indexOf(zh_cn) == -1) {
+				sb.insert(0, zh_cn + ",");
 				System.out.println(zh_cn);
 			}
-			
-			if(i == end){
+
+			if (i == end) {
 				sb.append(one);
-			}else{
+			} else {
 				sb.append(one).append(BaseParser.KEYWORD_SEPARATOR);
 			}
 		}
+
+		if (sb.length() > 0) {
+			String endChar = sb.substring(sb.length() - 1, sb.length());
+			if (BaseParser.KEYWORD_SEPARATOR.equals(endChar)) {
+				return sb.substring(0, sb.length() - 1);
+			} else {
+				return sb.toString();
+			}
+		}
+
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @param key
 	 * @return
 	 */
-	public static String chinaKeyword(String key){
+	public static String chinaKeyword(String key) {
 		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
 		StringBuffer sb = new StringBuffer();
-		
+
 		int size = keys.length;
 		int end = size - 1;
-		
+
 		for (int i = 0; i < size; i++) {
 			String one = keys[i].trim();
-			if(sb.indexOf(one) > -1 || one.length() == 0 ){
+			if (sb.indexOf(one) > -1 || one.length() == 0) {
 				continue;
 			}
-			
+
 			String zh_cn = dic.getProperty(one);
-			if(zh_cn != null && sb.indexOf(zh_cn) == -1){
-				sb.insert(0, zh_cn+",");
+			if (zh_cn != null && sb.indexOf(zh_cn) == -1) {
+				sb.insert(0, zh_cn + ",");
 			}
 		}
 		return sb.toString();
 	}
-	
-	public static String enKeywords(String key){
+
+	public static String enKeywords(String key) {
 		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
 		StringBuffer sb = new StringBuffer();
-		
+
 		int size = keys.length;
 		for (int i = 0; i < size; i++) {
 			String one = keys[i].trim();
-			if(sb.indexOf(one) > -1 || one.length() == 0 || !CharUtil.isEnglish(one) ){
+			if (sb.indexOf(one) > -1 || one.length() == 0 || !CharUtil.isEnglish(one)) {
 				continue;
 			}
-			sb.insert(0, one+",");
+			sb.insert(0, one + ",");
 		}
-		
-		if(sb.length() > 0){
-			return sb.substring(0, sb.length() - 1);
+
+		if (sb.length() > 0) {
+			String endChar = sb.substring(sb.length() - 1, sb.length());
+			if (BaseParser.KEYWORD_SEPARATOR.equals(endChar)) {
+				return sb.substring(0, sb.length() - 1);
+			} else {
+				return sb.toString();
+			}
 		}
 		return null;
-		
 	}
-	
-	
-	
-	public static String zhKeyowrds(String key){
+
+	public static String zhKeyowrds(String key) {
 		String[] keys = key.toLowerCase().split(BaseParser.KEYWORD_SEPARATOR);
 		StringBuffer sb = new StringBuffer();
-		
+
 		int size = keys.length;
 		for (int i = 0; i < size; i++) {
 			String one = keys[i].trim();
-			if(sb.indexOf(one) > -1 || one.length() == 0  || !CharUtil.isChinese(one.charAt(0))){
+			if (sb.indexOf(one) > -1 || one.length() == 0 || !CharUtil.isChinese(one.charAt(0))) {
 				continue;
 			}
-			sb.insert(0, one+",");
+			sb.insert(0, one + ",");
 		}
-		
-		if(sb.length() > 0){
-			return sb.substring(0, sb.length() - 1);
+
+		if (sb.length() > 0) {
+			String endChar = sb.substring(sb.length() - 1, sb.length());
+			if (BaseParser.KEYWORD_SEPARATOR.equals(endChar)) {
+				return sb.substring(0, sb.length() - 1);
+			} else {
+				return sb.toString();
+			}
 		}
 		return null;
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			dic = PropertiesUtil.getProperties(SpiderHttpServer.class.getResource("/dic.properties").getPath());
@@ -235,15 +254,15 @@ public class BaseParser implements HtmlParser {
 				String object = (String) enums.nextElement();
 				System.out.println(object);
 				System.out.println(dic.getProperty(object));
-				
+
 			}
-		System.out.println(dic.getProperty("bruce lee"));
-			
+			System.out.println(dic.getProperty("bruce lee"));
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);;
-		} 
+			System.exit(0);
+			;
+		}
 	}
 
-	
 }

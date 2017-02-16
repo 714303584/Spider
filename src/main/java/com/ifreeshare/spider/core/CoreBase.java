@@ -150,6 +150,7 @@ public class CoreBase {
 	public static final String HTML_TITLE = "title";
 	public static final String HTML_KEYWORDS = "keywords";
 	public static final String ENGLISH_KEYWORDS = "enkeywords";
+	public static final String CHINESE_KEYWORDS = "chkeywords";
 	public static final String HTML_DESCRIPTION = "description";
 	//
 	public static final String Content_Type = "Content-Type";
