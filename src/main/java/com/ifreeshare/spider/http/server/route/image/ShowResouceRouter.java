@@ -6,8 +6,11 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.ifreeshare.persistence.IDataSearch;
+import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
@@ -21,7 +24,6 @@ public class ShowResouceRouter extends BaseRoute {
 	public ShowResouceRouter() {
 		super("/public/show/image/resource/", BaseRoute.GET, "templates/images/resources/show.ftl");
 	}
-
 
 	@Override
 	public void process(RoutingContext context) {
@@ -45,15 +47,22 @@ public class ShowResouceRouter extends BaseRoute {
 		doc.setUuid(id);
 		
 		Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), docJson);
-	 	File file = new File("G:\\nginx-1.9.4\\html\\iresource\\"+doc.getSrc());
+		
+		String resourcePath = Configuration.getConfig(CoreBase.IRESOURCE, CoreBase.STORAGE);
+		
+	 	File file = new File(resourcePath+doc.getSrc()+"/thumbnail/");
 	 	File[] childs = file.listFiles();
+	 	
+	 	Map<String, String> map = new HashMap<String, String>();
 	 	
 	 	for (int i = 0; i < childs.length; i++) {
 	 		File child = childs[i];
 	 		String name = child.getName();
-	 		doc.getTags().add("/iresource/"+doc.getSrc()+"/"+name);
+	 		map.put("/iresource/"+doc.getSrc()+"/thumbnail/"+name, "/iresource/"+doc.getSrc()+"/"+name);
+//	 		doc.getTags().add("/iresource/"+doc.getSrc()+"/thumbnail/"+"/"+name);
 		}
 		context.put("doc", doc);
+		context.put("rimages", map);
 		render(context);
 	}
 	

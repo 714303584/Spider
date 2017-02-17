@@ -200,6 +200,7 @@ public class CoreBase {
 	 */
 	public static final String STORAGE = "storage";
 	public static final String IMAGES = "images";
+	public static final String IRESOURCE = "iresource";
 	public static final String URI = "uri";
 	public static final String INDEX = "index";
 	

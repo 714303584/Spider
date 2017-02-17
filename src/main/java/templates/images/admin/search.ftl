@@ -45,8 +45,6 @@
 			</div>
     
 	 	<div class="container"> 
-	 				
-	 				
 	 				<table class="table">
 						  <thead class="thead-default">
 						    <tr>

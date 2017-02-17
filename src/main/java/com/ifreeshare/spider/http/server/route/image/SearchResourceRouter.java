@@ -104,7 +104,7 @@ public class SearchResourceRouter extends BaseRoute {
 				pd.setKeywords(keywords);
 				pd.setDescription(description);
 				pd.setTitle(title);
-				pd.setThumbnail("/iresource/"+path+"/"+thumbnail);
+				pd.setThumbnail("/iresource/"+path+"/thumbnail/"+thumbnail);
 				Log.log(logger, Level.DEBUG, "router[%s],image[%s]", this.getUrl(), pd);
 				result.add(pd);
 			} catch (Exception e) {

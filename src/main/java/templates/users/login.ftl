@@ -28,8 +28,6 @@
 		</div>
 	</div>
 
-
-
 	<div class="container">
 		<form action="/login" method="post" >
 		
