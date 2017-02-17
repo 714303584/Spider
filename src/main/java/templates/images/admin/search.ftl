@@ -44,7 +44,7 @@
 			  </div>
 			</div>
     
-	 	<div id="mainScreen" class="container"> 
+	 	<div class="container"> 
 	 				
 	 				
 	 				<table class="table">

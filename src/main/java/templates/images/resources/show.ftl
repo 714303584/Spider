@@ -7,7 +7,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <!-- Bootstrap CSS -->
     <!-- include linker.ftl -->
-	<#include "../../linker.ftl">
+	<title>${context.doc.title} --- 爱享网</title>
+	<meta name="keywords" content="图片,美图,${context.doc.keywords}">
+	<meta name="description" content="${context.doc.description}。">
+	<link rel="stylesheet"
+		href="/static/js/bootstrap/dist/css/bootstrap.css">
+	<link href="/static/ifreeshare.ico" rel="shortcut icon">
     <link rel="stylesheet" href="/static/css/falls/style.css">
     <link rel="stylesheet" href="/static/css/lightbox/lightbox.css">
     
@@ -41,11 +46,11 @@
 				
 						 <div id="main">
 							<ul id="waterfall" class="masonry" style="position: relative;">
-									<#list context.doc.tags as item>
+									<#list context.rimages?keys as key>
 										 <li class="masonry-brick" style="position: absolute; top: 0px; left: 0px;">
 								        	<div class="img_block">
-								            	<img src="http://192.168.3.148:808/${item}" alt="">
-								            	 <a href="http://192.168.3.148:808/${item}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
+								            	<img src="http://192.168.3.148:808/${key}" alt="">
+								            	 <a href="http://192.168.3.148:808/${context.rimages[key]}"  rel="lightbox[plants]" class="zoom" style="display: none;">放大</a>
 								            	 <a href="#" class="ilike" onclick="loveImage('${context.doc.uuid}')" style="display: none;">我喜欢</a>
 								          </div>
 								            <h3></h3>
