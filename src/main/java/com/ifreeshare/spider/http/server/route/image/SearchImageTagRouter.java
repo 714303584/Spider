@@ -77,21 +77,20 @@ public class SearchImageTagRouter extends BaseRoute {
 		 String name = classif.getString(CoreBase.NAME);
 		 
 		 Classification classification = new Classification();
-		 classification.setId(classif.getString("id"));
+		 classification.setId(classif.getString(CoreBase.ID));
 		 classification.setName(name);
 		 classification.setKeywords(ckeywords);
 		 classification.setDescription(cdescription);
-		 
 		
 		SearchRequestBuilder srb = client.prepareSearch(CoreBase.INDEX_HTML).setTypes(CoreBase.TYPE_IMAGE);
 
-		if (keys != null && keys.trim().length() != 0) {
+//		if (keys != null && keys.trim().length() != 0) {
 			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, alias);
 			srb.setQuery(qb);
-		}else{
-			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
-			keys="";
-		}
+//		}else{
+//			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
+//			keys="";
+//		}
 		
 		
 

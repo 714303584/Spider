@@ -16,9 +16,6 @@
           		<#list context.imgclassi as item>
           		   <a class="dropdown-item" href="/public/classic/image/${item.id}/">${item.name}</a>
           		</#list>
-          	 
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
             </div>
           </li>
           

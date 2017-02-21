@@ -205,6 +205,8 @@ public class CoreBase {
 	public static final String INDEX = "index";
 	
 	
+	public static final String ID = "id";
+	
 	public static final String NAME = "name";
 	public static final String ALIAS = "alias";
 	public static final String PARENT = "parent";

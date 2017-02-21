@@ -21,11 +21,35 @@
 <script src="/static/js/bootstrap/dist/js/tether.min.js"></script>
 
 <script src="/static/js/bootstrap/dist/js/bootstrap.js"></script>
-
 <script src="/static/js/other/ads.js"></script>
+
+<script type="text/javascript">
+    (function(win,doc){
+        var s = doc.createElement("script"), h = doc.getElementsByTagName("head")[0];
+        if (!win.alimamatk_show) {
+            s.charset = "gbk";
+            s.async = true;
+            s.src = "http://a.alimama.cn/tkapi.js";
+            h.insertBefore(s, h.firstChild);
+        };
+        var o = {
+            pid: "mm_46625958_21094119_71756354",/*推广单元ID，用于区分不同的推广渠道*/
+            appkey: "",/*通过TOP平台申请的appkey，设置后引导成交会关联appkey*/
+            unid: "",/*自定义统计字段*/
+            type: "click" /* click 组件的入口标志 （使用click组件必设）*/
+        };
+        win.alimamatk_onload = win.alimamatk_onload || [];
+        win.alimamatk_onload.push(o);
+    })(window,document);
+</script>
+
+
+
+
+
   
 	<style>
-		#pop{background:#fff;width:300px; height:282px;font-size:12px;position:fixed;right:0;bottom:0;}
+		#pop{background:#fff;width:320px; height:292px;font-size:12px;position:fixed;right:0;bottom:0;}
 		#popHead{line-height:32px;background:#f6f0f3;border-bottom:1px solid #e0e0e0;font-size:12px;padding:0 0 0 10px;}
 		#popHead h2{font-size:14px;color:#666;line-height:32px;height:32px;}
 		#popHead #popClose{position:absolute;right:10px;top:1px;}
@@ -42,7 +66,7 @@
 		        <h2>赞助广告</h2> 
 		    </div> 
 		    <div id="popContent"> 
-		    <a href="http://www.helloweba.com/" target="_blank"><img src="http://localhost:808/thumbnail/2017/1/16/c5023774-a40c-47b6-a68d-0d9acf5520d7.jpg"></a> 
+		    	<a data-type="3" data-tmpl="320x250" data-tmplid="186" data-rd="2" data-style="2" data-border="1" href="#"></a>
 		    </div> 
 		</div> 
 	 	<!-- include  top -->

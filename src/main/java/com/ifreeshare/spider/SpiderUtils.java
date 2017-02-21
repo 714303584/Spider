@@ -22,22 +22,22 @@ public class SpiderUtils {
 	
 	static{
 		
-//		TransportClient client = IDataSearch.instance().getSearchClient();
-//		QueryBuilder qb = QueryBuilders.termQuery("parent", "0");
-//		SearchResponse scrollResp = client.prepareSearch("classification").setTypes("image").setQuery(qb)
-//		        .setQuery(qb)
-//		        .setSize(100).get();
-//		SearchHits sh = scrollResp.getHits();
-//		long totalCount = sh.getTotalHits();
-//		for (SearchHit hit : sh.getHits()) {
-//			String id =  hit.getId();
-//			JsonObject classification = new JsonObject(hit.getSourceAsString());
-//			Classification classic = new Classification();
-//			classic.setId(id);
-//			classic.setName(classification.getString(CoreBase.NAME));
-//			classic.setAlias(classification.getString(CoreBase.ALIAS));
-//			imageClassification.add(classic);
-//		}
+		TransportClient client = IDataSearch.instance().getSearchClient();
+		QueryBuilder qb = QueryBuilders.termQuery("parent", "0");
+		SearchResponse scrollResp = client.prepareSearch("classification").setTypes("image").setQuery(qb)
+		        .setQuery(qb)
+		        .setSize(100).get();
+		SearchHits sh = scrollResp.getHits();
+		long totalCount = sh.getTotalHits();
+		for (SearchHit hit : sh.getHits()) {
+			String id =  hit.getId();
+			JsonObject classification = new JsonObject(hit.getSourceAsString());
+			Classification classic = new Classification();
+			classic.setId(id);
+			classic.setName(classification.getString(CoreBase.NAME));
+			classic.setAlias(classification.getString(CoreBase.ALIAS));
+			imageClassification.add(classic);
+		}
 		
 		
 	}
