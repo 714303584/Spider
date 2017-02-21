@@ -10,6 +10,9 @@
             <a class="nav-item nav-link" href="http://www.ifreeshare.com">首页</a>
           </li>
           <li class="nav-item active">
+            <a class="nav-item nav-link" href="/admin/search/image/get/html/">图片管理</a>
+          </li>
+          <li class="nav-item active">
             <a class="nav-item nav-link" href="/admin/manage/image/resouce/">资源管理</a>
           </li>
           
