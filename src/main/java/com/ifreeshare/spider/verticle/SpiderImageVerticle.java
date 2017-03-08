@@ -5,6 +5,7 @@ import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,12 +19,14 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+
 import javax.imageio.ImageIO;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -34,6 +37,9 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.elasticsearch.client.transport.TransportClient;
+
+import org.elasticsearch.search.aggregations.bucket.terms.support.IncludeExclude.StringFilter;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -42,8 +48,10 @@ import co.paralleluniverse.fibers.okhttp.FiberOkHttpClient;
 import co.paralleluniverse.strands.channels.Channel;
 import co.paralleluniverse.strands.channels.Channels;
 
+
 import com.ifreeshare.lucene.LuceneFactory;
 import com.ifreeshare.persistence.IDataPersistence;
+import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.HttpUtil;
@@ -52,6 +60,7 @@ import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.spider.redis.RedisPool;
 import com.ifreeshare.spider.verticle.msg.MessageType;
+import com.ifreeshare.util.CharUtil;
 import com.ifreeshare.util.DateUtil;
 import com.ifreeshare.util.FileAccess;
 import com.ifreeshare.util.MD5Util;
@@ -78,6 +87,8 @@ public class SpiderImageVerticle extends AbstractVerticle {
 	Channel<JsonObject> urlsChannel = Channels.newChannel(10000);
 
 	Channel<JsonObject> imageChannel = Channels.newChannel(100000);
+	
+	Channel<String> keywordChannel = Channels.newChannel(100000);
 
 	Channel<JsonObject> others = Channels.newChannel(100);
 
@@ -160,7 +171,42 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		});
 		processUrl();
 		processImage();
-		imagesInfoProcess();
+//		imagesInfoProcess();
+		
+		
+		
+		Fiber fiber = new Fiber(() -> {
+			String keyword = null;
+//			TransportClient client = IDataSearch.instance().getSearchClient();
+			IDataSearch<JsonObject> search = IDataSearch.instance();
+			while (((keyword = keywordChannel.receive()) != null)) {
+				String[] keywordArray = keyword.split(BaseParser.KEYWORD_SEPARATOR);
+				for (int i = 0; i < keywordArray.length; i++) {
+					String key = keywordArray[i].trim();
+					if (key == null || key.length() == 0){
+						continue;
+					}
+					String tag = CharUtil.StringFilter(key);
+					JsonObject tagJson = search.getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TAGS, tag);
+					
+					if(tagJson == null){
+						tagJson = new JsonObject();
+						tagJson.put(CoreBase.ENGLISH_KEYWORDS, key);
+						tagJson.put(CoreBase.TAG, tag);
+						//0  is Do not show
+						tagJson.put(CoreBase.STATUS, 0);
+						tagJson.put(CoreBase.INDEX, CoreBase.INDEX_CLASSIFICATION);
+						tagJson.put(CoreBase.TYPE, CoreBase.TAGS);
+						tagJson.put(CoreBase.UUID, tag);
+						tagJson.put(CoreBase.OPERATE, CoreBase.OPERATE_I);
+						vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, tagJson);
+						Log.log(logger, Level.DEBUG, "create tag -----------------------------  taginfo [%s]", tagJson);
+					}
+				}
+			}
+		});
+		
+		fiber.start();
 	}
 
 	@Override
@@ -195,101 +241,101 @@ public class SpiderImageVerticle extends AbstractVerticle {
 		}
 	}
 
-	public void imagesInfoProcess() {
-		new Fiber(() -> {
-			JsonObject message = null;
-			while ((message = others.receive()) != null) {
-				int type = message.getInteger(MessageType.MESSAGE_TYPE);
-				switch (type) {
-				case MessageType.KEYWORD_REPLACE:
-					keywordReplace(message);
-					break;
-				case MessageType.KEYWORD_REMOVE:
-					keywordReplace(message);
-					break;
-
-				default:
-					break;
-				}
-			}
-		}).start();
-	}
-
-	public void keywordReplace(JsonObject message) {
-		String oldKeyword = message.getString(CoreBase.OLD_KEYWORDS);
-		String newKeyword = message.getString(CoreBase.NEW_KEYWORDS);
-		int opType = message.getInteger(MessageType.MESSAGE_TYPE);
-		Log.log(logger, Level.DEBUG, "change documents   -----------------------------  old_keyword[%s], new_keyword[%s], optype[%d]", oldKeyword, newKeyword, opType);
-
-		String[] value = { oldKeyword };
-		String[] field = {
-				// CoreBase.HTML_TITLE,
-				CoreBase.HTML_KEYWORDS
-				// , CoreBase.HTML_DESCRIPTION
-		};
-		Occur[] occur = {
-				// Occur.SHOULD,
-				Occur.SHOULD
-				// , Occur.SHOULD
-		};
-		//
-		new Fiber(() -> {
-			boolean flage = true;
-			int index = 0;
-			while (flage) {
-//				Document[] documents = LuceneFactory.search(indexReader, value, 100, field, occur, index);
-//				Log.log(logger, Level.DEBUG, "change documents   -----------------------------  exist document size[%s]", documents.length);
-//				for (int i = 0; i < documents.length; i++) {
-//					Document document = documents[i];
-//					String uuid = document.get(CoreBase.UUID);
-//					String keywords = document.get(CoreBase.HTML_KEYWORDS);
-//				
+//	public void imagesInfoProcess() {
+//		new Fiber(() -> {
+//			JsonObject message = null;
+//			while ((message = others.receive()) != null) {
+//				int type = message.getInteger(MessageType.MESSAGE_TYPE);
+//				switch (type) {
+//				case MessageType.KEYWORD_REPLACE:
+//					keywordReplace(message);
+//					break;
+//				case MessageType.KEYWORD_REMOVE:
+//					keywordReplace(message);
+//					break;
 //
-//					document.removeField(CoreBase.HTML_KEYWORDS);
-//
-//					if (opType == MessageType.KEYWORD_REPLACE) {
-//						 if(keywords.contains(newKeyword)){
-//							 Log.log(logger, Level.DEBUG, "images update  -----------------------------  keywords[%s] contains new_keywords[%s]", keywords, newKeyword);
-//							 continue;
-//						 }
-//						
-//						keywords = newKeyword + " " + keywords;
-//					} else if (opType == MessageType.KEYWORD_REMOVE) {
-//						keywords = keywords.replaceAll(oldKeyword, " ");
-//					}
-//
-//
-//					keywords = BaseParser.keywordDeWeight(keywords);
-//					TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, keywords, Store.YES);
-//					document.add(keywordsField);
-//
-//					String thumbnail = document.get(CoreBase.DOC_THUMBNAIL);
-//					String src = document.get(CoreBase.FILE_URL_PATH);
-//					try {
-//						Log.log(logger, Level.DEBUG, "images update  -----------------------------  exist document uuid[%s], keywords[%s]", uuid, keywords);
-//						
-//						String redisJson = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid);
-//						if(redisJson != null){
-//							Log.log(logger, Level.DEBUG, "redis image update keys -----------------------------  uuid[%s], image_info[%s]", uuid, redisJson);
-//							JsonObject json = new JsonObject(redisJson);
-//							json.put(CoreBase.HTML_KEYWORDS, keywords);
-//							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, json.toString());
-//						}else{
-//							Log.log(logger, Level.WARN, "redis object not found  ----------------------------- uuid[%s]",uuid);
-//						}
-//					} catch (Exception e) {
-//						Log.log(logger, Level.ERROR, "images update  -----------------------------  exist document [%s]", document);
-//						e.printStackTrace();
-//					}
+//				default:
+//					break;
 //				}
-//
-//				if (documents.length < 100) {
-//					flage = false;
-//				}
-			}
-		}	).start();
+//			}
+//		}).start();
+//	}
 
-	}
+//	public void keywordReplace(JsonObject message) {
+//		String oldKeyword = message.getString(CoreBase.OLD_KEYWORDS);
+//		String newKeyword = message.getString(CoreBase.NEW_KEYWORDS);
+//		int opType = message.getInteger(MessageType.MESSAGE_TYPE);
+//		Log.log(logger, Level.DEBUG, "change documents   -----------------------------  old_keyword[%s], new_keyword[%s], optype[%d]", oldKeyword, newKeyword, opType);
+//
+//		String[] value = { oldKeyword };
+//		String[] field = {
+//				// CoreBase.HTML_TITLE,
+//				CoreBase.HTML_KEYWORDS
+//				// , CoreBase.HTML_DESCRIPTION
+//		};
+//		Occur[] occur = {
+//				// Occur.SHOULD,
+//				Occur.SHOULD
+//				// , Occur.SHOULD
+//		};
+//		//
+//		new Fiber(() -> {
+//			boolean flage = true;
+//			int index = 0;
+//			while (flage) {
+////				Document[] documents = LuceneFactory.search(indexReader, value, 100, field, occur, index);
+////				Log.log(logger, Level.DEBUG, "change documents   -----------------------------  exist document size[%s]", documents.length);
+////				for (int i = 0; i < documents.length; i++) {
+////					Document document = documents[i];
+////					String uuid = document.get(CoreBase.UUID);
+////					String keywords = document.get(CoreBase.HTML_KEYWORDS);
+////				
+////
+////					document.removeField(CoreBase.HTML_KEYWORDS);
+////
+////					if (opType == MessageType.KEYWORD_REPLACE) {
+////						 if(keywords.contains(newKeyword)){
+////							 Log.log(logger, Level.DEBUG, "images update  -----------------------------  keywords[%s] contains new_keywords[%s]", keywords, newKeyword);
+////							 continue;
+////						 }
+////						
+////						keywords = newKeyword + " " + keywords;
+////					} else if (opType == MessageType.KEYWORD_REMOVE) {
+////						keywords = keywords.replaceAll(oldKeyword, " ");
+////					}
+////
+////
+////					keywords = BaseParser.keywordDeWeight(keywords);
+////					TextField keywordsField = new TextField(CoreBase.HTML_KEYWORDS, keywords, Store.YES);
+////					document.add(keywordsField);
+////
+////					String thumbnail = document.get(CoreBase.DOC_THUMBNAIL);
+////					String src = document.get(CoreBase.FILE_URL_PATH);
+////					try {
+////						Log.log(logger, Level.DEBUG, "images update  -----------------------------  exist document uuid[%s], keywords[%s]", uuid, keywords);
+////						
+////						String redisJson = RedisPool.hGet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid);
+////						if(redisJson != null){
+////							Log.log(logger, Level.DEBUG, "redis image update keys -----------------------------  uuid[%s], image_info[%s]", uuid, redisJson);
+////							JsonObject json = new JsonObject(redisJson);
+////							json.put(CoreBase.HTML_KEYWORDS, keywords);
+////							RedisPool.hSet(CoreBase.UUID_MD5_SHA1_SHA512_IMAGES_KEY, uuid, json.toString());
+////						}else{
+////							Log.log(logger, Level.WARN, "redis object not found  ----------------------------- uuid[%s]",uuid);
+////						}
+////					} catch (Exception e) {
+////						Log.log(logger, Level.ERROR, "images update  -----------------------------  exist document [%s]", document);
+////						e.printStackTrace();
+////					}
+////				}
+////
+////				if (documents.length < 100) {
+////					flage = false;
+////				}
+//			}
+//		}	).start();
+//
+//	}
 
 	/**
 	 * Failure message forwarding
@@ -387,6 +433,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							String enkeyword = BaseParser.enKeywords(keywords);
 							String zhKeyword = BaseParser.zhKeyowrds(keywords);
 							
+							
 							if(zhKeyword == null){
 								zhKeyword = "";
 							}
@@ -395,9 +442,13 @@ public class SpiderImageVerticle extends AbstractVerticle {
 								enkeyword = "";
 							}
 							
+							String tags = getTags(enkeyword);
+							
+							
 							imageJson.put(CoreBase.HTML_KEYWORDS, keywords);
 							imageJson.put(CoreBase.CHINESE_KEYWORDS, zhKeyword);
 							imageJson.put(CoreBase.ENGLISH_KEYWORDS, enkeyword);
+							imageJson.put(CoreBase.TAGS, tags);
 							
 							//data storage
 							imageJson.put(IDataPersistence.INDEX, CoreBase.INDEX_HTML);
@@ -405,7 +456,8 @@ public class SpiderImageVerticle extends AbstractVerticle {
 							imageJson.put(CoreBase.CREATE_DATE, System.currentTimeMillis());
 							imageJson.put(CoreBase.OPERATE, CoreBase.OPERATE_I);
 							 vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, imageJson);
-							
+							 
+							 keywordChannel.send(enkeyword);
 							Log.log(logger, Level.DEBUG, "process image   -----------------------------  image [%s]", imageJson);
 						} else {
 							// Have the same unique code ,Put the file in the specified
@@ -430,8 +482,18 @@ public class SpiderImageVerticle extends AbstractVerticle {
 
 		imageFiber.start();
 	}
-
-
+	
+	
+	public String getTags(String enkeywords){
+		String[] tagArray =  enkeywords.split(BaseParser.KEYWORD_SEPARATOR);
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < tagArray.length; i++) {
+			String keyword = tagArray[i];
+			String tag =  CharUtil.StringFilter(keyword);
+			sb.append(tag+" ");
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * Start a fiber to process Images URL

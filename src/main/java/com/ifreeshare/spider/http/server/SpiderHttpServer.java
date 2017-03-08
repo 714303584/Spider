@@ -28,6 +28,8 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
+import com.ifreeshare.framework.HttpServerShell;
+import com.ifreeshare.persistence.elasticsearch.ElasticSearchPersistence;
 import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
@@ -47,6 +49,11 @@ import com.ifreeshare.spider.http.server.route.users.UserRegistPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserRegistPostRouter;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
+import com.ifreeshare.spider.verticle.PersistenceVertical;
+import com.ifreeshare.spider.verticle.SpiderFileVerticle;
+import com.ifreeshare.spider.verticle.SpiderHeaderVerticle;
+import com.ifreeshare.spider.verticle.SpiderHtmlVerticle;
+import com.ifreeshare.spider.verticle.SpiderImageVerticle;
 
 /**
  * User services 
@@ -54,7 +61,7 @@ import com.ifreeshare.spider.log.Loggable.Level;
  */
 public class SpiderHttpServer extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderHttpServer.class.getName());
-	
+	public static Vertx vertx = null;
 	
 	Set<BaseRoute> routers = new HashSet<BaseRoute>();
 	
@@ -68,6 +75,7 @@ public class SpiderHttpServer extends AbstractVerticle {
 	public void start() throws Exception {
 
 		Vertx vertx = Vertx.vertx();
+		CoreBase.vertx = vertx;
 		HttpServer httpServer = vertx.createHttpServer();
 		FreeMarkerTemplateEngine freeMarkerTemplateEngine = FreeMarkerTemplateEngine.create();
 		// init Route 
@@ -97,6 +105,9 @@ public class SpiderHttpServer extends AbstractVerticle {
 		 * login
 		 */
 		AuthProvider authProvider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, new JsonObject());
+		
+		
+		
 		
 		
 //		authProvider.authenticate(new JsonObject(), result -> {
@@ -163,6 +174,9 @@ public class SpiderHttpServer extends AbstractVerticle {
 			}
 		}
 		
+		HttpServerShell hss = new HttpServerShell(httpServer, router , "com.ifreeshare.spider.http.server.controller");
+		hss.setFreeMarkerTemplateEngine(FreeMarkerTemplateEngine.create());
+		hss.initRouter();
 		String listen_port = Configuration.getConfig(CoreBase.HTTP_SERVER, CoreBase.LISTEN_PORT);
 		httpServer.requestHandler(router::accept).listen(Integer.parseInt(listen_port));
 	}
@@ -175,7 +189,18 @@ public class SpiderHttpServer extends AbstractVerticle {
 	public static void main(String[] args) {
 		Configuration.load(Runner.defaultConfigPah,SpiderHttpServer.class.getResource("/spider-config.xml").getPath());
 		Vertx vertx = Vertx.vertx();
+		SpiderHttpServer.vertx = vertx;
 		Context context = vertx.getOrCreateContext();
+		
+//		ElasticSearchPersistence persistence = new ElasticSearchPersistence();
+
+//		vertx.deployVerticle(new SpiderHeaderVerticle(vertx, context));
+//		vertx.deployVerticle(new SpiderHtmlVerticle(vertx, context));
+//		vertx.deployVerticle(new SpiderImageVerticle(vertx, context));
+//		vertx.deployVerticle(new SpiderFileVerticle(vertx, context));
+//		vertx.deployVerticle(new PersistenceVertical(vertx, context, persistence));
+
+		
 		vertx.deployVerticle(new SpiderHttpServer(vertx, context));
 
 	}

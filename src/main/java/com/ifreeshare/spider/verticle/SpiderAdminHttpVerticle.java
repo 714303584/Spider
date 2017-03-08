@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
+import com.ifreeshare.framework.HttpServerShell;
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.http.server.route.classif.ClassificationCreate;
@@ -133,6 +134,11 @@ public class SpiderAdminHttpVerticle extends AbstractVerticle {
 				break;
 			}
 		}
+		
+		HttpServerShell hss = new HttpServerShell(httpServer, router , "com.ifreeshare.spider.http.server.controller");
+		hss.setFreeMarkerTemplateEngine(FreeMarkerTemplateEngine.create());
+		hss.initRouter();
+		
 		
 		httpServer.requestHandler(router::accept).listen(15888);
 		Log.log(logger, Level.WARN, "httpserver listen port[15888]");

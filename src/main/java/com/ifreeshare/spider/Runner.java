@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.persistence.elasticsearch.ElasticSearchPersistence;
 import com.ifreeshare.spider.config.Configuration;
+import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.SpiderHttpServer;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.verticle.PersistenceVertical;
@@ -44,6 +45,7 @@ public class Runner {
 	public static void main(String[] args) {
 		try {
 			vertx = Vertx.vertx();
+			CoreBase.vertx = vertx;
 			Context context = vertx.getOrCreateContext();
 			
 			Configuration.load(defaultConfigPah, SpiderHttpServer.class.getResource("/spider-config.xml").getPath());

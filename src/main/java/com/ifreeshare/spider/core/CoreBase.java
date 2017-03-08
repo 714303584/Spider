@@ -11,6 +11,7 @@ import org.apache.lucene.index.IndexWriter;
 
 import com.ifreeshare.spider.redis.RedisPool;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -18,6 +19,11 @@ import io.vertx.core.json.JsonObject;
  * @date 2016年9月19日下午5:26:20
  */
 public class CoreBase {
+	
+	
+	
+	public static Vertx vertx;
+	
 	
 	/**
 	 * redis  key for image
@@ -211,6 +217,7 @@ public class CoreBase {
 	public static final String ALIAS = "alias";
 	public static final String PARENT = "parent";
 	public static final String TAGS = "tags";
+	public static final String TAG = "tag";
 	public static final String PARENT_TOP = "0";
 	
     public static final String TOKEN = "token";
