@@ -20,6 +20,11 @@
             <a class="nav-item nav-link" href="/admin/classif/list/">分类管理</a>
           </li>
           
+           <li class="nav-item active">
+            <a class="nav-item nav-link" href="/admin/tags/list/">标签管理</a>
+          </li>
+          
+          
           <!-- <li class="nav-item">
             <a class="nav-link disabled" href="#">Disabled</a>
           </li>

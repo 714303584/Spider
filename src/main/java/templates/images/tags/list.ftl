@@ -36,7 +36,7 @@
 							  <p  style="text-align: center;">本网站所有数据均来自于网络上的公开数据并致力于对其进行免费的分享。</p>
 							  <hr class="m-y-md">
 							  <div class="row justify-content-md-center">
-		                  		 <form class="form-inline" method="get" action="/admin/search/image/get/html/" style="text-align: center;">
+		                  		 <form class="form-inline" method="get" action="/admin/tags/list/" style="text-align: center;">
 								  <input type="text" name="keys" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
 								  <button type="submit" class="btn btn-primary">搜索图片</button>
 								</form>
@@ -89,13 +89,13 @@
 				<div class="row justify-content-md-center">
 					 <ul class="pagination pagination-lg">
 				    <li class="page-item">
-				      <a class="page-link" href="/admin/search/image/get/html/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
+				      <a class="page-link" href="/admin/tags/list/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
 				        <span aria-hidden="true">&laquo;</span>
 				        <span class="sr-only">Previous</span>
 				      </a>
 				    </li>
 				    <li class="page-item">
-				     <a class="page-link" href="/admin/search/image/get/html/?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
+				     <a class="page-link" href="/admin/tags/list/?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
 				        <span aria-hidden="true">&raquo;</span>
 				        <span class="sr-only">Next</span>
 				      </a>

@@ -48,8 +48,11 @@
 			
 			<div class="form-group row">
 				<label for="example-text-input" class="col-xs-2 col-form-label">父类:</label>
-					<input id="id_parent" name="parent" class="form-control" type="text"  value="${context.tag.parent}"
-						id="example-text-input">
+					<select class="form-control" id="id_parent" name="parent" >
+						<#list context.imgclassi as item>
+						   <option value="${item.id}">${item.name}</option>
+		          		</#list>
+			 		</select>
 			</div>
 			
 			<div class="form-group row">
