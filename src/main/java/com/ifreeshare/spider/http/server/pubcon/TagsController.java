@@ -40,6 +40,8 @@ public class TagsController {
 	
 	@RequestMapping(value = { "list/:id/" }, method = { HttpMethod.GET })
 	public String search(RoutingContext context){
+		context.put("domain", BaseRoute.DOMAIN);
+		context.put("imgclassi", SpiderUtils.imageClassification);
 		HttpServerRequest request = context.request();
 		HttpServerResponse response = context.response();
 
@@ -120,8 +122,6 @@ public class TagsController {
 
 		DefaultPage<PageDocument> pages = new DefaultPage<PageDocument>(pageIndex, pageSize, result, totalCount);
 		context.put("pages", pages);
-		context.put("domain", BaseRoute.DOMAIN);
-		context.put("imgclassi", SpiderUtils.imageClassification);
 		context.put("tags", tags);
 		return "template:templates/images/tags/search.ftl";
 	}
