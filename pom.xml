@@ -211,6 +211,12 @@
 			<artifactId>ElasticSearch</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>ifreeshare</groupId>
+			<artifactId>vertx-framework</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 
 	</dependencies>

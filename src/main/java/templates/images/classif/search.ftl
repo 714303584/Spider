@@ -38,6 +38,14 @@
   
 	<!-- include  top -->
    <#include "../../toper.ftl">
+   
+   	<#if context.tags?exists >
+  				<div class="container"> 
+								<#list context.tags as item>
+									<a href="/public/tags/list/${item.id}/" class="btn btn-secondary btn-sm" role="button">${item.name}</a>
+								</#list>
+  				 </div>	
+  		</#if>
     
 	 	<div id="mainScreen" class="container"> 
 						 

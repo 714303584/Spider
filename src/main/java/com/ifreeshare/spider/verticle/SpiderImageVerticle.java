@@ -187,7 +187,7 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						continue;
 					}
 					String tag = CharUtil.StringFilter(key);
-					JsonObject tagJson = search.getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TAGS, tag);
+					JsonObject tagJson = search.getValueById(CoreBase.TAGS, CoreBase.IMAGES, tag);
 					
 					if(tagJson == null){
 						tagJson = new JsonObject();
@@ -195,8 +195,8 @@ public class SpiderImageVerticle extends AbstractVerticle {
 						tagJson.put(CoreBase.TAG, tag);
 						//0  is Do not show
 						tagJson.put(CoreBase.STATUS, 0);
-						tagJson.put(CoreBase.INDEX, CoreBase.INDEX_CLASSIFICATION);
-						tagJson.put(CoreBase.TYPE, CoreBase.TAGS);
+						tagJson.put(CoreBase.INDEX, CoreBase.TAGS);
+						tagJson.put(CoreBase.TYPE, CoreBase.IMAGES);
 						tagJson.put(CoreBase.UUID, tag);
 						tagJson.put(CoreBase.OPERATE, CoreBase.OPERATE_I);
 						vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, tagJson);

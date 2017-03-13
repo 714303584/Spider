@@ -174,7 +174,7 @@ public class SpiderHttpServer extends AbstractVerticle {
 			}
 		}
 		
-		HttpServerShell hss = new HttpServerShell(httpServer, router , "com.ifreeshare.spider.http.server.controller");
+		HttpServerShell hss = new HttpServerShell(httpServer, router , "com.ifreeshare.spider.http.server.pubcon");
 		hss.setFreeMarkerTemplateEngine(FreeMarkerTemplateEngine.create());
 		hss.initRouter();
 		String listen_port = Configuration.getConfig(CoreBase.HTTP_SERVER, CoreBase.LISTEN_PORT);

@@ -16,8 +16,10 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
@@ -27,6 +29,7 @@ import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.core.CoreBase;
 import com.ifreeshare.spider.http.server.page.Classification;
 import com.ifreeshare.spider.http.server.page.PageDocument;
+import com.ifreeshare.spider.http.server.page.Tags;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
@@ -43,12 +46,16 @@ public class SearchImageTagRouter extends BaseRoute {
 
 	public SearchImageTagRouter() {
 		super("/public/classic/image/:keys/", BaseRoute.GET, "templates/images/classif/search.ftl");
-//		try {
-//			client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//			Log.log(logger, Level.DEBUG, "router[%s],TransportClient[%s]", this.getUrl(), e.getMessage());
-//		}
+		// try {
+		// client = new
+		// PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new
+		// InetSocketTransportAddress(InetAddress.getByName("localhost"),
+		// 9300));
+		// } catch (UnknownHostException e) {
+		// e.printStackTrace();
+		// Log.log(logger, Level.DEBUG, "router[%s],TransportClient[%s]",
+		// this.getUrl(), e.getMessage());
+		// }
 	}
 
 	@Override
@@ -69,37 +76,40 @@ public class SearchImageTagRouter extends BaseRoute {
 		if (size != null && RegExpValidatorUtils.IsIntNumber(size)) {
 			pageSize = Integer.parseInt(size);
 		}
-		
-		 JsonObject classif = (JsonObject) IDataSearch.instance().getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TYPE_IMAGE, keys);
-		 String alias = classif.getString(CoreBase.ALIAS);
-		 String ckeywords = classif.getString(CoreBase.HTML_KEYWORDS);
-		 String cdescription = classif.getString(CoreBase.HTML_DESCRIPTION);
-		 String name = classif.getString(CoreBase.NAME);
-		 
-		 Classification classification = new Classification();
-		 classification.setId(classif.getString(CoreBase.ID));
-		 classification.setName(name);
-		 classification.setKeywords(ckeywords);
-		 classification.setDescription(cdescription);
-		
+
+		JsonObject classif = (JsonObject) IDataSearch.instance().getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TYPE_IMAGE, keys);
+
+		if (classif == null) {
+
+		}
+
+		String alias = classif.getString(CoreBase.ALIAS);
+		String ckeywords = classif.getString(CoreBase.HTML_KEYWORDS);
+		String cdescription = classif.getString(CoreBase.HTML_DESCRIPTION);
+		String name = classif.getString(CoreBase.NAME);
+
+		Classification classification = new Classification();
+		classification.setId(classif.getString(CoreBase.ID));
+		classification.setName(name);
+		classification.setKeywords(ckeywords);
+		classification.setDescription(cdescription);
+		List<Tags> tags = getTagsByClassification(classification, 0, 20);
 		SearchRequestBuilder srb = client.prepareSearch(CoreBase.INDEX_HTML).setTypes(CoreBase.TYPE_IMAGE);
 
-//		if (keys != null && keys.trim().length() != 0) {
-			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, alias);
-			srb.setQuery(qb);
-//		}else{
-//			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
-//			keys="";
-//		}
-		
-		
+		// if (keys != null && keys.trim().length() != 0) {
+		QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, alias);
+		srb.setQuery(qb);
+		// }else{
+		// srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
+		// keys="";
+		// }
 
-		int pageFrom =  pageIndex*pageSize;
+		int pageFrom = pageIndex * pageSize;
 		SearchResponse scrollResp = srb.setFrom(pageFrom).setSize(pageSize).get();
 
 		SearchHits sh = scrollResp.getHits();
 		long totalCount = sh.getTotalHits();
-		Log.log(logger, Level.DEBUG, "router[%s],SearchHits.size[%d]", this.getUrl(), totalCount );
+		Log.log(logger, Level.DEBUG, "router[%s],SearchHits.size[%d]", this.getUrl(), totalCount);
 		List<PageDocument> result = new ArrayList<PageDocument>();
 		for (SearchHit hit : sh.getHits()) {
 			JsonObject document = new JsonObject(hit.getSourceAsString());
@@ -128,7 +138,48 @@ public class SearchImageTagRouter extends BaseRoute {
 		DefaultPage<PageDocument> pages = new DefaultPage<PageDocument>(pageIndex, pageSize, result, totalCount);
 		context.put("pages", pages);
 		context.put("classification", classification);
+		if(tags != null && tags.size() > 0) context.put("tags", tags);
+		
 		render(context);
+	}
+
+	public List<Tags> getTagsByClassification(Classification classification, int pageFrom, int pageSize) {
+		QueryBuilder qb = QueryBuilders.termsQuery(CoreBase.PARENT, classification.getId());
+		TermsQueryBuilder qb2 = QueryBuilders.termsQuery("status", "1");
+
+		BoolQueryBuilder bqb = QueryBuilders.boolQuery().must(qb).must(qb2);
+		SearchRequestBuilder srbTags = client.prepareSearch(CoreBase.TAGS).setTypes(CoreBase.IMAGES);
+		srbTags.setQuery(bqb);
+		SearchResponse scrollResp = srbTags.setFrom(pageFrom).setSize(pageSize).get();
+		SearchHits sh = scrollResp.getHits();
+		long totalCount = sh.getTotalHits();
+		Log.log(logger, Level.DEBUG, "router[%s],SearchHits.size[%d]", this.getUrl(), totalCount);
+		List<Tags> result = new ArrayList<Tags>();
+		for (SearchHit hit : sh.getHits()) {
+			JsonObject document = new JsonObject(hit.getSourceAsString());
+			String uuid = hit.getId();
+			String name = document.getString(CoreBase.NAME);
+			String keywords = document.getString(CoreBase.HTML_KEYWORDS);
+			String description = document.getString(CoreBase.HTML_DESCRIPTION);
+			String title = document.getString(CoreBase.HTML_TITLE);
+			
+			
+			Tags tags = new Tags();
+			tags.setId(uuid);
+			try {
+				tags.setName(name);
+				// pd.setKeywords(keywords);
+				// pd.setDescription(description);
+				// pd.setThumbnail(thumbnail);
+				// pd.setSrc(src);
+				// Log.log(logger, Level.DEBUG, "router[%s],image[%s]",
+				// this.getUrl(), pd);
+				result.add(tags);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 }

@@ -58,7 +58,7 @@ public class TagsController {
 			pageSize = Integer.parseInt(size);
 		}
 
-		SearchRequestBuilder srb = client.prepareSearch(CoreBase.INDEX_CLASSIFICATION).setTypes(CoreBase.TAGS);
+		SearchRequestBuilder srb = client.prepareSearch(CoreBase.TAGS).setTypes(CoreBase.IMAGES);
 		
 		if (keys != null && keys.trim().length() != 0) {
 			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.HTML_KEYWORDS, keys);
@@ -122,7 +122,7 @@ public class TagsController {
 	public String editPage(RoutingContext context) {
 		HttpServerRequest request = context.request();
 		String id = request.getParam(CoreBase.ID);
-		JsonObject document = (JsonObject) IDataSearch.instance().getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TAGS, id);
+		JsonObject document = (JsonObject) IDataSearch.instance().getValueById(CoreBase.TAGS, CoreBase.IMAGES, id);
 		String name = document.getString(CoreBase.NAME);
 		String keywords = document.getString(CoreBase.HTML_KEYWORDS);
 		String description = document.getString(CoreBase.HTML_DESCRIPTION);
@@ -169,8 +169,8 @@ public class TagsController {
 		document.put(CoreBase.STATUS, Integer.parseInt(request.getParam(CoreBase.STATUS)));
 		
 		
-		document.put(CoreBase.INDEX, CoreBase.INDEX_CLASSIFICATION);
-		document.put(CoreBase.TYPE, CoreBase.TAGS);
+		document.put(CoreBase.INDEX, CoreBase.TAGS);
+		document.put(CoreBase.TYPE, CoreBase.IMAGES);
 		document.put(CoreBase.OPERATE, CoreBase.OPERATE_U);
 		
 		CoreBase.vertx.eventBus().send(PersistenceVertical.PERSISTENCE_VERTICAL_ADDRESS, document);
