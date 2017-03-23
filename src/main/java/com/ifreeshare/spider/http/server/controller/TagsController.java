@@ -61,7 +61,7 @@ public class TagsController {
 		SearchRequestBuilder srb = client.prepareSearch(CoreBase.TAGS).setTypes(CoreBase.IMAGES);
 		
 		if (keys != null && keys.trim().length() != 0) {
-			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.HTML_KEYWORDS, keys);
+			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, keys);
 			srb.setQuery(qb);
 		}else{
 			keys="";

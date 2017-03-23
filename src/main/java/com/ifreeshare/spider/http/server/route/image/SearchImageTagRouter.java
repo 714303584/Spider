@@ -80,7 +80,6 @@ public class SearchImageTagRouter extends BaseRoute {
 		JsonObject classif = (JsonObject) IDataSearch.instance().getValueById(CoreBase.INDEX_CLASSIFICATION, CoreBase.TYPE_IMAGE, keys);
 
 		if (classif == null) {
-
 		}
 
 		String alias = classif.getString(CoreBase.ALIAS);
@@ -100,7 +99,7 @@ public class SearchImageTagRouter extends BaseRoute {
 		QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.ENGLISH_KEYWORDS, alias);
 		srb.setQuery(qb);
 		// }else{
-		// srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
+		 srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
 		// keys="";
 		// }
 

@@ -76,9 +76,11 @@ public class SearchImageRouter extends BaseRoute {
 			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.HTML_KEYWORDS, keys);
 			srb.setQuery(qb);
 		}else{
-			srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
+			
 			keys="";
 		}
+		
+		srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
 
 		int pageFrom =  pageIndex*pageSize;
 		SearchResponse scrollResp = srb.setFrom(pageFrom).setSize(pageSize).get();

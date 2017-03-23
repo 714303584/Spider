@@ -25,11 +25,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 
 import com.ifreeshare.framework.HttpServerShell;
-import com.ifreeshare.persistence.elasticsearch.ElasticSearchPersistence;
 import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
@@ -49,11 +50,6 @@ import com.ifreeshare.spider.http.server.route.users.UserRegistPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserRegistPostRouter;
 import com.ifreeshare.spider.log.Log;
 import com.ifreeshare.spider.log.Loggable.Level;
-import com.ifreeshare.spider.verticle.PersistenceVertical;
-import com.ifreeshare.spider.verticle.SpiderFileVerticle;
-import com.ifreeshare.spider.verticle.SpiderHeaderVerticle;
-import com.ifreeshare.spider.verticle.SpiderHtmlVerticle;
-import com.ifreeshare.spider.verticle.SpiderImageVerticle;
 
 /**
  * User services 
@@ -64,7 +60,6 @@ public class SpiderHttpServer extends AbstractVerticle {
 	public static Vertx vertx = null;
 	
 	Set<BaseRoute> routers = new HashSet<BaseRoute>();
-	
 	
 	public SpiderHttpServer(Vertx vertx, Context context) {
 		this.vertx = vertx;
@@ -177,6 +172,32 @@ public class SpiderHttpServer extends AbstractVerticle {
 		HttpServerShell hss = new HttpServerShell(httpServer, router , "com.ifreeshare.spider.http.server.pubcon");
 		hss.setFreeMarkerTemplateEngine(FreeMarkerTemplateEngine.create());
 		hss.initRouter();
+		
+		
+		
+		httpServer.websocketHandler(sws -> {
+			String path = sws.path();
+			
+
+			Pattern pattern =Pattern.compile("/websocket/(.*?)/(.*?)/");
+			Matcher m = pattern.matcher(path);
+			String room = null;
+			
+//			ChatRoom chatRoom = new ChatRoom();
+//			Actor actor = new Actor();
+			if(m.matches()){
+				
+				
+				
+				
+			}
+			
+		});
+		
+		
+		
+		
+		
 		String listen_port = Configuration.getConfig(CoreBase.HTTP_SERVER, CoreBase.LISTEN_PORT);
 		httpServer.requestHandler(router::accept).listen(Integer.parseInt(listen_port));
 	}

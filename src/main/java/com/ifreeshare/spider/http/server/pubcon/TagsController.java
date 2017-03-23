@@ -16,6 +16,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.sort.SortOrder;
 
 import com.ifreeshare.framework.annotation.Controller;
 import com.ifreeshare.framework.web.annotation.RequestMapping;
@@ -87,7 +88,7 @@ public class TagsController {
 		QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.TAGS, tag);
 		srb.setQuery(qb);
 		// }else{
-		// srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
+		 srb.addSort(CoreBase.CREATE_DATE, SortOrder.DESC);
 		// keys="";
 		// }
 
