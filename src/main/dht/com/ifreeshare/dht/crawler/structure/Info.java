@@ -1,6 +1,12 @@
 package com.ifreeshare.dht.crawler.structure;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+
+import java.util.Iterator;
 import java.util.List;
+
+import com.ifreeshare.spider.core.CoreBase;
 
 public class Info {
 	
@@ -49,6 +55,20 @@ public class Info {
 
 	public void setFiles(List<SubFile> files) {
 		this.files = files;
+	}
+	
+	
+	public JsonArray subFilesToJson(){
+		JsonArray subFiles = new JsonArray();
+		Iterator<SubFile> it = files.iterator();
+		while (it.hasNext()) {
+			SubFile subFile = it.next();
+			JsonObject json = new JsonObject();
+			json.put(CoreBase.FILE_PATH, subFile.getPath());
+			json.put(CoreBase.FILE_SIZE, subFile.getLength());
+			subFiles.add(json);
+		}
+		return subFiles;
 	}
 
 	

@@ -61,7 +61,7 @@ public class DHTServer extends Thread {
 	/**
 	 * node id
 	 */
-	private byte[] nodId = createRandomNodeId();
+	private byte[] nodId = getDHTServerNodeId();
 	
 	/**
 	 * node队列
@@ -106,12 +106,6 @@ public class DHTServer extends Thread {
     
     public DHTServer(String hostname, int port, int maxGoodNodeCount) {
     	this.hostname = hostname;
-    	
-//    	try {
-//			ls = new LookupService(DHTServer.class.getResource("/GeoIP.dat").getPath(), LookupService.GEOIP_MEMORY_CACHE);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
     	
     	DatagramChannelFactory factory = new NioDatagramChannelFactory(Executors
                 .newCachedThreadPool());

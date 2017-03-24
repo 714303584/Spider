@@ -1,20 +1,23 @@
 package com.ifreeshare.dht.crawler.task;
 
+import io.vertx.core.json.JsonObject;
+
 import java.net.InetSocketAddress;
-import java.sql.Timestamp;
 
 import com.ifreeshare.dht.crawler.handler.AnnouncePeerInfoHashWireHandler;
 import com.ifreeshare.dht.crawler.listener.OnMetadataListener;
 import com.ifreeshare.dht.crawler.main.Main;
 import com.ifreeshare.dht.crawler.structure.DownloadPeer;
 import com.ifreeshare.dht.crawler.structure.Torrent;
-import com.ifreeshare.dht.crawler.util.StringUtil;
-import com.ifreeshare.dht.crawler.util.ZipUtil;
-
-import redis.clients.jedis.Jedis;
+import com.ifreeshare.persistence.elasticsearch.ElasticSearchPersistence;
+import com.ifreeshare.persistence.elasticsearch.ElasticSearchSearch;
+import com.ifreeshare.spider.core.CoreBase;
 
 public class WireMetadataDownloadTask implements Runnable {
 	
+	public static  ElasticSearchPersistence esp = new  ElasticSearchPersistence();
+	
+	public static  ElasticSearchSearch ess = new ElasticSearchSearch();
 	private DownloadPeer peer;
 	
 	public WireMetadataDownloadTask(DownloadPeer peer) {
@@ -47,6 +50,25 @@ public class WireMetadataDownloadTask implements Runnable {
 					if (torrent == null || torrent.getInfo() == null)
 						return;
 					System.out.println(torrent.toString());
+					
+					JsonObject get = ess.getValueById("torrent", "infos", torrent.getInfo_hash());
+					if(get != null){
+						return ;
+					}
+					
+					JsonObject torrentJsonObject = new JsonObject();
+					torrentJsonObject.put(CoreBase.UUID, torrent.getInfo_hash());
+					torrentJsonObject.put("info_hash", torrent.getInfo_hash());
+					torrentJsonObject.put(CoreBase.NAME, torrent.getInfo().getName());
+					torrentJsonObject.put(CoreBase.TYPE, torrent.getType());
+					torrentJsonObject.put("hot", 1);
+					torrentJsonObject.put(CoreBase.FILE_SIZE, torrent.getInfo().getLength());
+					torrentJsonObject.put("subfiles", torrent.getInfo().subFilesToJson().toString());
+					torrentJsonObject.put(CoreBase.INDEX, "torrent");
+					torrentJsonObject.put(CoreBase.TYPE, "infos");
+					esp.insert(torrentJsonObject);
+					
+					
 					//入库操作
 //					Record record = new Record();
 //					String jsonSubFiles = JSON.toJSONString(torrent.getInfo().getFiles());
