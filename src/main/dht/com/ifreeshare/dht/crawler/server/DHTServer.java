@@ -111,7 +111,6 @@ public class DHTServer extends Thread {
                 .newCachedThreadPool());
 
     	PacketHandler packetHandler = new PacketHandler();
-
         b = new ConnectionlessBootstrap(factory);
         b.setPipelineFactory(new ChannelPipelineFactory() {
             public ChannelPipeline getPipeline() throws Exception {
@@ -120,7 +119,7 @@ public class DHTServer extends Thread {
         });
         b.setOption("receiveBufferSize", 65536);
         b.setOption("sendBufferSize", 268435456);
-        channel = b.bind(new InetSocketAddress("localhost",port));
+        channel = b.bind(new InetSocketAddress(port));
         this.maxGoodNodeCount = maxGoodNodeCount;
         
         autoRejoinDHTTimer = new Timer();
@@ -132,7 +131,7 @@ public class DHTServer extends Thread {
 					System.out.println("joinDHT();");
 					joinDHT();
 				}
-				System.out.println("node count:" + queue.size());
+//				System.out.println("node count:" + queue.size());
 			}
 		}, 1000, 5000);
 
@@ -154,7 +153,7 @@ public class DHTServer extends Thread {
                     Map<String, ?> map = bencode.readMap();
                     
                     if (map != null){
-                    	System.out.println(map);
+//                    	System.out.println(map);
                     	packetProcessing((InetSocketAddress) e.getRemoteAddress(), map);
                     }
                         //packetProcessing((InetSocketAddress) e.getRemoteAddress(), map);
@@ -171,6 +170,7 @@ public class DHTServer extends Thread {
 
 		@Override
 		public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
+			e.getCause().printStackTrace();
 			logger.error(e);
 		}
         
@@ -340,7 +340,7 @@ public class DHTServer extends Thread {
         */
         
 
-        logger.debug("resultFindNode : " + address.toString());
+//        logger.debug("resultFindNode : " + address.toString());
     }
     
     /**
@@ -388,8 +388,11 @@ public class DHTServer extends Thread {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
         		BencodingOutputStream bencode = new BencodingOutputStream(stream)){
             bencode.writeMap(map);
+//            channel.write(stream.toByteArray(), address);
+            
             channel.write(ChannelBuffers.copiedBuffer(stream.toByteArray()), address);
         } catch (Exception e) {
+        	e.printStackTrace();
             //logger.error("", e);
         }
     }
@@ -423,7 +426,7 @@ public class DHTServer extends Thread {
                 	System.arraycopy(nodes, i, nid, 0, 20);
                 	queue.insert(new Node(address.getHostString(), address.getPort(), nid));
                 }
-                logger.debug("setNodes :" + address.toString());
+//                logger.debug("setNodes :" + address.toString());
             } catch (IllegalArgumentException ex) {
             	ex.printStackTrace();
                 logger.error("", ex);
@@ -456,7 +459,7 @@ public class DHTServer extends Thread {
         	map.put("id", getNeighbor(nid));
         sendKRPC(address, createQueries("find_node".getBytes(), "q", map));
 //        System.out.println("findNode : " + address.toString());
-        logger.debug("findNode : " + address.toString());
+//        logger.debug("findNode : " + address.toString());
     }
     
     @Override
@@ -489,7 +492,6 @@ public class DHTServer extends Thread {
      */
     public static byte[] getDHTServerNodeId(){
     	 String uuid = "12e8934ded-dfa9-4651-b987-8de7c5458b7b";
-    	 System.out.println(uuid);
     	 MessageDigest digest = null;
  		try {
  			digest = MessageDigest.getInstance("SHA1");

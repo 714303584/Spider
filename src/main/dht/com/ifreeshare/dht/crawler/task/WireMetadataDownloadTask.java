@@ -66,7 +66,7 @@ public class WireMetadataDownloadTask implements Runnable {
 					torrentJsonObject.put("subfiles", torrent.getInfo().subFilesToJson().toString());
 					torrentJsonObject.put(CoreBase.INDEX, "torrent");
 					torrentJsonObject.put(CoreBase.TYPE, "infos");
-					esp.insert(torrentJsonObject);
+//					esp.insert(torrentJsonObject);
 					
 					
 					//入库操作
