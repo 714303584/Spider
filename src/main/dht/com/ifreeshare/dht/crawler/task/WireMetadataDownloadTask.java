@@ -16,8 +16,6 @@ import com.ifreeshare.spider.core.CoreBase;
 public class WireMetadataDownloadTask implements Runnable {
 	
 	public static  ElasticSearchPersistence esp = new  ElasticSearchPersistence();
-	
-	public static  ElasticSearchSearch ess = new ElasticSearchSearch();
 	private DownloadPeer peer;
 	
 	public WireMetadataDownloadTask(DownloadPeer peer) {
@@ -49,12 +47,6 @@ public class WireMetadataDownloadTask implements Runnable {
 					//System.out.println("finished,dps size:" + Main.count.get());
 					if (torrent == null || torrent.getInfo() == null)
 						return;
-					System.out.println(torrent.toString());
-					
-					JsonObject get = ess.getValueById("torrent", "infos", torrent.getInfo_hash());
-					if(get != null){
-						return ;
-					}
 					
 					JsonObject torrentJsonObject = new JsonObject();
 					torrentJsonObject.put(CoreBase.UUID, torrent.getInfo_hash());
@@ -64,10 +56,12 @@ public class WireMetadataDownloadTask implements Runnable {
 					torrentJsonObject.put("hot", 1);
 					torrentJsonObject.put(CoreBase.FILE_SIZE, torrent.getInfo().getLength());
 					torrentJsonObject.put("subfiles", torrent.getInfo().subFilesToJson().toString());
+					torrentJsonObject.put("creationDate", torrent.getCreationDate().getTime());
+					
 					torrentJsonObject.put(CoreBase.INDEX, "torrent");
 					torrentJsonObject.put(CoreBase.TYPE, "infos");
-//					esp.insert(torrentJsonObject);
-					
+					esp.insert(torrentJsonObject);
+					System.out.println(torrent.toString());
 					
 					//入库操作
 //					Record record = new Record();
