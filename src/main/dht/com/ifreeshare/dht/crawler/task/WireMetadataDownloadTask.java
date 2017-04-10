@@ -59,7 +59,7 @@ public class WireMetadataDownloadTask implements Runnable {
 					torrentJsonObject.put("creationDate", torrent.getCreationDate().getTime());
 					
 					torrentJsonObject.put(CoreBase.INDEX, "torrent");
-					torrentJsonObject.put(CoreBase.TYPE, "infos");
+					torrentJsonObject.put(CoreBase.TYPE, "info");
 					esp.insert(torrentJsonObject);
 					System.out.println(torrent.toString());
 					

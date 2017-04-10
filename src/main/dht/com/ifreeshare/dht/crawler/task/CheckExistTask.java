@@ -57,7 +57,7 @@ public class CheckExistTask extends Thread {
 
 			String sha1UUID = ByteUtil.byteArrayToHex(peer.getInfo_hash());
 
-			JsonObject get = ess.getValueById("torrent", "infos", sha1UUID);
+			JsonObject get = ess.getValueById("torrent", "info", sha1UUID);
 			if (get != null) {
 				return;
 			}
