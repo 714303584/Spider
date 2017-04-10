@@ -61,7 +61,7 @@ public class DHTServer extends Thread {
 	/**
 	 * node id
 	 */
-	private byte[] nodId = getDHTServerNodeId();
+	private byte[] nodId = createRandomNodeId();
 	
 	/**
 	 * node队列
@@ -185,7 +185,13 @@ public class DHTServer extends Thread {
      */
     @SuppressWarnings("unchecked")
 	private void packetProcessing(InetSocketAddress address, Map<String, ?> map) {
-        String y = new String((byte[]) map.get("y"));
+    	
+    	byte[] b =  (byte[]) map.get("y");
+    	if(b == null){
+    		return;
+    	}
+    	
+        String y = new String(b);
         if (y.equals("q"))
             query(address, (byte[]) map.get("t"), new String((byte[]) map.get("q")), (Map<String, ?>) map.get("a"));
         else if (y.equals("r"))
@@ -465,7 +471,7 @@ public class DHTServer extends Thread {
     @Override
     public void run() {
     	while (!stop) {
-    		//System.out.println(queue.size());
+    		System.out.println(queue.size());
             try {
             	Node node = queue.remove();
         		//ping(new InetSocketAddress(node.getIp(), node.getPort()));
