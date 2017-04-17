@@ -3,6 +3,7 @@ package com.ifreeshare.dht.crawler.task;
 import io.vertx.core.json.JsonObject;
 
 import java.net.InetSocketAddress;
+import java.util.Date;
 
 import com.ifreeshare.dht.crawler.handler.AnnouncePeerInfoHashWireHandler;
 import com.ifreeshare.dht.crawler.listener.OnMetadataListener;
@@ -56,10 +57,10 @@ public class WireMetadataDownloadTask implements Runnable {
 					torrentJsonObject.put("hot", 1);
 					torrentJsonObject.put(CoreBase.FILE_SIZE, torrent.getInfo().getLength());
 					torrentJsonObject.put("subfiles", torrent.getInfo().subFilesToJson().toString());
-					torrentJsonObject.put("creationDate", torrent.getCreationDate().getTime());
-					
+					torrentJsonObject.put("creationDate", new Date().getTime());
 					torrentJsonObject.put(CoreBase.INDEX, "torrent");
 					torrentJsonObject.put(CoreBase.TYPE, "info");
+					
 					esp.insert(torrentJsonObject);
 					System.out.println(torrent.toString());
 					

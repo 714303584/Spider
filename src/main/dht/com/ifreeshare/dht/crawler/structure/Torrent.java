@@ -2,6 +2,8 @@ package com.ifreeshare.dht.crawler.structure;
 
 import java.util.Date;
 import java.util.List;
+
+import com.ifreeshare.dht.crawler.util.StringUtil;
 /**
  * torrent file structure
  * @author xwl
@@ -17,6 +19,8 @@ public class Torrent {
 	private String comment;
 	private String createdBy;
 	private String type;
+	
+	
 	
 	private Info info;
 
@@ -84,10 +88,16 @@ public class Torrent {
 		this.type = type;
 	}
 
+
+	public String getsSize() {
+		return StringUtil.formatSize((double)this.getInfo().getLength());
+	}
+
+
 	@Override
 	public String toString() {
 		return "Torrent [info_hash=" + info_hash + ", announce=" + announce + ", announceList=" + announceList + ", creationDate=" + creationDate + ", comment=" + comment + ", createdBy=" + createdBy
-				+ ", type=" + type + ", info=" + info + "]";
+				+ ", type=" + type + ", info=" + info.subFilesToJson().toString() + "]";
 	}
 	
 	
