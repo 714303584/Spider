@@ -21,8 +21,11 @@ import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -34,6 +37,8 @@ import com.ifreeshare.framework.HttpServerShell;
 import com.ifreeshare.spider.Runner;
 import com.ifreeshare.spider.config.Configuration;
 import com.ifreeshare.spider.core.CoreBase;
+import com.ifreeshare.spider.http.chat.Actor;
+import com.ifreeshare.spider.http.chat.ChatRoom;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
 import com.ifreeshare.spider.http.server.route.image.GetImageRouter;
 import com.ifreeshare.spider.http.server.route.image.LoveImageRouter;
@@ -58,6 +63,8 @@ import com.ifreeshare.spider.log.Loggable.Level;
 public class SpiderHttpServer extends AbstractVerticle {
 	private static  Logger logger  = Log.register(SpiderHttpServer.class.getName());
 	public static Vertx vertx = null;
+	
+	public static Map<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
 	
 	Set<BaseRoute> routers = new HashSet<BaseRoute>();
 	
@@ -100,10 +107,6 @@ public class SpiderHttpServer extends AbstractVerticle {
 		 * login
 		 */
 		AuthProvider authProvider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, new JsonObject());
-		
-		
-		
-		
 		
 //		authProvider.authenticate(new JsonObject(), result -> {
 //			User user = result.result();
@@ -177,21 +180,75 @@ public class SpiderHttpServer extends AbstractVerticle {
 		
 		httpServer.websocketHandler(sws -> {
 			String path = sws.path();
-			
-
 			Pattern pattern =Pattern.compile("/websocket/(.*?)/(.*?)/");
 			Matcher m = pattern.matcher(path);
 			String room = null;
+			String name = null;
+			ChatRoom chatRoom = null;
+			Actor actor = null;
 			
-//			ChatRoom chatRoom = new ChatRoom();
-//			Actor actor = new Actor();
 			if(m.matches()){
+				String[] strs = path.split("/");
+				room = strs[2];
+				name = strs[3];
 				
+				if(room != null){
+					 	chatRoom = rooms.get(room);
+						if(chatRoom != null){
+							actor = chatRoom.getActors().get(name);
+							if (actor == null) {
+								actor = new Actor();
+								actor.setName(name);
+								actor.setSws(sws);
+								chatRoom.getActors().put(name, actor);
+								
+							}else{
+								JsonObject json = new JsonObject();
+								json.put("type", 0);
+								json.put("message", "用户名称已经存在，请改变用户名称！");
+								sws.writeFinalTextFrame(json.toString());
+								sws.close();
+							}
+						}else{
+							chatRoom = new ChatRoom();
+							rooms.put(room, chatRoom);
+							actor = new Actor();
+							actor.setName(name);
+							actor.setSws(sws);
+							chatRoom.setOwner(actor);
+							chatRoom.getActors().put(name, actor);
+						}
+				}else{
+					sws.close();
+				}
 				
-				
-				
+			}else{
+				sws.close();
+				return;
 			}
 			
+			
+			sws.closeHandler(handler -> {
+				System.out.println("" + sws.toString());
+			});
+			
+			sws.handler(data -> {
+					JsonObject recevied = new JsonObject(data.toString());
+					JsonObject message = new JsonObject();
+					message.put("name", "广播");
+					message.put("message", recevied.getString("message"));
+					message.put("sender", recevied.getString("sender"));
+					message.put("time", new Date().toString());
+					
+					String roomName = recevied.getString("room");
+					ChatRoom cr =  rooms.get(roomName);
+					Iterator<Actor> ait =  cr.getActors().values().iterator();
+					while (ait.hasNext()) {
+						Actor a =  ait.next();
+						 a.getSws().writeFinalTextFrame(message.toString());
+					}
+					System.out.println("message:"+message.toString());
+			});
 		});
 		
 		

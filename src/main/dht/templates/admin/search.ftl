@@ -95,9 +95,21 @@
 												<span style="margin: 0 5px;color: #CCC;font-size: 10px!important;">|</span>
 												文件热度：1 ℃
 											</div>
-											<a class="btn btn-primary" href="/admin/torrent/show/?hash=${item.info_hash}">
-									  			显示
+											
+											
+											<#if (item.status == 1) >
+											 <a class="btn btn-primary" href="/admin/torrent/show/?hash=${item.info_hash}&status=0">
+									  			隐藏
 									  		 </a>
+												
+											<#else>
+												<a class="btn btn-primary" href="/admin/torrent/show/?hash=${item.info_hash}">
+										  			显示
+										  		 </a> 
+											</#if>
+											
+											
+									  		
 									  </li>
 				          		</#list>
 				</ul>

@@ -1,13 +1,13 @@
 package com.ifreeshare.spider.http.server.pubcon;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -23,12 +23,9 @@ import com.ifreeshare.framework.web.annotation.RequestMapping;
 import com.ifreeshare.persistence.IDataSearch;
 import com.ifreeshare.spider.SpiderUtils;
 import com.ifreeshare.spider.core.CoreBase;
-import com.ifreeshare.spider.http.server.page.Classification;
 import com.ifreeshare.spider.http.server.page.PageDocument;
 import com.ifreeshare.spider.http.server.page.Tags;
 import com.ifreeshare.spider.http.server.route.BaseRoute;
-import com.ifreeshare.spider.log.Log;
-import com.ifreeshare.spider.log.Loggable.Level;
 import com.ifreeshare.util.DefaultPage;
 import com.ifreeshare.util.RegExpValidatorUtils;
 

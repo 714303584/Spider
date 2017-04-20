@@ -8,6 +8,8 @@ public class ChatRoom {
 	private String name;
 	
 	private Map<String, Actor> actors = new HashMap<String,Actor>();
+	
+	private Actor owner;
 
 	public String getName() {
 		return name;
@@ -24,4 +26,13 @@ public class ChatRoom {
 	public void setActors(Map<String, Actor> actors) {
 		this.actors = actors;
 	}
+
+	public Actor getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Actor owner) {
+		this.owner = owner;
+	}
+	
 }
