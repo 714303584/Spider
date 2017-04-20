@@ -14,8 +14,10 @@ import java.util.List;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
@@ -44,10 +46,13 @@ public class PublicController {
 		int pageIndex = 0;
 		int pageSize = 10;
 		SearchRequestBuilder srb = client.prepareSearch("torrent").setTypes("info");
+		QueryBuilder qb = QueryBuilders.termQuery(CoreBase.STATUS, 1);
+		srb.setQuery(qb);
 		srb.addSort("creationDate", SortOrder.DESC);
 		int pageFrom =  pageIndex*pageSize;
 		SearchResponse scrollResp = srb.setFrom(pageFrom).setSize(pageSize).get();
 
+		
 		SearchHits sh = scrollResp.getHits();
 		long totalCount = sh.getTotalHits();
 		List<Torrent> result = new ArrayList<Torrent>();
@@ -91,7 +96,7 @@ public class PublicController {
 			pageIndex = Integer.parseInt(index);
 		}
 
-		int pageSize = 50;
+		int pageSize = 20;
 		if (size != null && RegExpValidatorUtils.IsIntNumber(size)) {
 			pageSize = Integer.parseInt(size);
 		}
@@ -100,11 +105,17 @@ public class PublicController {
 
 		if (keys != null && keys.trim().length() != 0) {
 			QueryBuilder qb = QueryBuilders.matchQuery(CoreBase.NAME, keys);
-			srb.setQuery(qb);
+			QueryBuilder qb2 = QueryBuilders.termQuery(CoreBase.STATUS, 1);
+			BoolQueryBuilder bqb = QueryBuilders.boolQuery().must(qb).must(qb2);
+			srb.setQuery(bqb);
 		}else{
 			keys="";
 			srb.addSort("creationDate", SortOrder.DESC);
+			QueryBuilder qb = QueryBuilders.termQuery(CoreBase.STATUS, 1);
+			srb.setQuery(qb);
 		}
+		
+	
 
 		int pageFrom =  pageIndex*pageSize;
 		SearchResponse scrollResp = srb.setFrom(pageFrom).setSize(pageSize).get();
@@ -120,6 +131,8 @@ public class PublicController {
 			info.setName(document.getString("name"));
 			info.setLength(document.getLong("fileSize"));
 			torrent.setCreationDate(new Date(document.getLong("creationDate")));
+			String type = document.getString("filetype");
+			torrent.setType( type == null ? "未知" : type );
 			String subfileString = document.getString("subfiles");
 			JsonArray subFileArrays = new JsonArray(subfileString);
 			
@@ -164,6 +177,8 @@ public class PublicController {
 			Info info = new Info();
 			info.setName(result.getString("name"));
 			info.setLength(result.getLong("fileSize"));
+			String type = result.getString("filetype");
+			torrent.setType( type == null ? "未知" : type );
 			torrent.setCreationDate(new Date(result.getLong("creationDate")));
 			String subfileString = result.getString("subfiles");
 			JsonArray subFileArrays = new JsonArray(subfileString);

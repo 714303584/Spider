@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     
     <!-- include linker.ftl -->
-	<#include "link.ftl">
+	<#include "../link.ftl">
     
     
     <link rel="stylesheet" href="/static/css/falls/style.css"> 
@@ -42,14 +42,14 @@
   <body>
   
 	<!-- include  top -->
-	<#include "top.ftl">
+	<#include "../top.ftl">
 	
 	
 	<div class="jumbotron" style="padding-bottom:16px;margin:0px" >
 	 		 <div class="row" >
 	 		 <div class="col-1"> </div>
 			<div class="col-8">
-			  <form class="form-inline" method="get" action="/search.html" style="text-align: center;">
+			  <form class="form-inline" method="get" action="/admin/torrent/list/" style="text-align: center;">
 							<input type="text" name="keys" value="${context.keys}" style="width: 500px" class="form-control" id="exampleInputEmail2"/>
 							<button type="submit" class="btn btn-primary">搜索</button>
 						</form>
@@ -95,6 +95,9 @@
 												<span style="margin: 0 5px;color: #CCC;font-size: 10px!important;">|</span>
 												文件热度：1 ℃
 											</div>
+											<a class="btn btn-primary" href="/admin/torrent/show/?hash=${item.info_hash}">
+									  			显示
+									  		 </a>
 									  </li>
 				          		</#list>
 				</ul>
@@ -103,17 +106,9 @@
 			<div class="col-1"> </div>
 		 </div>
 	</div>
-	  
-						 
-						 
-						  
-
-		
     
    <!-- include  footer -->
-   <#include "foot.ftl">
-	
-	
+   <#include "../foot.ftl">
 	
 </body>
   

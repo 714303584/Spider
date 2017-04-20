@@ -60,6 +60,10 @@
 							<th class="table-info" colspan="5">文件描述</th>
 						</tr>
 						<tr>
+							<td >文件类型:</td>
+							<td colspan="2">${context.torrent.type}</td>
+						</tr>
+						<tr>
 							<td >发现时间:</td>
 							<td colspan="2">${context.torrent.creationDate?string("yyyy-MM-dd HH:mm:ss zzzz")}</td>
 						</tr>
@@ -113,34 +117,38 @@
 			<div class="col-2">
 				<h1 class="f-18 pb-10">	&nbsp;</h1>
 				
-				<table class="table table-bordered">
+					<table class="table table-bordered">
 					<tbody>
 						<tr >
 							<th class="table-info" colspan="5">相关搜索</th>
 						</tr>
-						<tr>
-							<td colspan="2">视频</td>
-						</tr>
-						<tr>
-							<td colspan="2">2017-01-31 21:45:27</td>
-						</tr>
-						<tr>
-							<td colspan="2">1.30 GB</td>
-						</tr>
-						<tr>
-							<td colspan="2">3</td>
-						</tr>
-						<tr>
-							<td colspan="2">1 ℃</td>
-						</tr>
-						<tr>
-							<td colspan="2">没有了</td>
-						</tr>
-						<tr>
-							<td colspan="2">没有了</td>
-						</tr>
+						<!--
+							<tr>
+								<td colspan="2">视频</td>
+							</tr>
+							<tr>
+								<td colspan="2">2017-01-31 21:45:27</td>
+							</tr>
+							<tr>
+								<td colspan="2">1.30 GB</td>
+							</tr>
+							<tr>
+								<td colspan="2">3</td>
+							</tr>
+							<tr>
+								<td colspan="2">1 ℃</td>
+							</tr>
+							<tr>
+								<td colspan="2">没有了</td>
+							</tr>
+							<tr>
+								<td colspan="2">没有了</td>
+							</tr>
+						
+						 -->
 					</tbody>
 				</table>
+				
 			
 			</div>
 			<div class="col-1">

@@ -53,7 +53,7 @@ public class WireMetadataDownloadTask implements Runnable {
 					torrentJsonObject.put(CoreBase.UUID, torrent.getInfo_hash());
 					torrentJsonObject.put("info_hash", torrent.getInfo_hash());
 					torrentJsonObject.put(CoreBase.NAME, torrent.getInfo().getName());
-					torrentJsonObject.put(CoreBase.TYPE, torrent.getType());
+					torrentJsonObject.put("filetype", torrent.getType());
 					torrentJsonObject.put("hot", 1);
 					torrentJsonObject.put(CoreBase.FILE_SIZE, torrent.getInfo().getLength());
 					torrentJsonObject.put("subfiles", torrent.getInfo().subFilesToJson().toString());
