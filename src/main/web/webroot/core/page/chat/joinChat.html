@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Required meta tags always come first -->
+<meta charset="utf-8">
+<Meta http-equiv="Content-Type" Content="text/html; Charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- <meta http-equiv="x-ua-compatible" content="ie=edge"> -->
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="/static/js/bootstrap/dist/css/bootstrap.css">
+<link href="/static/ifreeshare.ico" rel="shortcut icon">
+
+	<style type="text/css">
+	.page-header {
+			padding-bottom: 10px;
+    		margin: 22px 0 33px;
+    		border-bottom: 1px solid #bfbfbf;
+	}
+	
+	</style>
+
+<link rel="stylesheet" href="/static/css/falls/style.css">
+<!-- jQuery first, then Bootstrap JS. -->
+</head>
+<body>
+
+	<div class="container">
+					<form>
+							<div class="form-actions input-append">
+								聊天室： <input id="my_room"
+									type="text" >
+									
+								进入名称： <input id="my_name"
+									type="text" class="width-75" name="name">
+								<button type="button" class="btn btn-small btn-info no-radius"
+									onclick="connect();">
+									<i class="icon-share-alt"></i> <span class="hidden-phone">进入</span>
+								</button>
+							</div>
+						</form>
+	
+	
+	
+	</div>
+
+	<div class="container" style="color: #777; border-top: 1px solid #e5e5e5; margin-top: 30px; padding: 30px 0;">
+		<div class="row">
+			<div id="message_container" class="col-sm-8">
+			<div id="template_message">
+				<div  class="alert alert-success" role="alert">
+					  	<strong>{{{sender}}}:</strong> {{{message}}}
+					</div>
+			</div>
+			</div>
+			<div class="col-sm-4">col-sm-4</div>
+		</div>
+	</div>
+	
+	<footer class="footer"
+		style="color: #777; border-top: 1px solid #e5e5e5; margin-top: 30px; padding: 30px 0;">
+		<div class="container">
+			<div class="row footer-top">
+					<form>
+							<div class="form-actions input-append">
+								<input id="message" placeholder="Type your message here ..."
+									type="text" class="width-75" name="message">
+								<button type="button" class="btn btn-small btn-info no-radius"
+									onclick="sendMessage();">
+									<i class="icon-share-alt"></i> <span class="hidden-phone">Send</span>
+								</button>
+							</div>
+						</form>
+			</div>
+			<hr>
+			<div class="row justify-content-md-center">
+                    <a href="http://www.miibeian.gov.cn/" target="_blank"> 京ICP备15051618号 </a> | <a href="/static/core/page/disclaimer.html" target="_blank">使用前必读</a>
+			</div>
+		</div>
+	</footer>
+
+	
+
+
+</body>
+
+<script src="/static/js/jquery/jquery.min.js"></script>
+<script src="/static/js/bootstrap/dist/js/tether.min.js"></script>
+<script src="/static/js/bootstrap/dist/js/bootstrap.js"></script>
+
+
+<script type="text/javascript">
+		var socket = null;
+		
+		var roomName = null;
+		
+		var username = null;
+		
+		//
+		function fillTemplate(template, json){
+			var template_message = $(template);
+			var template = template_message.html();
+			var result = template;
+			for(var i in json){
+				var key = "{{{"+i+"}}}";
+				var value = json[i];
+				result = result.replace(new RegExp(key,'g'), value);
+			}
+			return result;
+		}
+	
+		function sendMessage() {
+			var message = $("#message").val();
+			if(roomName == null || username == null || socket == null){
+				alert("服务器未连接！");
+			}else{
+				var sendM = {"room":roomName,"sender":username,"message":message};
+				socket.send(JSON.stringify(sendM));
+			}
+		}
+		
+		function connect(){
+			var room = $("#my_room").val();
+			if(room != null && room != undefined && room.length == 0){
+				alert("聊天室名称为空！")
+				return
+			}
+			
+			var name = $("#my_name").val();
+			if(name != null && name != undefined && name.length == 0){
+				alert("聊天室名称为空！")
+				return
+			}
+			
+			socket = new WebSocket('ws://localhost:8000/websocket/'+ room +'/'+ name +'/');
+			
+			roomName = room;
+			username = name;
+			socket.onmessage = function(message) {
+				console.log(message);
+				var data = message.data;
+				var messageTtml = fillTemplate("#template_message", JSON.parse(data));
+				$("#message_container").append(messageTtml);
+			};
+			
+		}
+</script>
+
+
+</html>
