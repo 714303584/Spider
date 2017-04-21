@@ -113,7 +113,7 @@ public class TorrentController {
 		return "template:templates/admin/search.ftl";
 	}
 	
-	@RequestMapping(value = { "show/" }, method = { HttpMethod.GET })
+	@RequestMapping(value = { "update/" }, method = { HttpMethod.GET })
 	public String show(RoutingContext context){
 		JsonObject update = new JsonObject();
 		HttpServerRequest request = context.request();
@@ -121,12 +121,20 @@ public class TorrentController {
 		int status = 1;
 		if(statusValue != null && RegExpValidatorUtils.IsNumber(statusValue)){
 			status = Integer.parseInt(statusValue);
+			update.put(CoreBase.STATUS, status);
+		}
+		
+		String rtype = request.getParam("rtype");
+		
+		if(rtype != null  && RegExpValidatorUtils.IsNumber(rtype) ){
+			int rTypeValue = Integer.parseInt(rtype);
+			update.put("rtype", rTypeValue);
 		}
 		
 		update.put(CoreBase.UUID, request.getParam("hash"));
 		update.put(CoreBase.INDEX, "torrent");
 		update.put(CoreBase.TYPE, "info");
-		update.put(CoreBase.STATUS, status);
+		
 		esp.update(update);
 		return "redirect:/admin/torrent/list/";
 	}

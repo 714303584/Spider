@@ -18,8 +18,37 @@
 
 <link rel="stylesheet" href="/static/css/falls/style.css">
 
-<!-- jQuery first, then Bootstrap JS. -->
-<script src="/static/js/jquery/jquery.min.js"></script>
+
+    <style type="text/css">
+
+		.c-666 {
+		    color: #666;
+		    margin-bottom: 0;
+		
+		}
+		
+		.mb-20 {
+			margin-bottom: 20px;
+		}
+		
+		.f-18 {
+			font-size: 18px;
+		
+		}
+		
+			.f-12 {
+			font-size: 12px;
+		}
+		
+		
+		.text-r {
+			text-align: right!important;
+			width:100px;
+		}
+
+</style>
+
+
 
 <script src="/static/js/webThunder/webThunderDetect.js"></script> 
 <script src="/static/js/webThunder/base64.js"></script> 
@@ -53,46 +82,51 @@
 		<div class="row">
 			<div class="col-1"> </div>
 			<div class="col-8">
-				<h1 class="f-18 pb-10">${context.torrent.info.name}</h1>
+				<h4>${context.torrent.info.name}</h4>
 				<table class="table table-bordered">
 					<tbody>
 						<tr >
 							<th class="table-info" colspan="5">文件描述</th>
 						</tr>
 						<tr>
-							<td >文件类型:</td>
+							<td class="text-r">文件类型:</td>
 							<td colspan="2">${context.torrent.type}</td>
 						</tr>
 						<tr>
-							<td >发现时间:</td>
+							<td class="text-r">发现时间:</td>
 							<td colspan="2">${context.torrent.creationDate?string("yyyy-MM-dd HH:mm:ss zzzz")}</td>
 						</tr>
 						<tr>
-							<td >文件大小:</td>
+							<td class="text-r">文件大小:</td>
 							<td colspan="2">${context.sSize}</td>
 						</tr>
 						<tr>
-							<td >文件数量:</td>
+							<td class="text-r">文件数量:</td>
 							<td colspan="2">${context.torrent.info.files?size}</td>
 						</tr>
 						<tr>
-							<td >文件热度:</td>
+							<td class="text-r">文件热度:</td>
 							<td colspan="2">1 ℃</td>
 						</tr>
 						<tr>
 							<th class="table-info" colspan="5">下载地址</th>
 						</tr>
 						<tr>
-							<td  style="width: 60px">磁力链接:</td>
-							<td colspan="4"><a class="c-blue"
+							<td  class="text-r">磁力链接:</td>
+							<td colspan="2"><a class="c-blue"
 								href="magnet:?xt=urn:btih:${context.torrent.info_hash}&amp;dn=${context.torrent.info.name}">
 								magnet:?xt=urn:btih:${context.torrent.info_hash}&amp;dn=${context.torrent.info.name}</a></td>
 						</tr>
 						<tr>
-							<td >迅雷链接:</td>
-							<td colspan="4"><a class="c-blue" style="word-break:break-all" id="thunder-link"
-								onclick="xldown('magnet:?xt=urn:btih:${context.torrent.info_hash}&amp;dn=${context.torrent.info.name}')"
-								href="javascript:void(0);"><script type="text/javascript">document.write(ThunderEncode("magnet:?xt=urn:btih:${context.torrent.info_hash}&amp;dn=${context.torrent.info.name}"))</script></a></td>
+							<td class="text-r">迅雷链接:</td>
+							<td colspan="2">
+							<a class="c-blue" style="word-break:break-all" id="thunder-link"
+								href="magnet:?xt=urn:btih:${context.torrent.info_hash}&amp;dn=${context.torrent.info.name}">
+									<p>
+										<script type="text/javascript">document.write(ThunderEncode("magnet:?xt=urn:btih:${context.torrent.info_hash}&amp;dn=${context.torrent.info.name}"))</script>
+									</p>
+								
+								</a></td>
 						</tr>
 						<tr>
 							<th class="table-info" colspan="5">文件列表</th>
@@ -115,7 +149,7 @@
 				</table>
 			</div>
 			<div class="col-2">
-				<h1 class="f-18 pb-10">	&nbsp;</h1>
+				<h4>	&nbsp;</h4>
 				
 					<table class="table table-bordered">
 					<tbody>
@@ -168,6 +202,11 @@
 
 
 </body>
+
+<!-- jQuery first, then Bootstrap JS. -->
+
+<script src="/static/js/jquery/jquery.min.js"></script>
+<script src="/static/js/bootstrap/dist/js/bootstrap.js"></script>
 
 <!--  Submit the link address to the search engine -->
 </html>

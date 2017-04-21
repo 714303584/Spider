@@ -7,15 +7,15 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <!-- Bootstrap CSS -->
     
-    <!-- include linker.ftl -->
-	<#include "link.ftl">
+ 
     
     
     <link rel="stylesheet" href="/static/css/falls/style.css"> 
     
        <!-- jQuery first, then Bootstrap JS. -->
-    <script src="/static/js/jquery/jquery.min.js"></script>
    
+      <!-- include linker.ftl -->
+	<#include "link.ftl">
   </head>
   <body>
   
@@ -69,6 +69,11 @@
 	
 	
 </body>
+
+<!-- jQuery first, then Bootstrap JS. -->
+
+<script src="/static/js/jquery/jquery.min.js"></script>
+<script src="/static/js/bootstrap/dist/js/bootstrap.js"></script>
   
 <!--  Submit the link address to the search engine -->
 </html>

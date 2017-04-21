@@ -7,14 +7,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <!-- Bootstrap CSS -->
     
-    <!-- include linker.ftl -->
-	<#include "link.ftl">
+
     
     
     <link rel="stylesheet" href="/static/css/falls/style.css"> 
     
-       <!-- jQuery first, then Bootstrap JS. -->
-    <script src="/static/js/jquery/jquery.min.js"></script>
+    
+        <!-- include linker.ftl -->
+	<#include "link.ftl">
     <style type="text/css">
 
 		.c-666 {
@@ -68,8 +68,6 @@
 				  	<hr class="m-y-md" style="margin:0px">
 				  </li>
 					
-					
-					
 						<#list context.pages.elements as item>
 									<li class="mb-20">
 									  		<a class="f-18" href="/btinfo.html?hash=${item.info_hash}">
@@ -98,6 +96,27 @@
 									  </li>
 				          		</#list>
 				</ul>
+				
+				
+			<div class="container" >
+				  <div class="row justify-content-md-center">
+				  	<ul class="pagination pagination-lg">
+				    <li class="page-item">
+				      <a class="page-link" href="/search.html?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
+				        <span aria-hidden="true">&laquo;</span>
+				        <span class="sr-only">Previous</span>
+				      </a>
+				    </li>
+				    <li class="page-item">
+				      <a class="page-link" href="/search.html?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
+				        <span aria-hidden="true">&raquo;</span>
+				        <span class="sr-only">Next</span>
+				      </a>
+				    </li>
+				  </ul>
+				   </div>
+			</div>
+			
 			
 			</div>
 			<div class="col-1"> </div>
@@ -116,6 +135,11 @@
 	
 	
 </body>
+
+<!-- jQuery first, then Bootstrap JS. -->
+
+<script src="/static/js/jquery/jquery.min.js"></script>
+<script src="/static/js/bootstrap/dist/js/bootstrap.js"></script>
   
 <!--  Submit the link address to the search engine -->
 </html>

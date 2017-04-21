@@ -8,13 +8,14 @@
     <!-- Bootstrap CSS -->
     
     <!-- include linker.ftl -->
-	<#include "../link.ftl">
-    
+	
     
     <link rel="stylesheet" href="/static/css/falls/style.css"> 
     
        <!-- jQuery first, then Bootstrap JS. -->
     <script src="/static/js/jquery/jquery.min.js"></script>
+    
+    <#include "../link.ftl">
     <style type="text/css">
 
 		.c-666 {
@@ -103,16 +104,34 @@
 									  		 </a>
 												
 											<#else>
-												<a class="btn btn-primary" href="/admin/torrent/show/?hash=${item.info_hash}">
+												<a class="btn btn-primary" href="/admin/torrent/show/?hash=${item.info_hash}&status=1">
 										  			显示
 										  		 </a> 
 											</#if>
-											
-											
 									  		
 									  </li>
 				          		</#list>
 				</ul>
+				<div class="container" >
+				  <div class="row justify-content-md-center">
+				  	<ul class="pagination pagination-lg">
+				    <li class="page-item">
+				      <a class="page-link" href="/admin/torrent/list/?index=${context.pages.previousPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Previous">
+				        <span aria-hidden="true">&laquo;</span>
+				        <span class="sr-only">Previous</span>
+				      </a>
+				    </li>
+				    <li class="page-item">
+				      <a class="page-link" href="/admin/torrent/list/?index=${context.pages.nextPageNo}&size=${context.pages.pageSize}&keys=${context.keys}" aria-label="Next">
+				        <span aria-hidden="true">&raquo;</span>
+				        <span class="sr-only">Next</span>
+				      </a>
+				    </li>
+				  </ul>
+				   </div>
+			</div>
+				
+				
 			
 			</div>
 			<div class="col-1"> </div>

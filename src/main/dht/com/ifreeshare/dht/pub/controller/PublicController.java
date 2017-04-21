@@ -154,7 +154,7 @@ public class PublicController {
 		DefaultPage<Torrent> pages = new DefaultPage<Torrent>(pageIndex, pageSize, result, totalCount);
 		context.put("pages", pages);
 		context.put("keys", keys);
-		return "template:templates/search.ftl";
+		return "template:templates/btsearch.ftl";
 	}
 	
 	

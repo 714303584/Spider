@@ -39,16 +39,6 @@
 								<li><a href="#" target="_blank">暂无</a></li>
 							</ul>
 						</div>
-						<!--
-              	<div class="col-xs-3">
-               <h4 style="color: #563d7c;font-size: 16px;">赞助商</h4>
-                <ul class="list-unstyled">
-                  <li><a href="http://www.ucloud.cn/" target="_blank">UCloud</a></li>
-                  <li><a href="https://www.upyun.com" target="_blank">又拍云</a></li>
-                </ul>
-              </div>
-              
-               -->
 					</div>
 
 				</div>
