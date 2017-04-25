@@ -44,6 +44,8 @@
 								<#list context.tags as item>
 									<a href="/public/tags/list/${item.id}/" class="btn btn-secondary btn-sm" role="button">${item.name}</a>
 								</#list>
+								
+								<a href="/public/classic/tags/${context.classification.id}/" class="btn btn-secondary btn-sm" role="button">......</a>
   				 </div>	
   		</#if>
     

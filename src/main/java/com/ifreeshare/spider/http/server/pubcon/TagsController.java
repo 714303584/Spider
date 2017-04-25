@@ -2,7 +2,6 @@ package com.ifreeshare.spider.http.server.pubcon;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -41,7 +40,6 @@ public class TagsController {
 		context.put("domain", BaseRoute.DOMAIN);
 		context.put("imgclassi", SpiderUtils.imageClassification);
 		HttpServerRequest request = context.request();
-		HttpServerResponse response = context.response();
 
 		String id = request.getParam("id");
 		String index = request.getParam("index");
@@ -187,8 +185,6 @@ public class TagsController {
 		context.put("imgclassi", SpiderUtils.imageClassification);
 		context.put("pages", pages);
 		return "template:templates/images/tags/publist.ftl";
-
-
 		
 	}
 	
