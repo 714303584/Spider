@@ -201,6 +201,17 @@ public class SpiderHttpServer extends AbstractVerticle {
 								actor.setName(name);
 								actor.setSws(sws);
 								chatRoom.getActors().put(name, actor);
+								Map<String, Actor> roomActors = chatRoom.getActors();
+								
+								Iterator<Actor> it = roomActors.values().iterator();
+								 while (it.hasNext()) {
+									 Actor roomActor = it.next();
+									 JsonObject message = new JsonObject();
+									 message.put("type","sys_new_actor");
+									 message.put("data", new JsonObject().put("name", name));
+									 message.put("time", new Date().toString());
+									 roomActor.getSws().writeFinalTextFrame(message.toString());
+								}
 								
 							}else{
 								JsonObject json = new JsonObject();

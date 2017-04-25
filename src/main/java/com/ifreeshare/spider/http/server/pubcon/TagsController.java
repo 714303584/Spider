@@ -127,5 +127,72 @@ public class TagsController {
 	
 	
 	
+	@RequestMapping(value = { "page/" }, method = { HttpMethod.GET })
+	public String page(RoutingContext context){
+		
+		HttpServerRequest request = context.request();
+		String index = request.getParam("index");
+		String size = request.getParam("size");
+
+		int pageIndex = 0;
+		if ((index != null && RegExpValidatorUtils.IsIntNumber(index))) {
+			pageIndex = Integer.parseInt(index);
+		}
+
+		int pageSize = 50;
+		if (size != null && RegExpValidatorUtils.IsIntNumber(size)) {
+			pageSize = Integer.parseInt(size);
+		}
+
+		SearchRequestBuilder srb = client.prepareSearch(CoreBase.TAGS).setTypes(CoreBase.IMAGES);
+		
+		srb.setQuery(QueryBuilders.termQuery(CoreBase.STATUS, 1));
+		
+		int pageFrom = pageIndex * pageSize;
+		SearchResponse scrollResp = srb.setFrom(pageFrom).setSize(pageSize).get();
+
+		SearchHits sh = scrollResp.getHits();
+		long totalCount = sh.getTotalHits();
+		List<Tags> result = new ArrayList<Tags>();
+		for (SearchHit hit : sh.getHits()) {
+			String uuid = hit.getId();
+			JsonObject document = new JsonObject(hit.getSourceAsString());
+			String keywords = document.getString(CoreBase.HTML_KEYWORDS);
+			String description = document.getString(CoreBase.HTML_DESCRIPTION);
+			String title = document.getString(CoreBase.HTML_TITLE);
+			String enkeywords = document.getString(CoreBase.ENGLISH_KEYWORDS);
+			String chkeywords = document.getString(CoreBase.CHINESE_KEYWORDS);
+			String tag = document.getString(CoreBase.TAG);
+			String name = document.getString(CoreBase.NAME);
+			int status = document.getInteger(CoreBase.STATUS);
+
+			Tags pd = new Tags();
+			pd.setId(uuid);
+			try {
+				pd.setName(name == null ? "" : name);
+				pd.setKeywords(keywords == null ? "" : keywords);
+				pd.setStatus(status);
+				pd.setTag(tag);
+				pd.setDescription(description == null ? "" : description);
+				pd.setChkeywords(chkeywords == null ? "" : chkeywords);
+				pd.setEnkeywords(enkeywords == null ? "" : enkeywords);
+				result.add(pd);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		DefaultPage<Tags> pages = new DefaultPage<Tags>(pageIndex, pageSize, result, totalCount);
+		context.put("domain", BaseRoute.DOMAIN);
+		context.put("imgclassi", SpiderUtils.imageClassification);
+		context.put("pages", pages);
+		return "template:templates/images/tags/publist.ftl";
+
+
+		
+	}
+	
+	
+	
 
 }

@@ -9,6 +9,21 @@
           <li class="nav-item active">
             <a class="nav-item nav-link" href="http://www.ifreeshare.com">首页</a>
           </li>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">分类</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+          	
+          		<#list context.imgclassi as item>
+          		   <a class="dropdown-item" href="/public/classic/image/${item.id}/">${item.name}</a>
+          		</#list>
+            </div>
+          </li>
+          
+           <li class="nav-item active">
+            <a class="nav-item nav-link" href="/public/tags/page/">标签</a>
+          </li>
+          
+          
           <!-- 
           <li class="nav-item active">
             <a class="nav-item nav-link" href="/public/search/image/resouce/">资源</a>
