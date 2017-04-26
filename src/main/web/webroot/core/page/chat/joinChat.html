@@ -53,7 +53,17 @@
 					</div>
 			</div>
 			</div>
-			<div class="col-sm-4">col-sm-4</div>
+			<div class="col-sm-4">
+				<div class="list-group" id="div_users_list">
+				  <a href="#" class="list-group-item active">
+				   	在线
+				  </a>
+				  <div id="template_users">
+				  		<a  href="#" class="list-group-item list-group-item-action">{{{name}}}</a>
+				  </div>
+				</div>
+			
+			</div>
 		</div>
 	</div>
 	
@@ -139,8 +149,17 @@
 			socket.onmessage = function(message) {
 				console.log(message);
 				var data = message.data;
-				var messageTtml = fillTemplate("#template_message", JSON.parse(data));
-				$("#message_container").append(messageTtml);
+				var dataJson = JSON.parse(data);
+				var messageType = dataJson["type"];
+				if(messageType == "sys_new_actor"){
+					var data = JSON.parse(data);
+					var messageTtml = fillTemplate("#template_users", dataJson["data"]);
+					$("#div_users_list").append(messageTtml);
+				}else{
+					var messageTtml = fillTemplate("#template_message", dataJson);
+					$("#message_container").append(messageTtml);
+					
+				}
 			};
 			
 		}
