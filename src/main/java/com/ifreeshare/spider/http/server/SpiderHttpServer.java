@@ -10,6 +10,7 @@ import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.auth.shiro.ShiroAuth;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
+import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CookieHandler;
@@ -139,6 +140,26 @@ public class SpiderHttpServer extends AbstractVerticle {
 //	    SessionStore store = ClusteredSessionStore.create(vertx);
 //	    SessionHandler sessionHandler = SessionHandler.create(store);
 //	    router.route().handler(sessionHandler);
+	    
+	    
+	    
+	    router.post("/form").handler(ctx -> {
+	        ctx.response().putHeader("Content-Type", "text/plain");
+
+	        ctx.response().setChunked(true);
+	        
+	        
+	        for (FileUpload f : ctx.fileUploads()) {
+	      	  String fileName = f.fileName();
+	      	  System.out.println("FileName:"+f.fileName());
+	      	  System.out.println("uploadedFileName:"+f.uploadedFileName());
+	      	  System.out.println("FileName:"+f.size());
+	      	  
+	        }
+
+	        ctx.response().end();
+	      });
+	    
 	    
 	    router.route("/logout").handler(context -> {
 	        context.clearUser();

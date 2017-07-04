@@ -31,9 +31,12 @@
 			</div>
     
 	 	<div class="container"> 
+	 	
+	 			<ul class="list-group">
 	 				<#list context.pages.elements as item>
-	 				  		<a href="/public/tags/list/${item.id}/" class="btn btn-secondary btn-sm" role="button">${item.name}</a>
+  							<li class="list-group-item"><a href="/public/tags/list/${item.id}/" >${item.name}</a></li>
 					</#list>
+				</ul>
 		</div>
 			<div class="container" style="text-align:center">
 				<div class="row justify-content-md-center">
