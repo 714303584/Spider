@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ifreeshare.util.Encode;
 import com.ifreeshare.util.RegExpValidatorUtils;
 
 public class BenCodingParse {
@@ -88,12 +89,10 @@ public class BenCodingParse {
 
 		return new String(b, 0, len);// byte 转 字符串
 	}
+	
+	
+//	public static 
 
-	// public static String getString(){
-	// // String ,
-	//
-	//
-	// }
 
 
 	public static Object parseBenCoding(ByteArrayInputStream bin) {
@@ -182,6 +181,13 @@ public class BenCodingParse {
 						CharBuffer cf = cn.decode(ByteBuffer.wrap(stringBytes, 0, lengths)); // 这就不会出现乱码，坑爹情况了。我之前都不知道了
 						return  new String(cf.array(), 0, cf.limit());
 					} else { // 如果特殊的 就是二进制的话直接byte数组返回
+						
+						BigInteger bi = new BigInteger(stringBytes);
+						System.out.println(bi.toString(16));;
+						
+						System.out.println(Encode.hexEncode(stringBytes));
+						
+						
 						return stringBytes;
 					}
 				} else if (c.equals("e")) {

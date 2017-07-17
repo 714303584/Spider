@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +80,23 @@ public class BenCodingParse {
 		Torrent torrent = new Torrent();
 		
 		torrent.init(result);
+		
+		
+		BTClient btClient = new BTClient();
+		
+		byte[] results = btClient.tracker(torrent);
+		
+		if(results != null){
+			
+			ByteArrayInputStream	bin = new ByteArrayInputStream(results);
+			
+			Map<String, Object> map =  (Map<String, Object>) parseBenCoding(bin);
+			JsonObject jsonObject = new JsonObject(map);
+			
+			System.out.println(jsonObject.encodePrettily());
+			
+		}
+		
 		
 		System.out.println(torrent.toString());
 		

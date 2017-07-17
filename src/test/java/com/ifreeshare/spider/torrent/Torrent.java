@@ -80,6 +80,24 @@ public class Torrent {
 		this.info = info;
 	}
 	
+	public List<String> getHttpUrls(){
+		List<String> result = new ArrayList<String>();
+		if(announce != null && announce.startsWith("http")){
+			result.add(announce);
+		}
+		
+		Iterator<String> it = announce_list.iterator();
+		while (it.hasNext()) {
+			String url = it.next();
+			if (url.startsWith("http")) {
+				result.add(url);
+			}
+		}
+		return result;
+	}
+	
+	
+	
 	@Override
 	public String toString() {
 		return "Torrent [announce=" + announce + ", announce_list=" + announce_list + ", creation_date=" + creation_date + ", encoding=" + encoding + ", comment=" + comment + ", create_by="
@@ -104,7 +122,7 @@ public class Torrent {
 					List<Object> list2 = (List<Object>)url;
 					for (int i = 0; i < list2.size(); i++) {
 						Object childurl = list2.get(i);
-						if(childurl instanceof byte[]) this.announce_list.add(coverString(childurl));
+						this.announce_list.add(coverString(childurl));
 						System.out.println(coverString(childurl));
 					}
 					
