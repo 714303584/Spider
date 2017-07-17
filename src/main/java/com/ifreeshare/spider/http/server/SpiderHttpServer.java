@@ -22,6 +22,9 @@ import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 
+
+
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +35,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+
 import org.apache.logging.log4j.Logger;
+
+
 
 import com.ifreeshare.framework.HttpServerShell;
 import com.ifreeshare.spider.Runner;
@@ -55,7 +62,8 @@ import com.ifreeshare.spider.http.server.route.users.UserLoginPostRouter;
 import com.ifreeshare.spider.http.server.route.users.UserRegistPageRouter;
 import com.ifreeshare.spider.http.server.route.users.UserRegistPostRouter;
 import com.ifreeshare.spider.log.Log;
-import com.ifreeshare.spider.log.Loggable.Level;
+import com.ifreeshare.spider.log.Loggable.Level;import com.ifreeshare.util.FileAccess;
+
 
 /**
  * User services 
@@ -68,6 +76,9 @@ public class SpiderHttpServer extends AbstractVerticle {
 	public static Map<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
 	
 	Set<BaseRoute> routers = new HashSet<BaseRoute>();
+	
+	public static String upload_path = "G:\\nginx-1.9.4\\html\\file";
+	
 	
 	public SpiderHttpServer(Vertx vertx, Context context) {
 		this.vertx = vertx;
@@ -100,7 +111,7 @@ public class SpiderHttpServer extends AbstractVerticle {
 		Router router = Router.router(vertx);
 		
 		//cookies, sessions and request bodies
-		router.route().handler(BodyHandler.create());
+		router.route().handler(BodyHandler.create().setUploadsDirectory(upload_path));
 		router.route().handler(CookieHandler.create());
 		router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
 		
@@ -143,22 +154,27 @@ public class SpiderHttpServer extends AbstractVerticle {
 	    
 	    
 	    
-	    router.post("/form").handler(ctx -> {
-	        ctx.response().putHeader("Content-Type", "text/plain");
-
-	        ctx.response().setChunked(true);
-	        
-	        
-	        for (FileUpload f : ctx.fileUploads()) {
-	      	  String fileName = f.fileName();
-	      	  System.out.println("FileName:"+f.fileName());
-	      	  System.out.println("uploadedFileName:"+f.uploadedFileName());
-	      	  System.out.println("FileName:"+f.size());
-	      	  
-	        }
-
-	        ctx.response().end();
-	      });
+//	    router.post("/form").handler(ctx -> {
+//	        ctx.response().putHeader("Content-Type", "text/plain");
+//
+//	        ctx.response().setChunked(true);
+//	        
+//	        
+//	        for (FileUpload f : ctx.fileUploads()) {
+//	      	  String fileName = f.fileName();
+//	      	  System.out.println("FileName:"+f.fileName());
+//	      	  System.out.println("uploadedFileName:"+f.uploadedFileName());
+//	      	  System.out.println("FileName:"+f.size());
+//	      	  
+//	      	  File file = new File(f.uploadedFileName());
+//	      	  String fileType = FileAccess.getFileType(f.fileName());
+//	      	  
+//	      	  file.renameTo(new File(f.uploadedFileName()+"."+fileType));
+//	      	  
+//	        }
+//
+//	        ctx.response().end();
+//	      });
 	    
 	    
 	    router.route("/logout").handler(context -> {
